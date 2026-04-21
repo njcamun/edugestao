@@ -1,0 +1,204 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  SECRETARIA
+  PROFESSOR
+  FINANCEIRO
+}
+
+enum EnrollmentStatus {
+  PENDENTE
+  CONFIRMADA
+  CANCELADA
+}
+
+enum InvoiceStatus {
+  PENDENTE
+  PAGO
+  PARCIAL
+  VENCIDO
+}
+
+enum PaymentMethod {
+  DINHEIRO
+  TRANSFERENCIA
+  TPA
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         UserRole @default(SECRETARIA)
+  isActive     Boolean  @default(true)
+
+  teacher      Teacher? // Se for professor, tem dados extras
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AcademicYear {
+  id        String   @id @default(uuid())
+  year      String   @unique // ex: 2024/2025
+  startDate DateTime
+  endDate   DateTime
+  isActive  Boolean  @default(true)
+
+  enrollments Enrollment[]
+  classes     SchoolClass[]
+}
+
+model Student {
+  id         String    @id @default(uuid())
+  fullName   String
+  gender     String?
+  birthDate  DateTime?
+  phone      String?
+  address    String?
+  photoUrl   String?
+  isActive   Boolean   @default(true)
+
+  enrollments Enrollment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GradeLevel {
+  id      String @id @default(uuid())
+  name    String // ex: 10ª Classe, 1ª Primária
+  classes SchoolClass[]
+}
+
+model Subject {
+  id   String @id @default(uuid())
+  name String
+
+  teacherAssignments TeacherAssignment[]
+  grades             Grade[]
+}
+
+model Room {
+  id       String @id @default(uuid())
+  name     String
+  capacity Int?
+
+  classes       SchoolClass[]
+  scheduleItems ScheduleItem[]
+}
+
+model SchoolClass {
+  id             String  @id @default(uuid())
+  name           String  // ex: Turma A
+  academicYearId String
+  gradeLevelId   String
+  roomId         String?
+
+  academicYear AcademicYear @relation(fields: [academicYearId], references: [id])
+  gradeLevel   GradeLevel   @relation(fields: [gradeLevelId], references: [id])
+  room         Room?        @relation(fields: [roomId], references: [id])
+
+  enrollments   Enrollment[]
+  scheduleItems ScheduleItem[]
+  teacherAssignments TeacherAssignment[]
+}
+
+model Teacher {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  assignments   TeacherAssignment[]
+  scheduleItems ScheduleItem[]
+}
+
+model TeacherAssignment {
+  id            String @id @default(uuid())
+  teacherId     String
+  subjectId     String
+  schoolClassId String
+
+  teacher     Teacher     @relation(fields: [teacherId], references: [id])
+  subject     Subject     @relation(fields: [subjectId], references: [id])
+  schoolClass SchoolClass @relation(fields: [schoolClassId], references: [id])
+
+  @@unique([teacherId, subjectId, schoolClassId])
+}
+
+model Enrollment {
+  id             String           @id @default(uuid())
+  studentId      String
+  schoolClassId  String
+  academicYearId String
+  status         EnrollmentStatus @default(PENDENTE)
+  enrollmentDate DateTime         @default(now())
+
+  student      Student      @relation(fields: [studentId], references: [id])
+  schoolClass  SchoolClass  @relation(fields: [schoolClassId], references: [id])
+  academicYear AcademicYear @relation(fields: [academicYearId], references: [id])
+
+  grades   Grade[]
+  invoices Invoice[]
+
+  @@unique([studentId, academicYearId]) // Um aluno não pode ter duas matrículas no mesmo ano
+}
+
+model Grade {
+  id           String @id @default(uuid())
+  enrollmentId String
+  subjectId    String
+  trimester    Int    // 1, 2, 3
+  type         String // Teste, Trabalho, Exame
+  value        Float  // 0-20
+  weight       Float  @default(1.0)
+
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id])
+  subject    Subject    @relation(fields: [subjectId], references: [id])
+}
+
+model ScheduleItem {
+  id            String @id @default(uuid())
+  schoolClassId String
+  teacherId     String
+  roomId        String
+  dayOfWeek     Int    // 1 (Segunda) a 5 (Sexta) ou 6
+  startTime     String // ex: "08:00"
+  endTime       String // ex: "09:30"
+
+  schoolClass SchoolClass @relation(fields: [schoolClassId], references: [id])
+  teacher     Teacher     @relation(fields: [teacherId], references: [id])
+  room        Room        @relation(fields: [roomId], references: [id])
+}
+
+model Invoice {
+  id           String        @id @default(uuid())
+  enrollmentId String
+  description  String        // ex: Propina Março
+  amount       Float         // Em KZ
+  dueDate      DateTime
+  status       InvoiceStatus @default(PENDENTE)
+
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id])
+  payments   Payment[]
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  invoiceId     String
+  amountPaid    Float
+  paymentDate   DateTime      @default(now())
+  paymentMethod PaymentMethod
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id])
+}

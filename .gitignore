@@ -1,0 +1,24 @@
+# Node
+backend/node_modules
+backend/dist
+backend/.env
+
+# Flutter
+.dart_tool/
+build/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+pubspec.lock
+
+# OS
+.DS_Store
+
+# Local desktop OAuth credentials
+oauth.desktop.local.bat
+client_secret_*.json
+google-services.json
+GoogleService-Info.plist
+
+# Project exclude paths
+/.dart_tool/

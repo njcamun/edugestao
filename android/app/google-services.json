@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "174638590833",
+    "project_id": "edugestao",
+    "storage_bucket": "edugestao.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:174638590833:android:16a462c4bbfeeda6a864d0",
+        "android_client_info": {
+          "package_name": "com.example.edugestao"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "174638590833-iqbud5c17h3da9fu3aj6hk8s2sp1chf3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKXQoQpJDVPfiEqJuTYXH46xYgqjpsk6I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "174638590833-iqbud5c17h3da9fu3aj6hk8s2sp1chf3.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "174638590833-nsb8uu12pcdsa9fotn01ro0hnd8e94kp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.edugestao"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

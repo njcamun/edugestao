@@ -58,11 +58,18 @@ class _SplashPageState extends ConsumerState<SplashPage> {
       }
     }
 
-    // Geracao de custos fixos locais (sempre executa pois deve funcionar offline)
+    // Geração de custos fixos locais (sempre executa pois deve funcionar offline)
     try {
       await ref.read(costsRepositoryProvider).checkAndGenerateMonthlyCosts();
     } catch (e) {
       debugPrint('Erro ao gerar custos locais: $e');
+    }
+
+    // MANUTENÇÃO: Apagar mensalidades de Junho em diante (Pedido do utilizador)
+    try {
+      await ref.read(financeRepositoryProvider).deleteFeesFromMonth(6, 2025);
+    } catch (e) {
+      debugPrint('Erro na limpeza de mensalidades: $e');
     }
 
     if (mounted) context.go('/');

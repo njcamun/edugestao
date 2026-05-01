@@ -20,4 +20,5 @@ abstract class FinanceRepository {
   // Manutenção
   Future<void> resetAndRecreateMensalidades(int startingMonth, int year);
   Future<void> generateMonthlyFees({String? matriculaId, required int month, required int year});
+  Future<void> deleteFeesFromMonth(int startingMonth, int year);
 }

@@ -8,6 +8,7 @@ import '../settings/settings_controller.dart';
 import '../../data/sync/sync_service.dart';
 import '../../shared/firebase_service.dart';
 import '../finance/costs_controller.dart';
+import '../finance/finance_controller.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});

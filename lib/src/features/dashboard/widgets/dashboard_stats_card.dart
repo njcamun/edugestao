@@ -13,6 +13,8 @@ class DashboardStatsCard extends StatelessWidget {
   final String? value2;
   final String? label3;
   final String? value3;
+  final String? label4;
+  final String? value4;
 
   const DashboardStatsCard({
     super.key,
@@ -27,6 +29,8 @@ class DashboardStatsCard extends StatelessWidget {
     this.value2,
     this.label3,
     this.value3,
+    this.label4,
+    this.value4,
   });
 
   @override
@@ -110,6 +114,17 @@ class DashboardStatsCard extends StatelessWidget {
                             Text(label3?.toUpperCase() ?? '', 
                                 style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.redAccent)),
                             Text(value3!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900, overflow: TextOverflow.ellipsis)),
+                          ],
+                        ),
+                      ),
+                    if (value4 != null)
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(label4?.toUpperCase() ?? '', 
+                                style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.teal)),
+                            Text(value4!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900, overflow: TextOverflow.ellipsis)),
                           ],
                         ),
                       ),

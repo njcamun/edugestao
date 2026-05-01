@@ -36,6 +36,7 @@ class DashboardPage extends ConsumerWidget {
                         final avg = snapshot.data?['avgStudentsPerClass'] ?? 0.0;
                         final capacity = snapshot.data?['totalCapacity'] ?? 0;
                         final spots = snapshot.data?['availableSpots'] ?? 0;
+                        final classes = snapshot.data?['totalClasses'] ?? 0;
 
                         return GridView.count(
                           shrinkWrap: true,
@@ -60,11 +61,15 @@ class DashboardPage extends ConsumerWidget {
                             DashboardStatsCard(
                               title: 'ALUNOS POR TURMA',
                               value: avg.toStringAsFixed(1),
-                              label1: 'CAPACIDADE TOTAL',
-                              value1: '$capacity',
-                              label2: 'VAGAS LIVRES',
-                              value2: '$spots',
-                              subtitle: 'MÉDIA DE OCUPAÇÃO',
+                              label1: 'TURMAS',
+                              value1: '$classes',
+                              label2: 'MÁX. ALUNOS',
+                              value2: '$capacity',
+                              label3: 'ACTUAIS',
+                              value3: '$active',
+                              label4: 'VAGAS',
+                              value4: '$spots',
+                              subtitle: 'MÉDIA DE OCUPAÇÃO POR SALA',
                               icon: Icons.school_rounded,
                             ),
                           ],

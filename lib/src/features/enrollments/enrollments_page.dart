@@ -10,28 +10,70 @@ import '../classes/classes_controller.dart';
 import '../../state/session.dart';
 import '../../domain/entities/utilizador.dart';
 
-class EnrollmentsPage extends ConsumerWidget {
+class EnrollmentsPage extends ConsumerStatefulWidget {
   const EnrollmentsPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<EnrollmentsPage> createState() => _EnrollmentsPageState();
+}
+
+class _EnrollmentsPageState extends ConsumerState<EnrollmentsPage> {
+  String _filtroEstado = 'todas'; // 'todas', 'ativa', 'cancelada'
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final enrollmentsAsync = ref.watch(enrollmentsStreamProvider);
+    final studentsAsync = ref.watch(studentsStreamProvider);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Column(
         children: [
+          _buildFilters(),
+          const SizedBox(height: 16),
           Expanded(
             child: enrollmentsAsync.when(
               data: (matriculas) {
-                if (matriculas.isEmpty) {
+                // Obter lista de alunos para busca por nome
+                List<String> idsAlunosQueMatch = [];
+                studentsAsync.whenData((alunos) {
+                  final query = _searchController.text.toLowerCase();
+                  if (query.isNotEmpty) {
+                    idsAlunosQueMatch = alunos
+                        .where((a) => a.nomeCompleto.toLowerCase().contains(query))
+                        .map((a) => a.id)
+                        .toList();
+                  }
+                });
+
+                var filtradas = matriculas.where((m) {
+                  // Filtro por Estado
+                  if (_filtroEstado == 'ativa' && (m.estado != 'ativa' || m.isDeleted)) return false;
+                  if (_filtroEstado == 'cancelada' && (m.estado != 'cancelada' && !m.isDeleted)) return false;
+                  
+                  // Filtro por Nome (se houver pesquisa)
+                  if (_searchController.text.isNotEmpty) {
+                    return idsAlunosQueMatch.contains(m.alunoId);
+                  }
+                  
+                  return true;
+                }).toList();
+
+                if (filtradas.isEmpty) {
                   return _buildEmptyState();
                 }
                 return ListView.builder(
                   physics: const BouncingScrollPhysics(),
-                  itemCount: matriculas.length,
+                  itemCount: filtradas.length,
                   itemBuilder: (context, index) {
-                    return _EnrollmentCard(matricula: matriculas[index]);
+                    return _EnrollmentCard(matricula: filtradas[index]);
                   },
                 );
               },
@@ -58,16 +100,55 @@ class EnrollmentsPage extends ConsumerWidget {
     );
   }
 
+  Widget _buildFilters() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTokens.border),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _searchController,
+              onChanged: (_) => setState(() {}),
+              decoration: InputDecoration(
+                hintText: 'Pesquisar por nome do aluno...',
+                hintStyle: const TextStyle(fontSize: 13),
+                prefixIcon: const Icon(Icons.search, size: 20),
+                isDense: true,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          DropdownButton<String>(
+            value: _filtroEstado,
+            underline: const SizedBox(),
+            onChanged: (val) => setState(() => _filtroEstado = val!),
+            items: const [
+              DropdownMenuItem(value: 'todas', child: Text('TODAS', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
+              DropdownMenuItem(value: 'ativa', child: Text('ACTIVAS', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
+              DropdownMenuItem(value: 'cancelada', child: Text('ANULADAS', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildEmptyState() {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.assignment_ind_outlined, size: 64, color: AppTokens.border),
-          SizedBox(height: 16),
+          const Icon(Icons.assignment_ind_outlined, size: 64, color: AppTokens.border),
+          const SizedBox(height: 16),
           Text(
-            'Nenhuma matrícula activa.',
-            style: TextStyle(color: AppTokens.slate600, fontSize: 16, fontWeight: FontWeight.w500),
+            _searchController.text.isNotEmpty ? 'Nenhuma matrícula encontrada para esta busca.' : 'Nenhuma matrícula activa.',
+            style: const TextStyle(color: AppTokens.slate600, fontSize: 16, fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -129,9 +210,18 @@ class _EnrollmentCard extends ConsumerWidget {
           title: Row(
             children: [
               Expanded(
-                child: Text(
-                  alunoNome,
-                  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: isDeleted ? Colors.black54 : AppTokens.slate900),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      alunoNome,
+                      style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: isDeleted ? Colors.black54 : AppTokens.slate900),
+                    ),
+                    Text(
+                      'MENSALIDADE: ${NumberFormat.currency(locale: 'pt_AO', symbol: 'Kz').format(matricula.valorMensalidade)}',
+                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.blueGrey.shade700),
+                    ),
+                  ],
                 ),
               ),
               if (isDeleted)

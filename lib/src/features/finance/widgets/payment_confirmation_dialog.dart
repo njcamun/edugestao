@@ -1,8 +1,10 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
+import 'package:path/path.dart' as p;
 import '../../../core/theme/app_tokens.dart';
 import '../../../domain/entities/mensalidade.dart';
 import '../../../domain/entities/pagamento.dart';
@@ -10,7 +12,7 @@ import '../../../domain/entities/evidencia_pagamento.dart';
 import '../../../domain/entities/sync_entity.dart';
 import '../finance_controller.dart';
 import '../../../state/session.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show Uint8List, kIsWeb;
 import 'dart:io' show File;
 
 class PaymentConfirmationDialog extends ConsumerStatefulWidget {
@@ -27,6 +29,7 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
   late TextEditingController _obsController;
   String _formaPagamento = 'Numerário';
   XFile? _evidencia;
+  Uint8List? _webBytes;
   bool _isSaving = false;
   bool _dividaAnulada = false;
 
@@ -47,7 +50,36 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
   Future<void> _pickImage(ImageSource source) async {
     final picker = ImagePicker();
     final image = await picker.pickImage(source: source, imageQuality: 70);
-    if (image != null) setState(() => _evidencia = image);
+    if (image != null) {
+      setState(() {
+        _evidencia = image;
+        _webBytes = null; // image_picker já dá blob URL no .path no web
+      });
+    }
+  }
+
+  Future<void> _pickFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png', 'doc', 'docx'],
+        withData: kIsWeb,
+      );
+
+      if (result != null) {
+        final file = result.files.first;
+        setState(() {
+          if (kIsWeb) {
+            _webBytes = file.bytes;
+            _evidencia = XFile.fromData(file.bytes!, name: file.name, path: file.name);
+          } else {
+            _evidencia = XFile(file.path!, name: file.name);
+          }
+        });
+      }
+    } catch (e) {
+      debugPrint('Erro ao selecionar ficheiro: $e');
+    }
   }
 
   Future<void> _confirmar() async {
@@ -69,23 +101,31 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
     final repo = ref.read(financeRepositoryProvider);
 
     try {
+      final extension = p.extension(_evidencia!.name).toLowerCase().isEmpty 
+          ? '.jpg' 
+          : p.extension(_evidencia!.name).toLowerCase();
+      
+      final mimeType = _getMimeType(extension);
+      final tipoArquivo = extension == '.pdf' ? 'pdf' : 
+                         (['.jpg', '.jpeg', '.png'].contains(extension) ? 'imagem' : 'documento');
+
       String? localPath;
       if (!kIsWeb) {
         final dir = await getApplicationDocumentsDirectory();
-        final fileName = 'EVI_${const Uuid().v4()}.jpg';
+        final fileName = 'EVI_${const Uuid().v4()}$extension';
         localPath = '${dir.path}/$fileName';
         await File(_evidencia!.path).copy(localPath);
       } else {
-        localPath = _evidencia!.path; // No browser usamos o path do blob
+        localPath = _evidencia!.path; // No browser usamos o path do blob ou nome
       }
 
       final evidencia = EvidenciaPagamento()
         ..id = const Uuid().v4()
-        ..nomeArquivo = 'EVI_${const Uuid().v4()}.jpg'
-        ..caminhoLocal = localPath
-        ..tipoArquivo = 'imagem'
+        ..nomeArquivo = 'EVI_${const Uuid().v4()}$extension'
+        ..caminhoLocal = localPath ?? ''
+        ..tipoArquivo = tipoArquivo
         ..tamanhoBytes = await _evidencia!.length()
-        ..mimeType = 'image/jpeg'
+        ..mimeType = mimeType
         ..createdAt = DateTime.now()
         ..syncStatus = SyncStatus.pendingSync;
 
@@ -195,16 +235,17 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(6),
-                            child: kIsWeb
-                                ? Image.network(_evidencia!.path, fit: BoxFit.cover)
-                                : Image.file(File(_evidencia!.path), fit: BoxFit.cover),
+                            child: _buildPreview(),
                           ),
                         ),
                         Positioned(
                           right: 8, top: 8,
                           child: CircleAvatar(
                             backgroundColor: Colors.black,
-                            child: IconButton(icon: const Icon(Icons.close, color: Colors.white, size: 18), onPressed: () => setState(() => _evidencia = null)),
+                            child: IconButton(icon: const Icon(Icons.close, color: Colors.white, size: 18), onPressed: () => setState(() {
+                              _evidencia = null;
+                              _webBytes = null;
+                            })),
                           ),
                         ),
                       ],
@@ -213,9 +254,15 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
                     isCompact
                         ? Column(
                             children: [
-                              SizedBox(width: double.infinity, child: _buildImageAction('CÂMARA', Icons.camera_alt_outlined, () => _pickImage(ImageSource.camera))),
+                              Row(
+                                children: [
+                                  Expanded(child: _buildImageAction('CÂMARA', Icons.camera_alt_outlined, () => _pickImage(ImageSource.camera))),
+                                  const SizedBox(width: 12),
+                                  Expanded(child: _buildImageAction('GALERIA', Icons.image_outlined, () => _pickImage(ImageSource.gallery))),
+                                ],
+                              ),
                               const SizedBox(height: 12),
-                              SizedBox(width: double.infinity, child: _buildImageAction('GALERIA', Icons.image_outlined, () => _pickImage(ImageSource.gallery))),
+                              SizedBox(width: double.infinity, child: _buildImageAction('FICHEIRO / PDF', Icons.attach_file_rounded, _pickFile)),
                             ],
                           )
                         : Row(
@@ -223,6 +270,8 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
                               Expanded(child: _buildImageAction('CÂMARA', Icons.camera_alt_outlined, () => _pickImage(ImageSource.camera))),
                               const SizedBox(width: 12),
                               Expanded(child: _buildImageAction('GALERIA', Icons.image_outlined, () => _pickImage(ImageSource.gallery))),
+                              const SizedBox(width: 12),
+                              Expanded(child: _buildImageAction('FICHEIRO / PDF', Icons.attach_file_rounded, _pickFile)),
                             ],
                           ),
                   
@@ -304,13 +353,56 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Container(
-        height: 80,
+        height: 70,
         decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 1.5), borderRadius: BorderRadius.circular(8)),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [Icon(icon, color: Colors.black), Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900))],
+          children: [Icon(icon, color: Colors.black, size: 22), const SizedBox(height: 4), Text(label, style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w900))],
         ),
       ),
     );
+  }
+
+  Widget _buildPreview() {
+    final name = _evidencia!.name.toLowerCase();
+    if (name.endsWith('.pdf')) {
+      return _fileIcon(Icons.picture_as_pdf, 'DOCUMENTO PDF', Colors.red);
+    }
+    
+    if (kIsWeb) {
+      if (_webBytes != null) {
+        return Image.memory(_webBytes!, fit: BoxFit.cover, errorBuilder: (_, __, ___) => _fileIcon(Icons.insert_drive_file, 'FICHEIRO', Colors.black54));
+      }
+      return Image.network(_evidencia!.path, fit: BoxFit.cover, errorBuilder: (_, __, ___) => _fileIcon(Icons.insert_drive_file, 'FICHEIRO', Colors.black54));
+    }
+    
+    return Image.file(File(_evidencia!.path), fit: BoxFit.cover, errorBuilder: (_, __, ___) => _fileIcon(Icons.insert_drive_file, 'FICHEIRO', Colors.black54));
+  }
+
+  Widget _fileIcon(IconData icon, String label, Color color) {
+    return Container(
+      color: Colors.grey[100],
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 40, color: color),
+          const SizedBox(height: 8),
+          Text(label, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 10)),
+          Text(_evidencia!.name, style: const TextStyle(fontSize: 8), maxLines: 1, overflow: TextOverflow.ellipsis),
+        ],
+      ),
+    );
+  }
+
+  String _getMimeType(String ext) {
+    switch (ext) {
+      case '.pdf': return 'application/pdf';
+      case '.jpg':
+      case '.jpeg': return 'image/jpeg';
+      case '.png': return 'image/png';
+      case '.doc': return 'application/msword';
+      case '.docx': return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+      default: return 'application/octet-stream';
+    }
   }
 }

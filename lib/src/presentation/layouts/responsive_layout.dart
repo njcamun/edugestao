@@ -111,21 +111,31 @@ class ResponsiveLayout extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (perfil != null)
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  perfil.nome.toUpperCase(),
-                  style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900),
-                ),
-                Text(
-                  perfil.perfil.name.toUpperCase(),
-                  style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 8, fontWeight: FontWeight.bold),
-                ),
-              ],
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    perfil.nome.toUpperCase(),
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    perfil.perfil.name.toUpperCase(),
+                    style: TextStyle(
+                        color: Colors.white.withOpacity(0.5),
+                        fontSize: 8,
+                        fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
           ),
         if (isSyncing)
@@ -168,13 +178,25 @@ class ResponsiveLayout extends ConsumerWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(6),
                   child: kIsWeb
-                      ? Image.network(logoPath, height: 40, width: 40, fit: BoxFit.cover)
+                      ? Image.network(
+                          logoPath,
+                          height: 40,
+                          width: 40,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => const Icon(
+                              Icons.school_rounded,
+                              color: Colors.white,
+                              size: 32),
+                        )
                       : Image.file(
                           File(logoPath),
                           height: 40,
                           width: 40,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => const Icon(Icons.school_rounded, color: Colors.white, size: 32),
+                          errorBuilder: (_, __, ___) => const Icon(
+                              Icons.school_rounded,
+                              color: Colors.white,
+                              size: 32),
                         ),
                 ),
                 const SizedBox(width: 12),

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -78,11 +79,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (logoPath != null && File(logoPath).existsSync())
-              Image.file(File(logoPath), height: 100, width: 100, fit: BoxFit.contain)
-            else
-              Image.asset('assets/icons/logo.png', height: 100, width: 100, errorBuilder: (c, e, s) => const Icon(Icons.school_rounded, size: 60)),
-            
+            _buildLogo(logoPath),
             const SizedBox(height: 32),
             const SizedBox(
               width: 24, height: 24,
@@ -97,5 +94,41 @@ class _SplashPageState extends ConsumerState<SplashPage> {
         ),
       ),
     );
+  }
+
+  Widget _buildLogo(String? path) {
+    if (path == null || path.isEmpty) {
+      return Image.asset('assets/icons/logo.png',
+          height: 100, width: 100,
+          errorBuilder: (c, e, s) =>
+              const Icon(Icons.school_rounded, size: 60));
+    }
+
+    if (kIsWeb) {
+      // No web, path pode ser um URL (blob ou remoto)
+      return Image.network(
+        path,
+        height: 100,
+        width: 100,
+        fit: BoxFit.contain,
+        errorBuilder: (c, e, s) => Image.asset('assets/icons/logo.png',
+            height: 100, width: 100,
+            errorBuilder: (c, e, s) =>
+                const Icon(Icons.school_rounded, size: 60)),
+      );
+    } else {
+      try {
+        final file = File(path);
+        if (file.existsSync()) {
+          return Image.file(file, height: 100, width: 100, fit: BoxFit.contain);
+        }
+      } catch (e) {
+        debugPrint('Erro ao carregar logo do ficheiro: $e');
+      }
+    }
+
+    return Image.asset('assets/icons/logo.png',
+        height: 100, width: 100,
+        errorBuilder: (c, e, s) => const Icon(Icons.school_rounded, size: 60));
   }
 }

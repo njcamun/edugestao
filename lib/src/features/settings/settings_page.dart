@@ -165,9 +165,27 @@ class _SettingsPageState extends ConsumerState<SettingsPage> with SingleTickerPr
                         child: Container(
                           width: 100, height: 100,
                           decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.black, width: 2)),
-                          child: _logotipoPath != null
-                              ? ClipRRect(borderRadius: BorderRadius.circular(10), child: kIsWeb ? Image.network(_logotipoPath!, fit: BoxFit.cover) : Image.file(File(_logotipoPath!), fit: BoxFit.cover))
-                              : const Icon(Icons.add_a_photo_outlined, color: Colors.black),
+                          child: _logotipoPath != null && _logotipoPath!.isNotEmpty
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: kIsWeb
+                                      ? Image.network(
+                                          _logotipoPath!,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (c, e, s) => const Icon(
+                                              Icons.add_a_photo_outlined,
+                                              color: Colors.black),
+                                        )
+                                      : Image.file(
+                                          File(_logotipoPath!),
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (c, e, s) => const Icon(
+                                              Icons.add_a_photo_outlined,
+                                              color: Colors.black),
+                                        ),
+                                )
+                              : const Icon(Icons.add_a_photo_outlined,
+                                  color: Colors.black),
                         ),
                       ),
                       SizedBox(

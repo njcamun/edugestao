@@ -28,7 +28,7 @@ class FinancePage extends ConsumerWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildFilterBar(context, ref, isAdmin),
+          _buildFilterBar(context, ref, isAdmin, filteredFinance),
           SizedBox(height: context.isMediumOrSmaller ? 14 : 24),
           
           Expanded(
@@ -48,7 +48,7 @@ class FinancePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildFilterBar(BuildContext context, WidgetRef ref, bool isAdmin) {
+  Widget _buildFilterBar(BuildContext context, WidgetRef ref, bool isAdmin, List<Mensalidade> filteredList) {
     final status = ref.watch(financeStatusFilterProvider);
     final month = ref.watch(financeMonthFilterProvider);
 
@@ -67,14 +67,26 @@ class FinancePage extends ConsumerWidget {
       ),
       child: Column(
         children: [
-          TextField(
-            onChanged: (val) => ref.read(financeSearchProvider.notifier).state = val,
-            decoration: const InputDecoration(
-              hintText: 'PESQUISAR POR NOME DO ALUNO...',
-              prefixIcon: Icon(Icons.search, color: Colors.black),
-              border: InputBorder.none,
-              hintStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  onChanged: (val) => ref.read(financeSearchProvider.notifier).state = val,
+                  decoration: const InputDecoration(
+                    hintText: 'PESQUISAR POR NOME DO ALUNO...',
+                    prefixIcon: Icon(Icons.search, color: Colors.black),
+                    border: InputBorder.none,
+                    hintStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              if (isAdmin && filteredList.isNotEmpty)
+                IconButton(
+                  onPressed: () => _confirmBulkDelete(context, ref, filteredList),
+                  icon: const Icon(Icons.delete_sweep_rounded, color: Colors.red),
+                  tooltip: 'Excluir Todos os Filtrados',
+                ),
+            ],
           ),
           const Divider(color: Colors.black12),
           SingleChildScrollView(
@@ -117,6 +129,41 @@ class FinancePage extends ConsumerWidget {
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmBulkDelete(BuildContext context, WidgetRef ref, List<Mensalidade> list) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('EXCLUIR EM MASSA', style: TextStyle(fontWeight: FontWeight.w900)),
+        content: Text('TEM A CERTEZA QUE DESEJA ELIMINAR AS ${list.length} COBRANÇAS FILTRADAS DEFINITIVAMENTE?\n\n'
+            '⚠️ ISTO REMOVERÁ TODOS OS DADOS E PAGAMENTOS ASSOCIADOS DO SISTEMA E DA CLOUD.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCELAR')),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('A EXCLUIR REGISTOS...')));
+              final repo = ref.read(financeRepositoryProvider);
+              try {
+                for (var item in list) {
+                  await repo.deleteMensalidadePermanent(item.id);
+                }
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('REGISTOS ELIMINADOS COM SUCESSO!'), backgroundColor: Colors.green));
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('ERRO AO EXCLUIR: $e'), backgroundColor: Colors.red));
+                }
+              }
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('EXCLUIR TUDO', style: TextStyle(fontWeight: FontWeight.w900)),
           ),
         ],
       ),
@@ -263,12 +310,18 @@ class _FinanceListItem extends ConsumerWidget {
                           : () => ReceiptPdfGenerator.generateAndPrint(mensalidade: item, aluno: aluno!),
                       icon: Icon(!isPaid ? Icons.payments_outlined : Icons.print_outlined, color: Colors.black),
                     ),
-                    if (isAdmin)
+                    if (isAdmin) ...[
                       IconButton(
                         onPressed: () => _showCorrectionDialog(context, ref, item),
                         icon: const Icon(Icons.edit_note_rounded, color: Colors.blue, size: 20),
                         tooltip: 'Corrigir Dados',
                       ),
+                      IconButton(
+                        onPressed: () => _confirmDeleteIndividual(context, ref, item),
+                        icon: const Icon(Icons.delete_forever_rounded, color: Colors.red, size: 20),
+                        tooltip: 'Excluir Definitivamente',
+                      ),
+                    ],
                   ],
                 ),
               ],
@@ -330,12 +383,18 @@ class _FinanceListItem extends ConsumerWidget {
                   onPressed: () => ReceiptPdfGenerator.generateAndPrint(mensalidade: item, aluno: aluno!),
                   icon: const Icon(Icons.print_outlined, color: Colors.black),
                 ),
-              if (isAdmin)
+              if (isAdmin) ...[
                 IconButton(
                   onPressed: () => _showCorrectionDialog(context, ref, item),
                   icon: const Icon(Icons.edit_note_rounded, color: Colors.blue),
                   tooltip: 'Corrigir Dados',
                 ),
+                IconButton(
+                  onPressed: () => _confirmDeleteIndividual(context, ref, item),
+                  icon: const Icon(Icons.delete_forever_rounded, color: Colors.red),
+                  tooltip: 'Excluir Definitivamente',
+                ),
+              ],
             ],
           );
         },
@@ -351,7 +410,29 @@ class _FinanceListItem extends ConsumerWidget {
       builder: (context) => _FinanceCorrectionDialog(mensalidade: item),
     );
   }
+
+  void _confirmDeleteIndividual(BuildContext context, WidgetRef ref, Mensalidade item) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('EXCLUIR FACTURA', style: TextStyle(fontWeight: FontWeight.w900)),
+        content: const Text('TEM A CERTEZA QUE DESEJA ELIMINAR ESTA COBRANÇA DEFINITIVAMENTE? ISTO APAGARÁ TAMBÉM QUALQUER PAGAMENTO ASSOCIADO.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCELAR')),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await ref.read(financeRepositoryProvider).deleteMensalidadePermanent(item.id);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('EXCLUIR', style: TextStyle(fontWeight: FontWeight.w900)),
+          ),
+        ],
+      ),
+    );
+  }
 }
+
 
 class _FinanceCorrectionDialog extends ConsumerStatefulWidget {
   final Mensalidade mensalidade;

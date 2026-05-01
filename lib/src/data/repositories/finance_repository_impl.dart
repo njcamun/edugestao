@@ -272,4 +272,32 @@ class FinanceRepositoryImpl implements FinanceRepository {
 
     await _sync.syncLocalToCloud();
   }
+
+  @override
+  Future<void> deleteMensalidadePermanent(String id) async {
+    await _db.transaction(() async {
+      // 1. Apagar pagamentos associados
+      final pagQuery = _db.select(_db.pagamentos)
+        ..where((t) => t.mensalidadeId.equals(id));
+      final pags = await pagQuery.get();
+      
+      for (final p in pags) {
+        if (p.evidenciaId != null) {
+          await (_db.delete(_db.evidenciaPagamentos)
+                ..where((t) => t.id.equals(p.evidenciaId!)))
+              .go();
+        }
+        await (_db.delete(_db.pagamentos)..where((t) => t.id.equals(p.id)))
+            .go();
+        _sync.deleteFromCloud('pagamentos', p.id);
+      }
+
+      // 2. Apagar a mensalidade
+      await (_db.delete(_db.mensalidades)..where((t) => t.id.equals(id)))
+          .go();
+      _sync.deleteFromCloud('mensalidades', id);
+    });
+
+    await _sync.syncLocalToCloud();
+  }
 }

@@ -20,13 +20,15 @@ class FinancePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final filteredFinance = ref.watch(filteredFinanceProvider);
     final currencyFmt = NumberFormat.currency(locale: 'pt_AO', symbol: 'KZ');
+    final session = ref.watch(sessionProvider);
+    final isAdmin = session.perfil?.perfil == Perfil.admin;
 
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildFilterBar(context, ref),
+          _buildFilterBar(context, ref, isAdmin),
           SizedBox(height: context.isMediumOrSmaller ? 14 : 24),
           
           Expanded(
@@ -46,7 +48,7 @@ class FinancePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildFilterBar(BuildContext context, WidgetRef ref) {
+  Widget _buildFilterBar(BuildContext context, WidgetRef ref, bool isAdmin) {
     final status = ref.watch(financeStatusFilterProvider);
     final month = ref.watch(financeMonthFilterProvider);
 
@@ -113,8 +115,62 @@ class FinancePage extends ConsumerWidget {
                   ],
                   onChanged: (val) => ref.read(financeMonthFilterProvider.notifier).state = val,
                 ),
+                if (isAdmin) ...[
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: Icon(Icons.cleaning_services_rounded, color: Colors.orange.shade900, size: 20),
+                    tooltip: 'Reset e Recriar Mensalidades (Maio+)',
+                    onPressed: () => _showMaintenanceDialog(context, ref),
+                  ),
+                ],
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showMaintenanceDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black, width: 2)),
+        title: const Text('MANUTENÇÃO DE DADOS', style: TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1)),
+        content: const Text(
+          'ESTA ACÇÃO IRÁ APAGAR TODAS AS MENSALIDADES E PAGAMENTOS DE MAIO DE 2025 EM DIANTE E RE-GERÁ-LAS COM OS VALORES ACTUAIS DAS MATRÍCULAS.\n\n'
+          '⚠️ ATENÇÃO: ISTO REMOVERÁ TODOS OS REGISTOS DE PAGAMENTO JÁ EFECTUADOS NESTE PERÍODO.',
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('CANCELAR', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          ),
+          FilledButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('A EXECUTAR MANUTENÇÃO...'), duration: Duration(seconds: 2)),
+              );
+              try {
+                await ref.read(financeRepositoryProvider).resetAndRecreateMensalidades(5, 2025);
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('DADOS RE-GERADOS COM SUCESSO!'), backgroundColor: Colors.green),
+                  );
+                }
+              } catch (e) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('ERRO NA MANUTENÇÃO: $e'), backgroundColor: Colors.red),
+                  );
+                }
+              }
+            },
+            style: FilledButton.styleFrom(backgroundColor: Colors.red.shade900, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+            child: const Text('EXECUTAR LIMPEZA', style: TextStyle(fontWeight: FontWeight.w900)),
           ),
         ],
       ),

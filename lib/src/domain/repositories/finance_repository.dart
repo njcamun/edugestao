@@ -16,4 +16,8 @@ abstract class FinanceRepository {
   
   Future<List<Pagamento>> getPagamentosByMensalidade(String mensalidadeId);
   Future<EvidenciaPagamento?> getEvidenciaById(String evidenciaId);
+
+  // Manutenção
+  Future<void> resetAndRecreateMensalidades(int startingMonth, int year);
+  Future<void> generateMonthlyFees({String? matriculaId, required int month, required int year});
 }

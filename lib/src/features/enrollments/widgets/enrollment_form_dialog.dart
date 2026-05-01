@@ -331,31 +331,6 @@ class _EnrollmentFormDialogState extends ConsumerState<EnrollmentFormDialog> {
 
         await repository.saveMatricula(matricula);
 
-        if (isNew) {
-          List<Mensalidade> mensalidades = [];
-          final dataAtual = DateTime.now();
-          for (int i = 0; i < 10; i++) {
-            final vencimento = DateTime(dataAtual.year, dataAtual.month + i, _diaVencimento);
-            mensalidades.add(
-              Mensalidade()
-                ..id = const Uuid().v4()
-                ..matriculaId = matriculaId
-                ..alunoId = _selectedAlunoId!
-                ..turmaId = _selectedTurmaId!
-                ..turno = _turno
-                ..mesReferencia = vencimento.month
-                ..anoReferencia = vencimento.year
-                ..valor = matricula.valorMensalidade
-                ..dataVencimento = vencimento
-                ..estado = 'pendente'
-                ..createdAt = DateTime.now()
-                ..updatedAt = DateTime.now()
-                ..syncStatus = SyncStatus.pendingSync
-            );
-          }
-          await ref.read(financeRepositoryProvider).saveMultipleMensalidades(mensalidades);
-        }
-
         if (mounted) Navigator.pop(context);
       } finally {
         if (mounted) setState(() => _isSubmitting = false);

@@ -9,7 +9,14 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2c8792ff-d361-4c8c-9933-19129bae1728" name="Changes" comment="" />
+    <list default="true" id="2c8792ff-d361-4c8c-9933-19129bae1728" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/data/repositories/finance_repository_impl.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/data/repositories/finance_repository_impl.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/domain/repositories/finance_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/domain/repositories/finance_repository.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/features/enrollments/enrollments_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/features/enrollments/enrollments_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/features/enrollments/widgets/enrollment_form_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/features/enrollments/widgets/enrollment_form_dialog.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/features/finance/finance_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/features/finance/finance_page.dart" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

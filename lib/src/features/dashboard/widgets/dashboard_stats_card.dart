@@ -11,6 +11,8 @@ class DashboardStatsCard extends StatelessWidget {
   final String? value1;
   final String? label2;
   final String? value2;
+  final String? label3;
+  final String? value3;
 
   const DashboardStatsCard({
     super.key,
@@ -23,6 +25,8 @@ class DashboardStatsCard extends StatelessWidget {
     this.value1,
     this.label2,
     this.value2,
+    this.label3,
+    this.value3,
   });
 
   @override
@@ -65,14 +69,14 @@ class DashboardStatsCard extends StatelessWidget {
                 child: Text(
                   value,
                   style: const TextStyle(
-                    fontSize: 28,
+                    fontSize: 34,
                     fontWeight: FontWeight.w900,
                     color: Colors.black,
                     letterSpacing: -1.0,
                   ),
                 ),
               ),
-              if (value1 != null || value2 != null) ...[
+              if (value1 != null || value2 != null || value3 != null) ...[
                 const SizedBox(height: 8),
                 Row(
                   children: [
@@ -83,7 +87,7 @@ class DashboardStatsCard extends StatelessWidget {
                           children: [
                             Text(label1?.toUpperCase() ?? '', 
                                 style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.blueGrey)),
-                            Text(value1!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900)),
+                            Text(value1!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900, overflow: TextOverflow.ellipsis)),
                           ],
                         ),
                       ),
@@ -94,7 +98,18 @@ class DashboardStatsCard extends StatelessWidget {
                           children: [
                             Text(label2?.toUpperCase() ?? '', 
                                 style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.orange)),
-                            Text(value2!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900)),
+                            Text(value2!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900, overflow: TextOverflow.ellipsis)),
+                          ],
+                        ),
+                      ),
+                    if (value3 != null)
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(label3?.toUpperCase() ?? '', 
+                                style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.redAccent)),
+                            Text(value3!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900, overflow: TextOverflow.ellipsis)),
                           ],
                         ),
                       ),

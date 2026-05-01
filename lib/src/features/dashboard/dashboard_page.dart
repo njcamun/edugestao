@@ -43,15 +43,17 @@ class DashboardPage extends ConsumerWidget {
                           crossAxisCount: isWide ? 2 : 1,
                           crossAxisSpacing: 16,
                           mainAxisSpacing: 16,
-                          childAspectRatio: isWide ? 2.0 : 2.0,
+                          childAspectRatio: isWide ? 2.1 : 1.8,
                           children: [
                             DashboardStatsCard(
                               title: 'ALUNOS MATRICULADOS',
                               value: '$active',
-                              label1: 'TOTAL INSCRITOS',
-                              value1: '$total',
-                              label2: 'SEM MATRÍCULA',
-                              value2: '$inactive',
+                              label1: 'PREVISÃO',
+                              value1: '$capacity',
+                              label2: 'INSCRITOS',
+                              value2: '$total',
+                              label3: 'NÃO MATRIC.',
+                              value3: '$inactive',
                               subtitle: 'ALUNOS COM MATRÍCULA ATIVA',
                               icon: Icons.people_alt_rounded,
                             ),
@@ -94,7 +96,7 @@ class DashboardPage extends ConsumerWidget {
                               crossAxisCount: isWide ? 2 : 1,
                               crossAxisSpacing: 16,
                               mainAxisSpacing: 16,
-                              childAspectRatio: isWide ? 2.0 : 2.0, // Aumentado para acomodar novos dados
+                              childAspectRatio: isWide ? 2.1 : 1.8, // Aumentado para acomodar novos dados
                               children: [
                                 DashboardStatsCard(
                                   title: 'RECEITA MENSAL',

@@ -110,7 +110,7 @@ class DashboardPage extends ConsumerWidget {
                                   value1: currencyFmt.format(revenue),
                                   label2: 'PENDENTE',
                                   value2: currencyFmt.format(revenuePending),
-                                  subtitle: 'TOTAL RECEBIDO NO MÊS',
+                                  subtitle: 'VALOR JÁ PAGO NO MÊS ACTUAL',
                                   icon: Icons.trending_up_rounded,
                                 ),
                                 DashboardStatsCard(

@@ -180,8 +180,6 @@ class _EnrollmentsPageState extends ConsumerState<EnrollmentsPage> {
   }
 }
 
-
-
 class _EnrollmentCard extends ConsumerWidget {
   final Matricula matricula;
   const _EnrollmentCard({required this.matricula});
@@ -334,4 +332,106 @@ class _EnrollmentCard extends ConsumerWidget {
   }
 }
 
+class _GenerateFeesDialog extends ConsumerStatefulWidget {
+  final String? matriculaId;
+  final String? alunoNome;
+  const _GenerateFeesDialog({this.matriculaId, this.alunoNome});
 
+  @override
+  ConsumerState<_GenerateFeesDialog> createState() => _GenerateFeesDialogState();
+}
+
+class _GenerateFeesDialogState extends ConsumerState<_GenerateFeesDialog> {
+  int _selectedMonth = DateTime.now().month;
+  int _selectedYear = DateTime.now().year;
+  bool _isGenerating = false;
+
+  final List<String> _meses = [
+    'JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO',
+    'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final isBulk = widget.matriculaId == null;
+
+    return AlertDialog(
+      title: Text(isBulk ? 'GERAR COBRANÇAS EM MASSA' : 'GERAR COBRANÇA INDIVIDUAL', 
+        style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!isBulk)
+            Text('ALUNO: ${widget.alunoNome?.toUpperCase()}', 
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.blueGrey)),
+          const SizedBox(height: 16),
+          const Text('SELECCIONE O MÊS DE REFERÊNCIA:', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w900)),
+          const SizedBox(height: 8),
+          DropdownButtonFormField<int>(
+            value: _selectedMonth,
+            items: List.generate(12, (i) => DropdownMenuItem(
+              value: i + 1,
+              child: Text(_meses[i]),
+            )),
+            onChanged: (val) => setState(() => _selectedMonth = val!),
+            decoration: const InputDecoration(border: OutlineInputBorder(), isDense: true),
+          ),
+          const SizedBox(height: 16),
+          const Text('ANO:', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w900)),
+          const SizedBox(height: 8),
+          DropdownButtonFormField<int>(
+            value: _selectedYear,
+            items: [DateTime.now().year, DateTime.now().year + 1].map((y) => DropdownMenuItem(
+              value: y,
+              child: Text('$y'),
+            )).toList(),
+            onChanged: (val) => setState(() => _selectedYear = val!),
+            decoration: const InputDecoration(border: OutlineInputBorder(), isDense: true),
+          ),
+          const SizedBox(height: 16),
+          Text(isBulk 
+            ? 'ISTO GERARÁ UMA MENSALIDADE PENDENTE PARA TODOS OS ALUNOS ACTIVOS QUE AINDA NÃO POSSUAM COBRANÇA PARA ESTE PERÍODO.'
+            : 'ISTO GERARÁ UMA MENSALIDADE PENDENTE PARA ESTE ALUNO PARA O MÊS SELECCIONADO.',
+            style: const TextStyle(fontSize: 10, color: Colors.black54),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCELAR')),
+        FilledButton(
+          onPressed: _isGenerating ? null : _generate,
+          style: FilledButton.styleFrom(backgroundColor: Colors.black),
+          child: _isGenerating 
+            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+            : const Text('GERAR COBRANÇAS'),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _generate() async {
+    setState(() => _isGenerating = true);
+    try {
+      await ref.read(financeRepositoryProvider).generateMonthlyFees(
+        matriculaId: widget.matriculaId,
+        month: _selectedMonth,
+        year: _selectedYear,
+      );
+      if (mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('COBRANÇAS GERADAS COM SUCESSO!'), backgroundColor: Colors.green),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('ERRO AO GERAR: $e'), backgroundColor: Colors.red),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isGenerating = false);
+    }
+  }
+}

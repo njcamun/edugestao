@@ -459,62 +459,163 @@ class FirebaseService {
         .map((snapshot) => snapshot.docs.length);
   }
 
+  Future<Map<String, dynamic>> getOperationalStats() async {
+    if (!isCloudFirestoreSupported) {
+      return {
+        'totalStudents': 0,
+        'activeEnrollments': 0,
+        'inactiveStudents': 0,
+        'totalClasses': 0,
+        'totalCapacity': 0,
+        'avgStudentsPerClass': 0.0,
+        'availableSpots': 0,
+      };
+    }
+    try {
+      final studentsSnap = await _dbInstance.collection('alunos')
+          .where('isDeleted', isEqualTo: false)
+          .get();
+      final matriculasSnap = await _dbInstance.collection('matriculas')
+          .where('isDeleted', isEqualTo: false)
+          .where('estado', isEqualTo: 'ativa')
+          .get();
+      final turmasSnap = await _dbInstance.collection('turmas')
+          .where('isDeleted', isEqualTo: false)
+          .where('ativa', isEqualTo: true)
+          .get();
+
+      int totalStudents = studentsSnap.docs.length;
+      int activeEnrollments = matriculasSnap.docs.length;
+      int inactiveStudents = totalStudents - activeEnrollments;
+
+      int totalClasses = turmasSnap.docs.length;
+      int totalCapacity = 0;
+      for (var doc in turmasSnap.docs) {
+        totalCapacity += (doc.data()['limiteAlunos'] ?? 0) as int;
+      }
+
+      double avgStudents = totalClasses > 0 ? activeEnrollments / totalClasses : 0.0;
+      int availableSpots = totalCapacity - activeEnrollments;
+
+      return {
+        'totalStudents': totalStudents,
+        'activeEnrollments': activeEnrollments,
+        'inactiveStudents': inactiveStudents,
+        'totalClasses': totalClasses,
+        'totalCapacity': totalCapacity,
+        'avgStudentsPerClass': avgStudents,
+        'availableSpots': availableSpots,
+      };
+    } catch (e) {
+      debugPrint('Erro Operational Stats: $e');
+      return {
+        'totalStudents': 0,
+        'activeEnrollments': 0,
+        'inactiveStudents': 0,
+        'totalClasses': 0,
+        'totalCapacity': 0,
+        'avgStudentsPerClass': 0.0,
+        'availableSpots': 0,
+      };
+    }
+  }
+
   Future<Map<String, dynamic>> getFinanceStats() async {
     if (!isCloudFirestoreSupported) {
-      return {'totalDebt': 0.0, 'monthlyRevenue': 0.0, 'monthlyCosts': 0.0, 'netBalance': 0.0};
+      return {
+        'totalDebt': 0.0,
+        'monthlyRevenue': 0.0,
+        'monthlyRevenuePaid': 0.0,
+        'monthlyRevenuePending': 0.0,
+        'monthlyCosts': 0.0,
+        'monthlyCostsPaid': 0.0,
+        'monthlyCostsPending': 0.0,
+        'netBalance': 0.0
+      };
     }
     try {
       final agora = DateTime.now();
-      
-      // 1. Buscar Receitas (Mensalidades pagas)
-        final mensalidadesSnap = await _dbInstance.collection('mensalidades')
+
+      // 1. ESTIMATIVA DE RECEITA: Baseado em Matrículas Activas
+      final matriculasSnap = await _dbInstance
+          .collection('matriculas')
           .where('isDeleted', isEqualTo: false)
-          .get();
-          
-      // 2. Buscar Custos (Despesas do inventário)
-        final custosSnap = await _dbInstance.collection('custos')
-          .where('isDeleted', isEqualTo: false)
+          .where('estado', isEqualTo: 'ativa')
           .get();
 
-      double totalDebt = 0;
-      double monthlyRevenue = 0;
-      double monthlyCosts = 0;
+      double totalExpectedRevenue = 0;
+      for (var doc in matriculasSnap.docs) {
+        totalExpectedRevenue += (doc.data()['valorMensalidade'] ?? 0).toDouble();
+      }
 
-      // Calcular Receitas e Dívidas
+      // 2. RECEITA REALIZADA: Mensalidades pagas no mês actual
+      final mensalidadesSnap = await _dbInstance
+          .collection('mensalidades')
+          .where('isDeleted', isEqualTo: false)
+          .where('mesReferencia', isEqualTo: agora.month)
+          .where('anoReferencia', isEqualTo: agora.year)
+          .get();
+
+      double monthlyRevenuePaid = 0;
       for (var doc in mensalidadesSnap.docs) {
         final data = doc.data();
-        final valor = (data['valor'] ?? 0).toDouble();
-        final estado = data['estado'] ?? 'pendente';
-        final mesRef = data['mesReferencia'] ?? 0;
-
-        if (estado != 'pago' && estado != 'anulada') {
-          totalDebt += valor;
-        }
-        if (estado == 'pago' && mesRef == agora.month) {
-          monthlyRevenue += valor;
+        final estado = (data['estado'] as String?)?.toLowerCase() ?? 'pendente';
+        if (estado == 'pago') {
+          monthlyRevenuePaid += (data['valor'] ?? 0).toDouble();
         }
       }
 
-      // Calcular Custos do Mês Actual
+      // 3. CUSTOS: Registados para o mês actual
+      final custosSnap = await _dbInstance
+          .collection('custos')
+          .where('isDeleted', isEqualTo: false)
+          .where('mesReferencia', isEqualTo: agora.month)
+          .where('anoReferencia', isEqualTo: agora.year)
+          .get();
+
+      double monthlyCostsPaid = 0;
+      double monthlyCostsTotal = 0;
+
       for (var doc in custosSnap.docs) {
         final data = doc.data();
         final valor = (data['valor'] ?? 0).toDouble();
-        final dataCusto = (data['createdAt'] as Timestamp?)?.toDate() ?? agora;
-
-        if (dataCusto.month == agora.month && dataCusto.year == agora.year) {
-          monthlyCosts += valor;
+        final estado = (data['estado'] as String?)?.toUpperCase() ?? 'PENDENTE';
+        
+        monthlyCostsTotal += valor;
+        if (estado == 'PAGO') {
+          monthlyCostsPaid += valor;
         }
       }
 
+      // Cálculo de Pendentes (Estimativas)
+      double monthlyRevenuePending = totalExpectedRevenue - monthlyRevenuePaid;
+      if (monthlyRevenuePending < 0) monthlyRevenuePending = 0;
+
+      // Para custos, a estimativa pendente é o que foi registado mas não pago
+      double monthlyCostsPending = monthlyCostsTotal - monthlyCostsPaid;
+
       return {
-        'totalDebt': totalDebt,
-        'monthlyRevenue': monthlyRevenue,
-        'monthlyCosts': monthlyCosts,
-        'netBalance': monthlyRevenue - monthlyCosts,
+        'totalDebt': 0.0, 
+        'monthlyRevenue': totalExpectedRevenue, // Valor Total Esperado
+        'monthlyRevenuePaid': monthlyRevenuePaid,
+        'monthlyRevenuePending': monthlyRevenuePending,
+        'monthlyCosts': monthlyCostsTotal, // Total de custos registados
+        'monthlyCostsPaid': monthlyCostsPaid,
+        'monthlyCostsPending': monthlyCostsPending,
+        'netBalance': monthlyRevenuePaid - monthlyCostsPaid, // Saldo Real em Caixa
       };
     } catch (e) {
       debugPrint('Erro Finance Stats Cloud: $e');
-      return {'totalDebt': 0.0, 'monthlyRevenue': 0.0, 'monthlyCosts': 0.0, 'netBalance': 0.0};
+      return {
+        'totalDebt': 0.0,
+        'monthlyRevenue': 0.0,
+        'monthlyRevenuePaid': 0.0,
+        'monthlyRevenuePending': 0.0,
+        'monthlyCosts': 0.0,
+        'monthlyCostsPaid': 0.0,
+        'monthlyCostsPending': 0.0,
+        'netBalance': 0.0
+      };
     }
   }
 }

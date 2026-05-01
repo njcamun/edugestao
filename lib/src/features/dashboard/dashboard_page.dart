@@ -26,33 +26,48 @@ class DashboardPage extends ConsumerWidget {
                 return Column(
                   children: [
                     // Linha 1: KPIs Operacionais
-                    GridView.count(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      crossAxisCount: isWide ? 2 : 1,
-                      crossAxisSpacing: 16,
-                      mainAxisSpacing: 16,
-                      childAspectRatio: isWide ? 2.5 : 2.5,
-                      children: [
-                        StreamBuilder<int>(
-                          stream: firebase.streamTotalStudents(),
-                          builder: (context, snapshot) => DashboardStatsCard(
-                            title: 'ALUNOS INSCRITOS',
-                            value: '${snapshot.data ?? 0}',
-                            subtitle: 'STATUS ACTIVO NA CLOUD',
-                            icon: Icons.people_alt_rounded,
-                          ),
-                        ),
-                        StreamBuilder<int>(
-                          stream: firebase.streamTotalClasses(),
-                          builder: (context, snapshot) => DashboardStatsCard(
-                            title: 'TURMAS ACTIVAS',
-                            value: '${snapshot.data ?? 0}',
-                            subtitle: 'ANO LECTIVO CORRENTE',
-                            icon: Icons.school_rounded,
-                          ),
-                        ),
-                      ],
+                    FutureBuilder<Map<String, dynamic>>(
+                      future: firebase.getOperationalStats(),
+                      builder: (context, snapshot) {
+                        final active = snapshot.data?['activeEnrollments'] ?? 0;
+                        final total = snapshot.data?['totalStudents'] ?? 0;
+                        final inactive = snapshot.data?['inactiveStudents'] ?? 0;
+
+                        final avg = snapshot.data?['avgStudentsPerClass'] ?? 0.0;
+                        final capacity = snapshot.data?['totalCapacity'] ?? 0;
+                        final spots = snapshot.data?['availableSpots'] ?? 0;
+
+                        return GridView.count(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          crossAxisCount: isWide ? 2 : 1,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: isWide ? 2.0 : 2.0,
+                          children: [
+                            DashboardStatsCard(
+                              title: 'ALUNOS MATRICULADOS',
+                              value: '$active',
+                              label1: 'TOTAL INSCRITOS',
+                              value1: '$total',
+                              label2: 'SEM MATRÍCULA',
+                              value2: '$inactive',
+                              subtitle: 'ALUNOS COM MATRÍCULA ATIVA',
+                              icon: Icons.people_alt_rounded,
+                            ),
+                            DashboardStatsCard(
+                              title: 'ALUNOS POR TURMA',
+                              value: avg.toStringAsFixed(1),
+                              label1: 'CAPACIDADE TOTAL',
+                              value1: '$capacity',
+                              label2: 'VAGAS LIVRES',
+                              value2: '$spots',
+                              subtitle: 'MÉDIA DE OCUPAÇÃO',
+                              icon: Icons.school_rounded,
+                            ),
+                          ],
+                        );
+                      },
                     ),
                     const SizedBox(height: 16),
                     
@@ -61,7 +76,13 @@ class DashboardPage extends ConsumerWidget {
                       future: firebase.getFinanceStats(),
                       builder: (context, snapshot) {
                         final revenue = snapshot.data?['monthlyRevenue'] ?? 0.0;
+                        final revenuePaid = snapshot.data?['monthlyRevenuePaid'] ?? 0.0;
+                        final revenuePending = snapshot.data?['monthlyRevenuePending'] ?? 0.0;
+
                         final costs = snapshot.data?['monthlyCosts'] ?? 0.0;
+                        final costsPaid = snapshot.data?['monthlyCostsPaid'] ?? 0.0;
+                        final costsPending = snapshot.data?['monthlyCostsPending'] ?? 0.0;
+                        
                         final balance = snapshot.data?['netBalance'] ?? 0.0;
                         
                         return Column(
@@ -73,18 +94,26 @@ class DashboardPage extends ConsumerWidget {
                               crossAxisCount: isWide ? 2 : 1,
                               crossAxisSpacing: 16,
                               mainAxisSpacing: 16,
-                              childAspectRatio: isWide ? 2.5 : 2.5,
+                              childAspectRatio: isWide ? 2.0 : 2.0, // Aumentado para acomodar novos dados
                               children: [
                                 DashboardStatsCard(
                                   title: 'RECEITA MENSAL',
-                                  value: currencyFmt.format(revenue),
-                                  subtitle: 'PROPINAS LIQUIDADAS',
+                                  value: currencyFmt.format(revenuePaid),
+                                  label1: 'PREVISÃO',
+                                  value1: currencyFmt.format(revenue),
+                                  label2: 'PENDENTE',
+                                  value2: currencyFmt.format(revenuePending),
+                                  subtitle: 'TOTAL RECEBIDO NO MÊS',
                                   icon: Icons.trending_up_rounded,
                                 ),
                                 DashboardStatsCard(
                                   title: 'CUSTOS MENSAIS',
-                                  value: currencyFmt.format(costs),
-                                  subtitle: 'SAÍDAS DO INVENTÁRIO',
+                                  value: currencyFmt.format(costsPaid),
+                                  label1: 'PREVISÃO',
+                                  value1: currencyFmt.format(costs),
+                                  label2: 'PENDENTE',
+                                  value2: currencyFmt.format(costsPending),
+                                  subtitle: 'TOTAL PAGO NO MÊS',
                                   icon: Icons.trending_down_rounded,
                                 ),
                               ],

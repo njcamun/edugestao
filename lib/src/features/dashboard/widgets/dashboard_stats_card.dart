@@ -7,6 +7,10 @@ class DashboardStatsCard extends StatelessWidget {
   final String? subtitle;
   final IconData icon;
   final Color? iconColor;
+  final String? label1;
+  final String? value1;
+  final String? label2;
+  final String? value2;
 
   const DashboardStatsCard({
     super.key,
@@ -15,6 +19,10 @@ class DashboardStatsCard extends StatelessWidget {
     this.subtitle,
     required this.icon,
     this.iconColor,
+    this.label1,
+    this.value1,
+    this.label2,
+    this.value2,
   });
 
   @override
@@ -33,13 +41,16 @@ class DashboardStatsCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                title.toUpperCase(), // Estilo mais brutalista
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1.2,
+              Expanded(
+                child: Text(
+                  title.toUpperCase(), // Estilo mais brutalista
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.2,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               Icon(icon, size: 20, color: Colors.black),
@@ -49,22 +60,54 @@ class DashboardStatsCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                value,
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.black,
-                  letterSpacing: -1.5,
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.black,
+                    letterSpacing: -1.0,
+                  ),
                 ),
               ),
+              if (value1 != null || value2 != null) ...[
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    if (value1 != null)
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(label1?.toUpperCase() ?? '', 
+                                style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.blueGrey)),
+                            Text(value1!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900)),
+                          ],
+                        ),
+                      ),
+                    if (value2 != null)
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(label2?.toUpperCase() ?? '', 
+                                style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.orange)),
+                            Text(value2!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900)),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ],
               if (subtitle != null) ...[
                 const SizedBox(height: 4),
                 Text(
                   subtitle!,
                   style: const TextStyle(
                     color: Colors.black54,
-                    fontSize: 12,
+                    fontSize: 10,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

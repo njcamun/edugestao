@@ -84,7 +84,7 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
         ..nomeArquivo = 'EVI_${const Uuid().v4()}.jpg'
         ..caminhoLocal = localPath
         ..tipoArquivo = 'imagem'
-        ..tamanhoBytes = kIsWeb ? 0 : await File(localPath).length()
+        ..tamanhoBytes = await _evidencia!.length()
         ..mimeType = 'image/jpeg'
         ..createdAt = DateTime.now()
         ..syncStatus = SyncStatus.pendingSync;
@@ -192,12 +192,12 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(color: Colors.black, width: 1.5),
-                            image: DecorationImage(
-                              image: kIsWeb 
-                                ? NetworkImage(_evidencia!.path) as ImageProvider
-                                : FileImage(File(_evidencia!.path)), 
-                              fit: BoxFit.cover
-                            ),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: kIsWeb
+                                ? Image.network(_evidencia!.path, fit: BoxFit.cover)
+                                : Image.file(File(_evidencia!.path), fit: BoxFit.cover),
                           ),
                         ),
                         Positioned(
@@ -220,9 +220,9 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
                           )
                         : Row(
                             children: [
-                              _buildImageAction('CÂMARA', Icons.camera_alt_outlined, () => _pickImage(ImageSource.camera)),
+                              Expanded(child: _buildImageAction('CÂMARA', Icons.camera_alt_outlined, () => _pickImage(ImageSource.camera))),
                               const SizedBox(width: 12),
-                              _buildImageAction('GALERIA', Icons.image_outlined, () => _pickImage(ImageSource.gallery)),
+                              Expanded(child: _buildImageAction('GALERIA', Icons.image_outlined, () => _pickImage(ImageSource.gallery))),
                             ],
                           ),
                   
@@ -300,17 +300,15 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
   }
 
   Widget _buildImageAction(String label, IconData icon, VoidCallback onTap) {
-    return Expanded(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: Container(
-          height: 80,
-          decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 1.5), borderRadius: BorderRadius.circular(8)),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [Icon(icon, color: Colors.black), Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900))],
-          ),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        height: 80,
+        decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 1.5), borderRadius: BorderRadius.circular(8)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [Icon(icon, color: Colors.black), Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900))],
         ),
       ),
     );

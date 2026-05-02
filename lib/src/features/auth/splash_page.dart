@@ -66,13 +66,6 @@ class _SplashPageState extends ConsumerState<SplashPage> {
       debugPrint('Erro ao gerar custos locais: $e');
     }
 
-    // MANUTENÇÃO: Apagar mensalidades de Junho em diante (Pedido do utilizador)
-    try {
-      await ref.read(financeRepositoryProvider).deleteFeesFromMonth(6, 2025);
-    } catch (e) {
-      debugPrint('Erro na limpeza de mensalidades: $e');
-    }
-
     if (mounted) context.go('/');
   }
 

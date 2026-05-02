@@ -13,10 +13,13 @@ class CostsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final filteredCosts = ref.watch(filteredCostsProvider);
-    final currencyFmt = NumberFormat.currency(locale: 'pt_AO', symbol: 'KZ');
+    final costsAsync = ref.watch(costsStreamProvider);
+    final typeFilter = ref.watch(costsTypeFilterProvider);
+    final monthFilter = ref.watch(costsMonthFilterProvider);
+    final yearFilter = ref.watch(costsYearFilterProvider);
     final session = ref.watch(sessionProvider);
     final isAdmin = session.perfil?.perfil == Perfil.admin;
+    final currencyFmt = NumberFormat.currency(locale: 'pt_AO', symbol: 'KZ');
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -24,21 +27,45 @@ class CostsPage extends ConsumerWidget {
         children: [
           _buildFilterBar(context, ref),
           const SizedBox(height: 24),
-          
           Expanded(
-            child: filteredCosts.isEmpty 
-              ? _buildEmptyState()
-              : ListView.builder(
+            child: costsAsync.when(
+              data: (list) {
+                final filteredCosts = list.where((c) {
+                  if (!isAdmin && c.isDeleted) return false;
+                  if (monthFilter != null && c.mesReferencia != monthFilter) {
+                    return false;
+                  }
+                  if (yearFilter != null && c.anoReferencia != yearFilter) {
+                    return false;
+                  }
+                  if (typeFilter == 'FIXOS' && c.tipo != 'FIXO') return false;
+                  if (typeFilter == 'VARIAVEIS' && c.tipo != 'VARIAVEL') {
+                    return false;
+                  }
+                  return true;
+                }).toList();
+
+                if (filteredCosts.isEmpty) return _buildEmptyState();
+
+                return ListView.builder(
                   physics: const BouncingScrollPhysics(),
                   itemCount: filteredCosts.length,
                   itemBuilder: (context, index) {
                     final cost = filteredCosts[index];
                     return Opacity(
                       opacity: cost.isDeleted ? 0.5 : 1.0,
-                      child: _CostListItem(cost: cost, currencyFmt: currencyFmt, isAdmin: isAdmin),
+                      child: _CostListItem(
+                          cost: cost,
+                          currencyFmt: currencyFmt,
+                          isAdmin: isAdmin),
                     );
                   },
-                ),
+                );
+              },
+              loading: () => const Center(
+                  child: CircularProgressIndicator(color: Colors.black)),
+              error: (err, stack) => Center(child: Text('ERRO AO CARREGAR: $err')),
+            ),
           ),
           
           if (session.perfil?.canEditData ?? false) ...[
@@ -88,11 +115,28 @@ class CostsPage extends ConsumerWidget {
           TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCELAR', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))),
           TextButton(
             onPressed: () async {
-              final costs = ref.read(filteredCostsProvider);
               final repo = ref.read(costsRepositoryProvider);
-              for (var c in costs) {
-                await repo.deleteCusto(c.id);
-              }
+              final costsAsync = ref.read(costsStreamProvider);
+              
+              costsAsync.whenData((list) async {
+                final typeFilter = ref.read(costsTypeFilterProvider);
+                final monthFilter = ref.read(costsMonthFilterProvider);
+                final yearFilter = ref.read(costsYearFilterProvider);
+                
+                final toDelete = list.where((c) {
+                  if (c.isDeleted) return false;
+                  if (monthFilter != null && c.mesReferencia != monthFilter) return false;
+                  if (yearFilter != null && c.anoReferencia != yearFilter) return false;
+                  if (typeFilter == 'FIXOS' && c.tipo != 'FIXO') return false;
+                  if (typeFilter == 'VARIAVEIS' && c.tipo != 'VARIAVEL') return false;
+                  return true;
+                }).toList();
+
+                for (var c in toDelete) {
+                  await repo.deleteCusto(c.id);
+                }
+              });
+
               if (context.mounted) Navigator.pop(context);
             },
             child: const Text('LIMPAR TUDO', style: TextStyle(color: Colors.red, fontWeight: FontWeight.w900)),

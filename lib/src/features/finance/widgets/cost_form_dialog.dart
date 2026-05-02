@@ -277,14 +277,36 @@ class _CostFormDialogState extends ConsumerState<CostFormDialog> {
             else if (isPaying || (isCorrection && isAdmin))
               MediaQuery.sizeOf(context).width < 640
                   ? Column(children: [
-                      SizedBox(width: double.infinity, child: _buildImageAction('CÂMARA', Icons.camera_alt_outlined, () => _pickImage(ImageSource.camera))),
+                      SizedBox(
+                        width: double.infinity,
+                        child: _buildImageAction(
+                            'CÂMARA',
+                            Icons.camera_alt_outlined,
+                            () => _pickImage(ImageSource.camera)),
+                      ),
                       const SizedBox(height: 8),
-                      SizedBox(width: double.infinity, child: _buildImageAction('GALERIA', Icons.image_outlined, () => _pickImage(ImageSource.gallery))),
+                      SizedBox(
+                        width: double.infinity,
+                        child: _buildImageAction(
+                            'GALERIA',
+                            Icons.image_outlined,
+                            () => _pickImage(ImageSource.gallery)),
+                      ),
                     ])
                   : Row(children: [
-                      _buildImageAction('CÂMARA', Icons.camera_alt_outlined, () => _pickImage(ImageSource.camera)),
+                      Expanded(
+                        child: _buildImageAction(
+                            'CÂMARA',
+                            Icons.camera_alt_outlined,
+                            () => _pickImage(ImageSource.camera)),
+                      ),
                       const SizedBox(width: 8),
-                      _buildImageAction('GALERIA', Icons.image_outlined, () => _pickImage(ImageSource.gallery)),
+                      Expanded(
+                        child: _buildImageAction(
+                            'GALERIA',
+                            Icons.image_outlined,
+                            () => _pickImage(ImageSource.gallery)),
+                      ),
                     ]),
           ],
           if (isNew || (isCorrection && isAdmin)) ...[
@@ -387,6 +409,20 @@ class _CostFormDialogState extends ConsumerState<CostFormDialog> {
   }
 
   Widget _buildImageAction(String label, IconData icon, VoidCallback onTap) {
-    return Expanded(child: InkWell(onTap: onTap, child: Container(height: 60, decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 1.0), borderRadius: BorderRadius.circular(8)), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(icon, color: Colors.black, size: 18), Text(label, style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w900))]))));
+    return InkWell(
+        onTap: onTap,
+        child: Container(
+            height: 60,
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.black, width: 1.0),
+                borderRadius: BorderRadius.circular(8)),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(icon, color: Colors.black, size: 18),
+                  Text(label,
+                      style: const TextStyle(
+                          fontSize: 9, fontWeight: FontWeight.w900))
+                ])));
   }
 }

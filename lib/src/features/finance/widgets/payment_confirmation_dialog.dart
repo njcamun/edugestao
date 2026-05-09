@@ -122,7 +122,7 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
       final evidencia = EvidenciaPagamento()
         ..id = const Uuid().v4()
         ..nomeArquivo = 'EVI_${const Uuid().v4()}$extension'
-        ..caminhoLocal = localPath ?? ''
+        ..caminhoLocal = localPath
         ..tipoArquivo = tipoArquivo
         ..tamanhoBytes = await _evidencia!.length()
         ..mimeType = mimeType

@@ -17,7 +17,6 @@ class _ReportStudentsPageState extends ConsumerState<ReportStudentsPage> {
   // Estados para os filtros
   String _selectedAnoLectivo = '2024/2025';
   String _selectedPeriodicidade = 'ANUAL';
-  String? _selectedClasse;
   String? _selectedTurmaId;
   String? _selectedTurno;
 

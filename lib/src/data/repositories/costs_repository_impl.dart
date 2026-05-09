@@ -23,6 +23,7 @@ class CostsRepositoryImpl implements CostsRepository {
         .map((rows) => rows.map((row) => row.toEntity()).toList());
   }
 
+  @override
   Stream<List<CustoMensal>> watchCustosAdmin() {
     return (_db.select(_db.custosMensais)
           ..orderBy([(t) => OrderingTerm(expression: t.data, mode: OrderingMode.desc)]))

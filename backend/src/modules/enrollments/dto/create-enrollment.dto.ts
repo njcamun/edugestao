@@ -6,17 +6,17 @@ export class CreateEnrollmentDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  studentId: string;
+  studentId!: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  schoolClassId: string;
+  schoolClassId!: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  academicYearId: string;
+  academicYearId!: string;
 
   @ApiProperty({ enum: EnrollmentStatus, default: EnrollmentStatus.PENDENTE })
   @IsEnum(EnrollmentStatus)

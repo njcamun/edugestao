@@ -1,7 +1,6 @@
 import 'package:drift/drift.dart';
 import 'package:edugestao/src/data/local/drift/app_database.dart';
 import 'package:edugestao/src/domain/entities/matricula.dart';
-import 'package:edugestao/src/domain/entities/sync_entity.dart';
 
 extension MatriculaMapper on Matricula {
   MatriculasCompanion toCompanion() {

@@ -10,14 +10,11 @@ import '../../features/finance/gestao_financeira_page.dart';
 import '../../features/reports/reports_page.dart';
 import '../../features/settings/settings_page.dart';
 import '../../presentation/layouts/responsive_layout.dart';
-import '../../state/session.dart';
 
 // Chave Global para notificações de sistema
 final rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final session = ref.watch(sessionProvider);
-
   return GoRouter(
     initialLocation: '/splash',
     routes: [

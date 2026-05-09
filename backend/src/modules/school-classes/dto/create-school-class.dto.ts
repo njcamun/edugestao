@@ -5,17 +5,17 @@ export class CreateSchoolClassDto {
   @ApiProperty({ example: 'Turma A' })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name!: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  academicYearId: string;
+  academicYearId!: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  gradeLevelId: string;
+  gradeLevelId!: string;
 
   @ApiProperty({ required: false })
   @IsString()

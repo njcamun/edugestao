@@ -119,25 +119,8 @@ class ApiClient {
 
   // Auth
   Future<LoginResponseDto> login(String email, String password) async {
-    // BYPASS para testes
-    if (email == 'admin@escola.local') {
-      return LoginResponseDto(
-        accessToken: "fake-token",
-        refreshToken: "fake-refresh",
-        user: LoginUserDto(id: "1", email: email, name: "Admin Offline", role: "ADMIN"),
-      );
-    }
-
-    try {
-      final res = await _dio.post('/auth/login', data: {'email': email, 'password': password});
-      return LoginResponseDto.fromJson(res.data as Map<String, dynamic>);
-    } catch (e) {
-      return LoginResponseDto(
-        accessToken: "fake-token",
-        refreshToken: "fake-refresh",
-        user: LoginUserDto(id: "1", email: email, name: "Bypass Mode", role: "ADMIN"),
-      );
-    }
+    final res = await _dio.post('/auth/login', data: {'email': email, 'password': password});
+    return LoginResponseDto.fromJson(res.data as Map<String, dynamic>);
   }
 
   // Students

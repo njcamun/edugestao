@@ -3,11 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/theme/app_tokens.dart';
 import '../../../domain/entities/matricula.dart';
-import '../../../domain/entities/mensalidade.dart';
 import '../../../domain/entities/sync_entity.dart';
 import '../../students/students_controller.dart';
 import '../../classes/classes_controller.dart';
-import '../../finance/finance_controller.dart';
 import '../enrollments_controller.dart';
 
 class EnrollmentFormDialog extends ConsumerStatefulWidget {
@@ -205,30 +203,6 @@ class _EnrollmentFormDialogState extends ConsumerState<EnrollmentFormDialog> {
           ],
         ),
         content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('COMPREENDIDO', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showLimitAlert(String turmaNome, int limite) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
-        shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black, width: 2)),
-        title: const Row(
-          children: [
-            Icon(Icons.warning_amber_rounded, color: Colors.black),
-            SizedBox(width: 10),
-            Text('LIMITE ATINGIDO', style: TextStyle(fontWeight: FontWeight.w900)),
-          ],
-        ),
-        content: Text('ESTA TURMA ATINGIU O LIMITE MÁXIMO DE $limite VAGAS.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),

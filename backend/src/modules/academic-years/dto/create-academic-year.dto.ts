@@ -5,17 +5,17 @@ export class CreateAcademicYearDto {
   @ApiProperty({ example: '2025' })
   @IsString()
   @IsNotEmpty()
-  year: string;
+  year!: string;
 
   @ApiProperty({ example: '2025-02-01' })
   @IsDateString()
   @IsNotEmpty()
-  startDate: string;
+  startDate!: string;
 
   @ApiProperty({ example: '2025-12-15' })
   @IsDateString()
   @IsNotEmpty()
-  endDate: string;
+  endDate!: string;
 
   @ApiProperty({ required: false, default: true })
   @IsBoolean()

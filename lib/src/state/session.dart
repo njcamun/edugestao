@@ -36,6 +36,10 @@ class SessionState {
 
 class SessionNotifier extends StateNotifier<SessionState> {
   final FirebaseService _firebaseService;
+  static const String _bootstrapAdminEmail = String.fromEnvironment(
+    'BOOTSTRAP_ADMIN_EMAIL',
+    defaultValue: '',
+  );
 
   SessionNotifier(this._firebaseService) : super(const SessionState()) {
     _init();
@@ -80,9 +84,7 @@ class SessionNotifier extends StateNotifier<SessionState> {
     }
 
     if (!isCloudProfileLookupSupported || !isCloudFirestoreSupported) {
-      final perfilInicial = user.email == 'ncamungondo@gmail.com'
-          ? Perfil.admin
-          : Perfil.user;
+      final perfilInicial = _resolveInitialPerfil(user.email);
       return Utilizador(
         id: user.uid,
         nome: user.displayName ?? 'Utilizador',
@@ -97,11 +99,7 @@ class SessionNotifier extends StateNotifier<SessionState> {
       if (doc.exists) {
         return Utilizador.fromFirestore(doc.data()!, doc.id);
       } else {
-        // Define o perfil inicial
-        // Se for o e-mail do proprietário, atribui Admin automaticamente
-        final perfilInicial = user.email == 'ncamungondo@gmail.com' 
-            ? Perfil.admin 
-            : Perfil.user;
+        final perfilInicial = _resolveInitialPerfil(user.email);
 
         final novoUtilizador = Utilizador(
           id: user.uid,
@@ -148,9 +146,7 @@ class SessionNotifier extends StateNotifier<SessionState> {
           return;
         }
 
-        final perfilInicial = desktopProfile.email == 'ncamungondo@gmail.com'
-            ? Perfil.admin
-            : Perfil.user;
+        final perfilInicial = _resolveInitialPerfil(desktopProfile.email);
 
         final perfil = Utilizador(
           id: desktopProfile.uid,
@@ -271,6 +267,15 @@ class SessionNotifier extends StateNotifier<SessionState> {
     state = SessionState(isLoading: true, googleDebugLog: state.googleDebugLog);
     await _firebaseService.signOut();
     state = const SessionState(isLoading: false);
+  }
+
+  Perfil _resolveInitialPerfil(String? email) {
+    if (_bootstrapAdminEmail.isEmpty || email == null) {
+      return Perfil.user;
+    }
+    return email.toLowerCase().trim() == _bootstrapAdminEmail.toLowerCase().trim()
+        ? Perfil.admin
+        : Perfil.user;
   }
 }
 

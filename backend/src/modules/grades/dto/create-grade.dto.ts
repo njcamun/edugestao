@@ -5,29 +5,29 @@ export class CreateGradeDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  enrollmentId: string;
+  enrollmentId!: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  subjectId: string;
+  subjectId!: string;
 
   @ApiProperty({ example: 1 })
   @IsNumber()
   @Min(1)
   @Max(3)
-  trimester: number;
+  trimester!: number;
 
   @ApiProperty({ example: 'Teste' })
   @IsString()
   @IsNotEmpty()
-  type: string;
+  type!: string;
 
   @ApiProperty({ example: 14.5 })
   @IsNumber()
   @Min(0)
   @Max(20)
-  value: number;
+  value!: number;
 
   @ApiProperty({ required: false, default: 1.0 })
   @IsNumber()

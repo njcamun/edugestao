@@ -6,21 +6,21 @@ export class CreateInvoiceDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  enrollmentId: string;
+  enrollmentId!: string;
 
   @ApiProperty({ example: 'Propina de Março' })
   @IsString()
   @IsNotEmpty()
-  description: string;
+  description!: string;
 
   @ApiProperty({ example: 10000 })
   @IsNumber()
-  amount: number;
+  amount!: number;
 
   @ApiProperty({ example: '2025-03-31' })
   @IsDateString()
   @IsNotEmpty()
-  dueDate: string;
+  dueDate!: string;
 
   @ApiProperty({ enum: InvoiceStatus, default: InvoiceStatus.PENDENTE, required: false })
   @IsEnum(InvoiceStatus)

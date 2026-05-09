@@ -5,31 +5,31 @@ export class CreateScheduleItemDto {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  schoolClassId: string;
+  schoolClassId!: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  teacherId: string;
+  teacherId!: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  roomId: string;
+  roomId!: string;
 
   @ApiProperty({ description: '1 (Segunda) a 6 (Sábado)', example: 1 })
   @IsInt()
   @Min(1)
   @Max(6)
-  dayOfWeek: number;
+  dayOfWeek!: number;
 
   @ApiProperty({ example: '08:00' })
   @IsString()
   @Matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
-  startTime: string;
+  startTime!: string;
 
   @ApiProperty({ example: '09:30' })
   @IsString()
   @Matches(/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/)
-  endTime: string;
+  endTime!: string;
 }

@@ -129,7 +129,7 @@ class ResponsiveLayout extends ConsumerWidget {
                   Text(
                     perfil.perfil.name.toUpperCase(),
                     style: TextStyle(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.white.withValues(alpha: 0.5),
                         fontSize: 8,
                         fontWeight: FontWeight.bold),
                     overflow: TextOverflow.ellipsis,
@@ -214,7 +214,7 @@ class ResponsiveLayout extends ConsumerWidget {
                     Text(
                       '$sectionTitle  •  $subtitle',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.75),
+                        color: Colors.white.withValues(alpha: 0.75),
                         fontSize: subtitleFontSize,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.3,
@@ -315,7 +315,7 @@ class ResponsiveLayout extends ConsumerWidget {
                           ),
                           Text(
                             ref.watch(sessionProvider).perfil!.perfil.name.toUpperCase(),
-                            style: TextStyle(fontSize: 9, color: Colors.black.withOpacity(0.5), fontWeight: FontWeight.w900),
+                            style: TextStyle(fontSize: 9, color: Colors.black.withValues(alpha: 0.5), fontWeight: FontWeight.w900),
                           ),
                         ],
                       ),
@@ -428,7 +428,7 @@ class _SidebarItem extends StatelessWidget {
         ),
         margin: const EdgeInsets.only(bottom: 4),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.black.withOpacity(0.05) : Colors.transparent,
+          color: isSelected ? Colors.black.withValues(alpha: 0.05) : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(

@@ -369,7 +369,7 @@ class _GenerateFeesDialogState extends ConsumerState<_GenerateFeesDialog> {
           const Text('SELECCIONE O MÊS DE REFERÊNCIA:', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w900)),
           const SizedBox(height: 8),
           DropdownButtonFormField<int>(
-            value: _selectedMonth,
+            initialValue: _selectedMonth,
             items: List.generate(12, (i) => DropdownMenuItem(
               value: i + 1,
               child: Text(_meses[i]),
@@ -381,7 +381,7 @@ class _GenerateFeesDialogState extends ConsumerState<_GenerateFeesDialog> {
           const Text('ANO:', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w900)),
           const SizedBox(height: 8),
           DropdownButtonFormField<int>(
-            value: _selectedYear,
+            initialValue: _selectedYear,
             items: [DateTime.now().year, DateTime.now().year + 1].map((y) => DropdownMenuItem(
               value: y,
               child: Text('$y'),

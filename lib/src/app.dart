@@ -43,11 +43,10 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
     }
 
     final syncService = ref.read(syncServiceProvider);
-    syncService.syncAll();
-
-    if (isAutomaticCloudSyncSupported) {
+    syncService.syncAll().whenComplete(() {
+      if (!mounted || !isAutomaticCloudSyncSupported) return;
       syncService.startRealtimeListeners();
-    }
+    });
   }
 
   @override

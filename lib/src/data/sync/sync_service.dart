@@ -65,6 +65,7 @@ class SyncService {
   StreamSubscription? _connectivitySubscription;
   final List<StreamSubscription> _realtimeSubscriptions = [];
   bool _syncAllInProgress = false;
+  bool _pullAlunosInProgress = false;
 
   SyncService(this._ref) {
     _init();
@@ -119,9 +120,12 @@ class SyncService {
     for (var coll in collections) {
       _realtimeSubscriptions.add(
         _firestore.collection(coll).snapshots().listen((snapshot) async {
-          if (snapshot.docChanges.isNotEmpty) {
-            _ref.read(isSyncingProvider.notifier).state = true;
+          if (_syncAllInProgress) return;
+          if (snapshot.docChanges.isEmpty) return;
+          _ref.read(isSyncingProvider.notifier).state = true;
+          try {
             await _pullCollection(coll);
+          } finally {
             _ref.read(isSyncingProvider.notifier).state = false;
           }
         }, onError: (e) => debugPrint('Erro Realtime ($coll): $e')),
@@ -148,19 +152,36 @@ class SyncService {
     }
   }
 
+  /// Procura aluno local por número (exacto ou TRIM para dados legados).
+  Future<AlunoData?> _findLocalAlunoByNumero(String numero) async {
+    final exact =
+        await (_db.select(_db.alunos)..where((t) => t.numeroAluno.equals(numero))).get();
+    if (exact.isNotEmpty) return exact.first;
+
+    final trimmed = await _db.customSelect(
+      'SELECT local_id FROM alunos WHERE TRIM(numero_aluno) = ? LIMIT 1',
+      variables: [Variable<String>(numero)],
+      readsFrom: {_db.alunos},
+    ).getSingleOrNull();
+    if (trimmed == null) return null;
+
+    final localId = trimmed.read<int>('local_id');
+    return await (_db.select(_db.alunos)..where((t) => t.localId.equals(localId)))
+        .getSingleOrNull();
+  }
+
   /// Upsert de aluno vindo da nuvem: `numero_aluno` é a chave de negócio; evita UNIQUE em pull.
   Future<void> _upsertAlunoFromPull(Aluno entity) async {
     var numero = entity.numeroAluno.trim();
     if (numero.isEmpty) {
       final suffix = entity.id.replaceAll('-', '');
-      entity.numeroAluno = 'CLD-${suffix.substring(0, suffix.length.clamp(0, 8))}';
-      numero = entity.numeroAluno;
+      numero = 'CLD-${suffix.substring(0, suffix.length.clamp(0, 8))}';
     }
+    entity.numeroAluno = numero;
 
     final existingById =
         await (_db.select(_db.alunos)..where((t) => t.id.equals(entity.id))).getSingleOrNull();
-    final existingByNumero =
-        await (_db.select(_db.alunos)..where((t) => t.numeroAluno.equals(numero))).getSingleOrNull();
+    final existingByNumero = await _findLocalAlunoByNumero(numero);
 
     if (existingByNumero != null &&
         existingById != null &&
@@ -175,14 +196,22 @@ class SyncService {
     }
 
     final target = existingByNumero ?? existingById;
+    final companion = entity.toCompanion();
+
     if (target != null) {
       await (_db.update(_db.alunos)..where((t) => t.localId.equals(target.localId))).write(
-        entity.toCompanion().copyWith(localId: Value(target.localId)),
+        companion.copyWith(localId: Value(target.localId)),
       );
       return;
     }
 
-    await _db.into(_db.alunos).insert(entity.toCompanion());
+    await _db.into(_db.alunos).insert(
+      companion,
+      onConflict: DoUpdate(
+        (_) => companion,
+        target: [_db.alunos.numeroAluno],
+      ),
+    );
   }
 
   void _stopRealtimeListeners() {
@@ -324,6 +353,11 @@ class SyncService {
 
   Future<void> pullAlunos() async {
     if (!isInitialCloudPullSupported) return;
+    if (_pullAlunosInProgress) {
+      debugPrint('SyncService: pullAlunos já em execução, ignorando.');
+      return;
+    }
+    _pullAlunosInProgress = true;
     try {
       final snap = await _firestore.collection('alunos').get();
       for (var doc in snap.docs) {
@@ -363,6 +397,8 @@ class SyncService {
       }
     } catch (e) {
       debugPrint('Erro Pull Alunos: $e');
+    } finally {
+      _pullAlunosInProgress = false;
     }
   }
 

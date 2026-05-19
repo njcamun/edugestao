@@ -148,12 +148,41 @@ class SyncService {
     }
   }
 
-  Future<int?> _findAlunoLocalId(String id, String numeroAluno) async {
-    final rowsById = await (_db.select(_db.alunos)..where((t) => t.id.equals(id))).get();
-    if (rowsById.isNotEmpty) return rowsById.first.localId;
+  /// Upsert de aluno vindo da nuvem: `numero_aluno` é a chave de negócio; evita UNIQUE em pull.
+  Future<void> _upsertAlunoFromPull(Aluno entity) async {
+    var numero = entity.numeroAluno.trim();
+    if (numero.isEmpty) {
+      final suffix = entity.id.replaceAll('-', '');
+      entity.numeroAluno = 'CLD-${suffix.substring(0, suffix.length.clamp(0, 8))}';
+      numero = entity.numeroAluno;
+    }
 
-    final rowsByNumeroAluno = await (_db.select(_db.alunos)..where((t) => t.numeroAluno.equals(numeroAluno))).get();
-    return rowsByNumeroAluno.isNotEmpty ? rowsByNumeroAluno.first.localId : null;
+    final existingById =
+        await (_db.select(_db.alunos)..where((t) => t.id.equals(entity.id))).getSingleOrNull();
+    final existingByNumero =
+        await (_db.select(_db.alunos)..where((t) => t.numeroAluno.equals(numero))).getSingleOrNull();
+
+    if (existingByNumero != null &&
+        existingById != null &&
+        existingByNumero.localId != existingById.localId) {
+      await (_db.update(_db.alunos)..where((t) => t.localId.equals(existingById.localId))).write(
+        AlunosCompanion(
+          isDeleted: const Value(true),
+          syncStatus: const Value(SyncStatus.synced),
+          updatedAt: Value(DateTime.now()),
+        ),
+      );
+    }
+
+    final target = existingByNumero ?? existingById;
+    if (target != null) {
+      await (_db.update(_db.alunos)..where((t) => t.localId.equals(target.localId))).write(
+        entity.toCompanion().copyWith(localId: Value(target.localId)),
+      );
+      return;
+    }
+
+    await _db.into(_db.alunos).insert(entity.toCompanion());
   }
 
   void _stopRealtimeListeners() {
@@ -326,12 +355,11 @@ class SyncService {
           ..updatedAt = (data['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now()
           ..syncStatus = SyncStatus.synced;
 
-        final localId = await _findAlunoLocalId(entity.id, entity.numeroAluno);
-        final companion = localId != null
-          ? entity.toCompanion().copyWith(localId: Value(localId))
-          : entity.toCompanion();
-
-        await _db.into(_db.alunos).insertOnConflictUpdate(companion);
+        try {
+          await _upsertAlunoFromPull(entity);
+        } catch (e, st) {
+          debugPrint('Erro Pull Aluno ${doc.id}: $e\n$st');
+        }
       }
     } catch (e) {
       debugPrint('Erro Pull Alunos: $e');

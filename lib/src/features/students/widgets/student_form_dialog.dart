@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../core/theme/app_tokens.dart';
+import '../../../shared/widgets/edu_form_styles.dart';
 import '../../../domain/entities/aluno.dart';
 import '../../../domain/entities/sync_entity.dart';
 import '../students_controller.dart';
@@ -149,7 +150,9 @@ class _StudentFormDialogState extends ConsumerState<StudentFormDialog> {
   Future<void> _save() async {
     if (_formKey.currentState!.validate()) {
       if (_dataNascimento == null) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('SELECCIONE A DATA DE NASCIMENTO')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Seleccione a data de nascimento.'), backgroundColor: AppTokens.warning),
+        );
         return;
       }
 
@@ -194,104 +197,69 @@ class _StudentFormDialogState extends ConsumerState<StudentFormDialog> {
     final isCompact = width < 640;
 
     return Dialog(
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTokens.radiusLG), side: const BorderSide(color: Colors.black, width: 2)),
+      shape: EduFormStyles.dialogShape(),
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: isCompact ? width * 0.96 : 550, maxHeight: isCompact ? 760 : 800),
+        constraints: BoxConstraints(
+          maxWidth: isCompact ? width * 0.96 : 550,
+          maxHeight: isCompact ? 760 : 800,
+        ),
         child: Padding(
-          padding: EdgeInsets.all(isCompact ? 12 : AppTokens.paddingLG),
+          padding: EduFormStyles.dialogPadding(context),
           child: Form(
             key: _formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        widget.aluno == null ? 'FICHA DE INSCRIÇÃO' : 'EDITAR FICHA',
-                        style: TextStyle(fontSize: isCompact ? 16 : 20, fontWeight: FontWeight.w900, color: Colors.black, letterSpacing: 1),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close, color: Colors.black)),
-                  ],
+                EduFormStyles.dialogHeader(
+                  context,
+                  widget.aluno == null ? 'Ficha de inscrição' : 'Editar ficha',
                 ),
-                const Divider(color: Colors.black, thickness: 2, height: 32),
+                const SizedBox(height: AppTokens.paddingMD),
                 
                 Flexible(
                   child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildSectionTitle('1. Identificação do Aluno'),
+                        EduFormStyles.formSectionTitle('1. Identificação do aluno'),
                         const SizedBox(height: 16),
                         _buildField('Nome Completo', _nomeController, Icons.person_outline, capitalize: true),
                         const SizedBox(height: 16),
                         isCompact
                             ? Column(
                                 children: [
-                                  TextFormField(
-                                    controller: _dataNascimentoController,
-                                    readOnly: true,
-                                    onTap: _selectDate,
-                                    style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 13),
-                                    decoration: const InputDecoration(
-                                      labelText: 'DATA DE NASCIMENTO',
-                                      labelStyle: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                                      prefixIcon: Icon(Icons.calendar_today_outlined, size: 20, color: Colors.black),
-                                      border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-                                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-                                      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.5)),
-                                    ),
-                                    validator: (v) => v!.isEmpty ? 'OBRIGATÓRIO' : null,
-                                  ),
+                                  _buildDateField('Data de nascimento', _dataNascimentoController, _selectDate),
                                   const SizedBox(height: 12),
-                                  _buildDropdown('SEXO', ['M', 'F'], (val) => setState(() => _sexo = val!)),
+                                  _buildDropdown('Sexo', ['M', 'F'], (val) => setState(() => _sexo = val!)),
                                 ],
                               )
                             : Row(
                                 children: [
                                   Expanded(
-                                    child: TextFormField(
-                                      controller: _dataNascimentoController,
-                                      readOnly: true,
-                                      onTap: _selectDate,
-                                      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 13),
-                                      decoration: const InputDecoration(
-                                        labelText: 'DATA DE NASCIMENTO',
-                                        labelStyle: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                                        prefixIcon: Icon(Icons.calendar_today_outlined, size: 20, color: Colors.black),
-                                        border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-                                        enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-                                        focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.5)),
-                                      ),
-                                      validator: (v) => v!.isEmpty ? 'OBRIGATÓRIO' : null,
-                                    ),
+                                    child: _buildDateField('Data de nascimento', _dataNascimentoController, _selectDate),
                                   ),
                                   const SizedBox(width: 12),
-                                  Expanded(child: _buildDropdown('SEXO', ['M', 'F'], (val) => setState(() => _sexo = val!))),
+                                  Expanded(child: _buildDropdown('Sexo', ['M', 'F'], (val) => setState(() => _sexo = val!))),
                                 ],
                               ),
                         const SizedBox(height: 16),
                         _buildField('Morada Completa', _moradaController, Icons.home_outlined, capitalize: true),
                         
                         const SizedBox(height: 32),
-                        _buildSectionTitle('2. Percurso Académico'),
+                        EduFormStyles.formSectionTitle('2. Percurso académico'),
                         const SizedBox(height: 16),
                         _buildField('Escola de Proveniência', _escolaController, Icons.school_outlined, capitalize: true),
                         const SizedBox(height: 16),
                         _buildDropdown('Ano de Escolaridade', _anosEscolaridade, (val) => setState(() => _anoEscolaridade = val!)),
 
                         const SizedBox(height: 32),
-                        _buildSectionTitle('3. Saúde'),
+                        EduFormStyles.formSectionTitle('3. Saúde'),
                         SwitchListTile(
-                          title: const Text('POSSUI ALGUMA CONDIÇÃO MÉDICA?', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                          title: const Text('Possui condição médica?', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
                           value: _possuiCondicaoMedica,
                           onChanged: (v) => setState(() => _possuiCondicaoMedica = v),
                           contentPadding: EdgeInsets.zero,
-                          activeThumbColor: Colors.black,
+                          activeThumbColor: AppTokens.primary,
                         ),
                         if (_possuiCondicaoMedica) ...[
                           const SizedBox(height: 8),
@@ -299,7 +267,7 @@ class _StudentFormDialogState extends ConsumerState<StudentFormDialog> {
                         ],
 
                         const SizedBox(height: 32),
-                        _buildSectionTitle('4. Encarregado de Educação'),
+                        EduFormStyles.formSectionTitle('4. Encarregado de educação'),
                         const SizedBox(height: 16),
                         _buildField('Nome do Encarregado', _encarregadoController, Icons.family_restroom_outlined, capitalize: true),
                         const SizedBox(height: 16),
@@ -322,14 +290,14 @@ class _StudentFormDialogState extends ConsumerState<StudentFormDialog> {
                         _buildField('E-mail', _emailController, Icons.email_outlined, required: false),
 
                         const SizedBox(height: 32),
-                        _buildSectionTitle('5. Pagamento de Inscrição'),
+                        EduFormStyles.formSectionTitle('5. Pagamento de inscrição'),
                         const SizedBox(height: 16),
                         CheckboxListTile(
-                          title: const Text('ALUNO ISENTO DE PAGAMENTO?', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+                          title: const Text('Aluno isento de pagamento?', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
                           value: _isentoPagamento,
                           onChanged: (v) => setState(() => _isentoPagamento = v!),
                           contentPadding: EdgeInsets.zero,
-                          activeColor: Colors.black,
+                          activeColor: AppTokens.primary,
                         ),
                         if (!_isentoPagamento) ...[
                           _buildField('Valor Pago (Kz)', _valorPagamentoController, Icons.payments_outlined, isNumber: true),
@@ -342,8 +310,8 @@ class _StudentFormDialogState extends ConsumerState<StudentFormDialog> {
                                       child: OutlinedButton.icon(
                                         onPressed: () => _pickImage(ImageSource.camera),
                                         icon: const Icon(Icons.camera_alt_outlined),
-                                        label: const Text('CÂMARA'),
-                                        style: OutlinedButton.styleFrom(foregroundColor: Colors.black, side: const BorderSide(color: Colors.black)),
+                                        label: const Text('Câmara'),
+                                        style: OutlinedButton.styleFrom(foregroundColor: AppTokens.primary),
                                       ),
                                     ),
                                     const SizedBox(height: 12),
@@ -352,8 +320,8 @@ class _StudentFormDialogState extends ConsumerState<StudentFormDialog> {
                                       child: OutlinedButton.icon(
                                         onPressed: () => _pickImage(ImageSource.gallery),
                                         icon: const Icon(Icons.file_upload_outlined),
-                                        label: const Text('FICHEIRO'),
-                                        style: OutlinedButton.styleFrom(foregroundColor: Colors.black, side: const BorderSide(color: Colors.black)),
+                                        label: const Text('Galeria'),
+                                        style: OutlinedButton.styleFrom(foregroundColor: AppTokens.primary),
                                       ),
                                     ),
                                   ],
@@ -364,8 +332,8 @@ class _StudentFormDialogState extends ConsumerState<StudentFormDialog> {
                                       child: OutlinedButton.icon(
                                         onPressed: () => _pickImage(ImageSource.camera),
                                         icon: const Icon(Icons.camera_alt_outlined),
-                                        label: const Text('CÂMARA'),
-                                        style: OutlinedButton.styleFrom(foregroundColor: Colors.black, side: const BorderSide(color: Colors.black)),
+                                        label: const Text('Câmara'),
+                                        style: OutlinedButton.styleFrom(foregroundColor: AppTokens.primary),
                                       ),
                                     ),
                                     const SizedBox(width: 12),
@@ -373,8 +341,8 @@ class _StudentFormDialogState extends ConsumerState<StudentFormDialog> {
                                       child: OutlinedButton.icon(
                                         onPressed: () => _pickImage(ImageSource.gallery),
                                         icon: const Icon(Icons.file_upload_outlined),
-                                        label: const Text('FICHEIRO'),
-                                        style: OutlinedButton.styleFrom(foregroundColor: Colors.black, side: const BorderSide(color: Colors.black)),
+                                        label: const Text('Galeria'),
+                                        style: OutlinedButton.styleFrom(foregroundColor: AppTokens.primary),
                                       ),
                                     ),
                                   ],
@@ -382,27 +350,17 @@ class _StudentFormDialogState extends ConsumerState<StudentFormDialog> {
                           if (_comprovativoFile != null)
                             Padding(
                               padding: const EdgeInsets.only(top: 8),
-                              child: Text('COMPROVATIVO: ${_comprovativoFile!.path.split('/').last}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.green)),
+                              child: Text(
+                                'Comprovativo: ${_comprovativoFile!.path.split(Platform.pathSeparator).last}',
+                                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppTokens.success),
+                              ),
                             ),
                         ],
 
                         const SizedBox(height: 32),
-                        _buildSectionTitle('6. Informações Adicionais'),
+                        EduFormStyles.formSectionTitle('6. Informações adicionais'),
                         const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _dataInscricaoController,
-                          readOnly: true,
-                          onTap: _selectInscricaoDate,
-                          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 13),
-                          decoration: const InputDecoration(
-                            labelText: 'DATA DE INSCRIÇÃO/CADASTRO',
-                            labelStyle: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-                            prefixIcon: Icon(Icons.event_available_outlined, size: 20, color: Colors.black),
-                            border: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-                            enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-                            focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.5)),
-                          ),
-                        ),
+                        _buildDateField('Data de inscrição', _dataInscricaoController, _selectInscricaoDate),
                         const SizedBox(height: 16),
                         _buildField('Observações Internas', _observacoesController, Icons.note_alt_outlined, maxLines: 3, required: false, capitalize: true),
                         const SizedBox(height: 24),
@@ -411,46 +369,12 @@ class _StudentFormDialogState extends ConsumerState<StudentFormDialog> {
                   ),
                 ),
                 
-                const Divider(color: Colors.black, thickness: 2, height: 32),
-                isCompact
-                    ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('CANCELAR', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                          ),
-                          const SizedBox(height: 8),
-                          FilledButton(
-                            onPressed: _save,
-                            style: FilledButton.styleFrom(
-                              backgroundColor: Colors.black,
-                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                            ),
-                            child: const Text('CONFIRMAR INSCRIÇÃO'),
-                          ),
-                        ],
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('CANCELAR', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                          ),
-                          const SizedBox(width: 12),
-                          FilledButton(
-                            onPressed: _save,
-                            style: FilledButton.styleFrom(
-                              backgroundColor: Colors.black,
-                              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                            ),
-                            child: const Text('CONFIRMAR INSCRIÇÃO'),
-                          ),
-                        ],
-                      ),
+                const SizedBox(height: AppTokens.paddingMD),
+                EduFormStyles.dialogActions(
+                  onCancel: () => Navigator.pop(context),
+                  onConfirm: _save,
+                  confirmLabel: widget.aluno == null ? 'Confirmar inscrição' : 'Guardar alterações',
+                ),
               ],
             ),
           ),
@@ -459,18 +383,13 @@ class _StudentFormDialogState extends ConsumerState<StudentFormDialog> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      decoration: const BoxDecoration(
-        color: Colors.black,
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(4), topRight: Radius.circular(4)),
-      ),
-      width: double.infinity,
-      child: Text(
-        title.toUpperCase(),
-        style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1),
-      ),
+  Widget _buildDateField(String label, TextEditingController controller, VoidCallback onTap) {
+    return TextFormField(
+      controller: controller,
+      readOnly: true,
+      onTap: onTap,
+      decoration: EduFormStyles.inputDecoration(label, icon: Icons.calendar_today_outlined),
+      validator: (v) => (v == null || v.isEmpty) ? 'Campo obrigatório' : null,
     );
   }
 
@@ -480,35 +399,21 @@ class _StudentFormDialogState extends ConsumerState<StudentFormDialog> {
       maxLines: maxLines,
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
       textCapitalization: capitalize ? TextCapitalization.words : TextCapitalization.none,
-      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 13),
-      decoration: InputDecoration(
-        labelText: label.toUpperCase(),
-        labelStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-        prefixIcon: Icon(icon, size: 20, color: Colors.black),
-        border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-        enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-        focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.5)),
-        alignLabelWithHint: true,
-      ),
-      validator: required ? (v) => v!.isEmpty ? 'OBRIGATÓRIO' : null : null,
+      decoration: EduFormStyles.inputDecoration(label, icon: icon).copyWith(alignLabelWithHint: true),
+      validator: required ? (v) => (v == null || v.isEmpty) ? 'Campo obrigatório' : null : null,
     );
   }
 
   Widget _buildDropdown(String label, List<String> items, Function(String?) onChanged) {
-    String value = items.contains(_sexo) && label == 'SEXO' ? _sexo : (label.contains('ANO') ? _anoEscolaridade : items.first);
+    String value = items.contains(_sexo) && label.toLowerCase().contains('sexo')
+        ? _sexo
+        : (label.toLowerCase().contains('ano') ? _anoEscolaridade : items.first);
     if (!items.contains(value)) value = items.first;
 
     return DropdownButtonFormField<String>(
       initialValue: value,
-      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 13),
-      decoration: InputDecoration(
-        labelText: label.toUpperCase(),
-        labelStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-        border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-        enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-        focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.5)),
-      ),
-      items: items.map((e) => DropdownMenuItem(value: e, child: Text(e.toUpperCase()))).toList(),
+      decoration: EduFormStyles.inputDecoration(label),
+      items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
       onChanged: onChanged,
     );
   }

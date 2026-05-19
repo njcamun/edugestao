@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../core/theme/app_tokens.dart';
+import '../../shared/widgets/edu_empty_state.dart';
 import '../../domain/entities/matricula.dart';
 import 'enrollments_controller.dart';
 import 'widgets/enrollment_form_dialog.dart';
@@ -78,7 +79,7 @@ class _EnrollmentsPageState extends ConsumerState<EnrollmentsPage> {
                   },
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator(strokeWidth: 2, color: AppTokens.slate900)),
+              loading: () => const Center(child: CircularProgressIndicator(strokeWidth: 2, color: AppTokens.primary)),
               error: (err, _) => Center(child: Text('Erro ao carregar matrículas: $err')),
             ),
           ),
@@ -88,12 +89,7 @@ class _EnrollmentsPageState extends ConsumerState<EnrollmentsPage> {
             child: FilledButton.icon(
               onPressed: () => _showEnrollmentForm(context),
               icon: const Icon(Icons.how_to_reg_rounded, size: 18),
-              label: const Text('Nova Matrícula'),
-              style: FilledButton.styleFrom(
-                backgroundColor: AppTokens.slate900,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
-              ),
+              label: const Text('Nova matrícula'),
             ),
           ),
         ],
@@ -157,18 +153,12 @@ class _EnrollmentsPageState extends ConsumerState<EnrollmentsPage> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.assignment_ind_outlined, size: 64, color: AppTokens.border),
-          const SizedBox(height: 16),
-          Text(
-            _searchController.text.isNotEmpty ? 'Nenhuma matrícula encontrada para esta busca.' : 'Nenhuma matrícula activa.',
-            style: const TextStyle(color: AppTokens.slate600, fontSize: 16, fontWeight: FontWeight.w500),
-          ),
-        ],
-      ),
+    return EduEmptyState(
+      icon: Icons.assignment_ind_outlined,
+      title: _searchController.text.isNotEmpty ? 'Sem resultados' : 'Nenhuma matrícula',
+      message: _searchController.text.isNotEmpty
+          ? 'Não encontrámos matrículas para esta pesquisa.'
+          : 'Registe a primeira matrícula para associar alunos às turmas.',
     );
   }
 

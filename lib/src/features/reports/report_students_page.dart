@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/theme/app_tokens.dart';
+import '../../shared/widgets/edu_section_title.dart';
+import '../../shared/widgets/report_export_tile.dart';
+import '../../shared/widgets/report_kpi_card.dart';
 import '../students/students_controller.dart';
 import '../classes/classes_controller.dart';
 import '../enrollments/enrollments_controller.dart';
@@ -14,11 +18,9 @@ class ReportStudentsPage extends ConsumerStatefulWidget {
 }
 
 class _ReportStudentsPageState extends ConsumerState<ReportStudentsPage> {
-  // Estados para os filtros
   String _selectedAnoLectivo = '2024/2025';
-  String _selectedPeriodicidade = 'ANUAL';
+  String _selectedPeriodicidade = 'Anual';
   String? _selectedTurmaId;
-  String? _selectedTurno;
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +36,7 @@ class _ReportStudentsPageState extends ConsumerState<ReportStudentsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionHeader('INDICADORES ACADÉMICOS'),
-          const SizedBox(height: 16),
+          const EduSectionTitle('Indicadores académicos'),
           LayoutBuilder(
             builder: (context, constraints) {
               final isWide = constraints.maxWidth > 600;
@@ -43,23 +44,30 @@ class _ReportStudentsPageState extends ConsumerState<ReportStudentsPage> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 crossAxisCount: isWide ? 2 : 1,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: isWide ? 3.5 : 4,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: isWide ? 3.2 : 3.8,
                 children: [
-                  _ReportKpiCard(title: 'TOTAL ALUNOS', value: '${students.length}', icon: Icons.people_alt_rounded),
-                  _ReportKpiCard(title: 'VAGAS DISPONÍVEIS', value: '${totalVagas - ocupacao}', icon: Icons.event_seat_rounded),
+                  ReportKpiCard(
+                    title: 'Total de alunos',
+                    value: '${students.length}',
+                    icon: Icons.people_alt_rounded,
+                  ),
+                  ReportKpiCard(
+                    title: 'Vagas disponíveis',
+                    value: '${totalVagas - ocupacao}',
+                    icon: Icons.event_seat_rounded,
+                    accentColor: AppTokens.accentPurple,
+                  ),
                 ],
               );
             },
           ),
-          const SizedBox(height: 40),
-          _buildSectionHeader('GERAÇÃO DE DOCUMENTOS'),
-          const SizedBox(height: 16),
-          
-          _ExportActionTile(
-            label: 'GERAR RELATÓRIOS ACADÉMICOS',
-            subtitle: 'Clique para filtrar por classe, turma, turno ou período.',
+          const SizedBox(height: 28),
+          const EduSectionTitle('Geração de documentos'),
+          ReportExportTile(
+            label: 'Relatório de alunos',
+            subtitle: 'Filtrar por ano lectivo, turma ou turno.',
             icon: Icons.assignment_rounded,
             onTap: () => _showFilterDialog(context),
           ),
@@ -68,132 +76,79 @@ class _ReportStudentsPageState extends ConsumerState<ReportStudentsPage> {
     );
   }
 
-  Widget _buildSectionHeader(String title) {
-    return Text(
-      title,
-      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.black, letterSpacing: 1.5),
-    );
-  }
-
   void _showFilterDialog(BuildContext context) {
     final classes = ref.read(classesStreamProvider).value ?? [];
     final config = ref.read(settingsProvider).value;
-    final students = ref.read(studentsStreamProvider).value ?? [];
-    final enrollments = ref.read(enrollmentsStreamProvider).value ?? [];
 
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          backgroundColor: Colors.white,
-          shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black, width: 2)),
-          title: const Text('FILTROS DO RELATÓRIO', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
-          content: SingleChildScrollView(
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Filtros do relatório'),
+          content: SizedBox(
+            width: 400,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _buildDialogDropdown('PERIODICIDADE', ['MENSAL', 'TRIMESTRAL', 'ANUAL'], _selectedPeriodicidade, (v) => setDialogState(() => _selectedPeriodicidade = v!)),
+                DropdownButtonFormField<String>(
+                  initialValue: _selectedAnoLectivo,
+                  decoration: const InputDecoration(labelText: 'Ano lectivo'),
+                  items: ['2024/2025', '2025/2026']
+                      .map((a) => DropdownMenuItem(value: a, child: Text(a)))
+                      .toList(),
+                  onChanged: (v) => setState(() => _selectedAnoLectivo = v ?? _selectedAnoLectivo),
+                ),
                 const SizedBox(height: 12),
-                _buildDialogDropdown('ANO LECTIVO', ['2024/2025', '2023/2024'], _selectedAnoLectivo, (v) => setDialogState(() => _selectedAnoLectivo = v!)),
+                DropdownButtonFormField<String>(
+                  initialValue: _selectedPeriodicidade,
+                  decoration: const InputDecoration(labelText: 'Periodicidade'),
+                  items: ['Anual', 'Mensal', 'Trimestral']
+                      .map((p) => DropdownMenuItem(value: p, child: Text(p)))
+                      .toList(),
+                  onChanged: (v) => setState(() => _selectedPeriodicidade = v ?? _selectedPeriodicidade),
+                ),
                 const SizedBox(height: 12),
-                _buildDialogDropdown('TURNO', ['TODOS', 'MANHÃ', 'TARDE', 'NOITE'], _selectedTurno ?? 'TODOS', (v) => setDialogState(() => _selectedTurno = v == 'TODOS' ? null : v)),
-                const SizedBox(height: 12),
-                _buildDialogDropdown(
-                  'TURMA ESPECÍFICA', 
-                  ['TODAS', ...classes.map((t) => t.nomeTurma)], 
-                  _selectedTurmaId ?? 'TODAS', 
-                  (v) => setDialogState(() => _selectedTurmaId = v == 'TODAS' ? null : v)
+                DropdownButtonFormField<String?>(
+                  initialValue: _selectedTurmaId,
+                  decoration: const InputDecoration(labelText: 'Turma'),
+                  items: [
+                    const DropdownMenuItem(value: null, child: Text('Todas')),
+                    ...classes.map((c) => DropdownMenuItem(value: c.id, child: Text(c.nomeTurma))),
+                  ],
+                  onChanged: (v) => setState(() => _selectedTurmaId = v),
                 ),
               ],
             ),
           ),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCELAR', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))),
+            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancelar')),
             FilledButton(
               onPressed: () async {
-                Navigator.pop(context);
-                // Aqui chamamos o gerador passando os filtros selecionados
+                Navigator.pop(ctx);
+                final students = ref.read(studentsStreamProvider).value ?? [];
+                final enrollments = ref.read(enrollmentsStreamProvider).value ?? [];
+                final turmas = ref.read(classesStreamProvider).value ?? [];
+
+                var filteredEnrollments =
+                    enrollments.where((e) => e.anoLectivo == _selectedAnoLectivo && e.estado == 'ativa');
+                if (_selectedTurmaId != null) {
+                  filteredEnrollments = filteredEnrollments.where((e) => e.turmaId == _selectedTurmaId);
+                }
+                final alunoIds = filteredEnrollments.map((e) => e.alunoId).toSet();
+                final filteredStudents = students.where((s) => alunoIds.contains(s.id)).toList();
+
                 await ReportPdfGenerator.generateStudentList(
-                  alunos: students,
-                  matriculas: enrollments,
-                  turmas: classes,
+                  alunos: filteredStudents,
+                  matriculas: filteredEnrollments.toList(),
+                  turmas: turmas,
                   anoLectivo: _selectedAnoLectivo,
                   config: config,
-                  // Adicionar lógica de filtro no gerador baseado nos estados acima
                 );
               },
-              style: FilledButton.styleFrom(backgroundColor: Colors.black),
-              child: const Text('GERAR PDF'),
+              child: const Text('Gerar PDF'),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildDialogDropdown(String label, List<String> items, String value, Function(String?) onChanged) {
-    return DropdownButtonFormField<String>(
-      initialValue: value,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-        border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
-      ),
-      items: items.map((e) => DropdownMenuItem(value: e, child: Text(e, style: const TextStyle(fontSize: 12)))).toList(),
-      onChanged: onChanged,
-    );
-  }
-}
-
-class _ReportKpiCard extends StatelessWidget {
-  final String title;
-  final String value;
-  final IconData icon;
-  const _ReportKpiCard({required this.title, required this.value, required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.black, width: 2), borderRadius: BorderRadius.circular(8)),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.black, size: 24),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(title, style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w900, color: Colors.black54)),
-                FittedBox(fit: BoxFit.scaleDown, child: Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Colors.black))),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ExportActionTile extends StatelessWidget {
-  final String label;
-  final String subtitle;
-  final IconData icon;
-  final VoidCallback onTap;
-  const _ExportActionTile({required this.label, required this.subtitle, required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.black, width: 1.5), borderRadius: BorderRadius.circular(8)),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.black, size: 24),
-        title: Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.black)),
-        subtitle: Text(subtitle, style: const TextStyle(fontSize: 10, color: Colors.black54, fontWeight: FontWeight.bold)),
-        trailing: const Icon(Icons.chevron_right_rounded, color: Colors.black),
-        onTap: onTap,
       ),
     );
   }

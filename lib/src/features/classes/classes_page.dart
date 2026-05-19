@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_tokens.dart';
+import '../../shared/widgets/edu_card.dart';
+import '../../shared/widgets/edu_empty_state.dart';
 import '../../domain/entities/turma.dart';
 import '../../domain/entities/utilizador.dart';
 import '../../state/session.dart';
@@ -40,7 +42,7 @@ class ClassesPage extends ConsumerWidget {
                   },
                 );
               },
-              loading: () => const Center(child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black)),
+              loading: () => const Center(child: CircularProgressIndicator(strokeWidth: 2, color: AppTokens.primary)),
               error: (err, _) => Center(child: Text('Erro ao carregar turmas: $err')),
             ),
           ),
@@ -51,12 +53,7 @@ class ClassesPage extends ConsumerWidget {
               child: FilledButton.icon(
                 onPressed: () => _showClassForm(context),
                 icon: const Icon(Icons.add_home_work_outlined, size: 18),
-                label: const Text('NOVA TURMA'),
-                style: FilledButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
-                ),
+                label: const Text('Nova turma'),
               ),
             ),
           ],
@@ -66,18 +63,10 @@ class ClassesPage extends ConsumerWidget {
   }
 
   Widget _buildEmptyState() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.class_outlined, size: 64, color: AppTokens.border),
-          SizedBox(height: 16),
-          Text(
-            'NENHUMA TURMA REGISTADA.',
-            style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1),
-          ),
-        ],
-      ),
+    return const EduEmptyState(
+      icon: Icons.class_outlined,
+      title: 'Nenhuma turma',
+      message: 'Crie a primeira turma para organizar alunos e matrículas.',
     );
   }
 
@@ -101,13 +90,9 @@ class _ClassCard extends ConsumerWidget {
 
     return Opacity(
       opacity: isDeleted ? 0.5 : 1.0,
-      child: Container(
+      child: EduCard(
         padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: isDeleted ? Colors.grey.shade100 : Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.black, width: isDeleted ? 1 : 1.5),
-        ),
+        color: isDeleted ? AppTokens.background : null,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -117,17 +102,21 @@ class _ClassCard extends ConsumerWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: isDeleted ? Colors.grey : Colors.black,
-                    borderRadius: BorderRadius.circular(4),
+                    color: isDeleted ? AppTokens.textMuted : AppTokens.primary.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(AppTokens.radiusSM),
                   ),
                   child: Text(
-                    isDeleted ? 'INACTIVA' : turma.turno.toUpperCase(),
-                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
+                    isDeleted ? 'Inactiva' : turma.turno,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: isDeleted ? Colors.white : AppTokens.primaryDark,
+                    ),
                   ),
                 ),
                 if (!isDeleted)
                   IconButton(
-                    icon: const Icon(Icons.edit_outlined, size: 18, color: Colors.black),
+                    icon: const Icon(Icons.edit_outlined, size: 18, color: AppTokens.primary),
                     onPressed: () => _showEditForm(context),
                   )
                 else if (isAdmin) ...[
@@ -151,13 +140,13 @@ class _ClassCard extends ConsumerWidget {
             ),
             const Spacer(),
             Text(
-              turma.nomeTurma.toUpperCase(),
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Colors.black, letterSpacing: 0.5),
+              turma.nomeTurma,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: AppTokens.textPrimary),
             ),
             const SizedBox(height: 4),
             Text(
-              'SALA: ${turma.numeroSala}  •  VAGAS: ${turma.limiteAlunos}',
-              style: const TextStyle(color: Colors.black87, fontSize: 12, fontWeight: FontWeight.w700),
+              'Sala ${turma.numeroSala} · ${turma.limiteAlunos} vagas',
+              style: const TextStyle(color: AppTokens.textSecondary, fontSize: 13),
             ),
           ],
         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/theme/app_tokens.dart';
+import '../../../shared/widgets/edu_form_styles.dart';
 import '../../../core/providers/database_provider.dart';
 import '../../../data/local/drift/mappers/ano_lectivo_mapper.dart';
 import '../../../domain/entities/turma.dart';
@@ -71,7 +72,7 @@ class _ClassFormDialogState extends ConsumerState<ClassFormDialog> {
     if (_formKey.currentState!.validate()) {
       if (_selectedAnoLectivoId == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('DEVE SELECIONAR UM ANO LECTIVO ATIVO'), backgroundColor: Colors.red),
+          const SnackBar(content: Text('Seleccione um ano lectivo activo.'), backgroundColor: AppTokens.error),
         );
         return;
       }
@@ -102,14 +103,13 @@ class _ClassFormDialogState extends ConsumerState<ClassFormDialog> {
     final isCompact = width < 640;
 
     return Dialog(
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTokens.radiusLG), side: const BorderSide(color: Colors.black, width: 2)),
+      shape: EduFormStyles.dialogShape(),
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: isCompact ? width * 0.96 : 500),
+        constraints: EduFormStyles.dialogConstraints(context),
         child: Padding(
-          padding: EdgeInsets.all(isCompact ? 12 : AppTokens.paddingLG),
+          padding: EduFormStyles.dialogPadding(context),
           child: _isLoadingAnos 
-            ? const Center(child: CircularProgressIndicator(color: Colors.black))
+            ? const Center(child: CircularProgressIndicator(color: AppTokens.primary))
             : Form(
                 key: _formKey,
                 child: SingleChildScrollView(
@@ -117,33 +117,14 @@ class _ClassFormDialogState extends ConsumerState<ClassFormDialog> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              widget.turma == null ? 'CRIAR NOVA TURMA' : 'EDITAR TURMA',
-                              style: TextStyle(fontSize: isCompact ? 15 : 18, fontWeight: FontWeight.w900, color: Colors.black, letterSpacing: 1),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close, color: Colors.black)),
-                        ],
+                      EduFormStyles.dialogHeader(
+                        context,
+                        widget.turma == null ? 'Nova turma' : 'Editar turma',
                       ),
-                      const Divider(color: Colors.black, thickness: 2, height: 32),
-                      
-                      if (_anosLectivos.isEmpty) 
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          margin: const EdgeInsets.only(bottom: 16),
-                          decoration: BoxDecoration(color: Colors.red.shade50, border: Border.all(color: Colors.red), borderRadius: BorderRadius.circular(4)),
-                          child: const Row(
-                            children: [
-                              Icon(Icons.warning_amber_rounded, color: Colors.red),
-                              SizedBox(width: 8),
-                              Expanded(child: Text('AVISO: NÃO EXISTE NENHUM ANO LECTIVO CADASTRADO NO SISTEMA.', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 11))),
-                            ],
-                          ),
+                      const SizedBox(height: AppTokens.paddingMD),
+                      if (_anosLectivos.isEmpty)
+                        EduFormStyles.warningBanner(
+                          'Não existe nenhum ano lectivo cadastrado. Crie um ano lectivo antes de adicionar turmas.',
                         ),
 
                       _buildDropdown('Ano Lectivo', _anosLectivos.map((a) => a.ano).toList(), (val) {
@@ -174,46 +155,12 @@ class _ClassFormDialogState extends ConsumerState<ClassFormDialog> {
                       
                       _buildDropdown('Turno', ['Manhã', 'Tarde'], (val) => setState(() => _turno = val!), value: _turno),
                       
-                      const SizedBox(height: 32),
-                      isCompact
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text('CANCELAR', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                                ),
-                                const SizedBox(height: 8),
-                                FilledButton(
-                                  onPressed: _anosLectivos.isEmpty ? null : _save,
-                                  style: FilledButton.styleFrom(
-                                    backgroundColor: Colors.black,
-                                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                  ),
-                                  child: const Text('GUARDAR TURMA'),
-                                ),
-                              ],
-                            )
-                          : Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text('CANCELAR', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                                ),
-                                const SizedBox(width: 12),
-                                FilledButton(
-                                  onPressed: _anosLectivos.isEmpty ? null : _save,
-                                  style: FilledButton.styleFrom(
-                                    backgroundColor: Colors.black,
-                                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                  ),
-                                  child: const Text('GUARDAR TURMA'),
-                                ),
-                              ],
-                            ),
+                      const SizedBox(height: AppTokens.paddingLG),
+                      EduFormStyles.dialogActions(
+                        onCancel: () => Navigator.pop(context),
+                        onConfirm: _anosLectivos.isEmpty ? null : _save,
+                        confirmLabel: 'Guardar turma',
+                      ),
                     ],
                   ),
                 ),
@@ -228,33 +175,16 @@ class _ClassFormDialogState extends ConsumerState<ClassFormDialog> {
       controller: controller,
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
       textCapitalization: capitalize ? TextCapitalization.words : TextCapitalization.none,
-      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
-      decoration: InputDecoration(
-        labelText: label.toUpperCase(),
-        labelStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-        prefixIcon: Icon(icon, size: 20, color: Colors.black),
-        border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-        enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-        focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.5)),
-        filled: true,
-        fillColor: Colors.white,
-      ),
-      validator: (v) => v!.isEmpty ? 'OBRIGATÓRIO' : null,
+      decoration: EduFormStyles.inputDecoration(label, icon: icon),
+      validator: (v) => (v == null || v.isEmpty) ? 'Campo obrigatório' : null,
     );
   }
 
   Widget _buildDropdown(String label, List<String> items, Function(String?) onChanged, {String? value}) {
     return DropdownButtonFormField<String>(
       initialValue: (value != null && items.contains(value)) ? value : (items.isNotEmpty ? items.first : null),
-      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
-      decoration: InputDecoration(
-        labelText: label.toUpperCase(),
-        labelStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-        border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-        enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-        focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.5)),
-      ),
-      items: items.map((e) => DropdownMenuItem(value: e, child: Text(e.toUpperCase()))).toList(),
+      decoration: EduFormStyles.inputDecoration(label),
+      items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
       onChanged: onChanged,
     );
   }

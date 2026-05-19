@@ -4,6 +4,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import '../../../domain/entities/mensalidade.dart';
 import '../../../domain/entities/aluno.dart';
+import '../../../core/services/pdf_font_service.dart';
 import '../../../domain/entities/configuracao.dart';
 
 class ReceiptPdfGenerator {
@@ -12,7 +13,7 @@ class ReceiptPdfGenerator {
     required Aluno aluno,
     ConfiguracaoInstitucional? config,
   }) async {
-    final doc = pw.Document();
+    final doc = pw.Document(theme: await PdfFontService.theme());
 
     final currencyFmt = NumberFormat.currency(locale: 'pt_AO', symbol: 'KZ');
     final dateFmt = DateFormat('dd/MM/yyyy');

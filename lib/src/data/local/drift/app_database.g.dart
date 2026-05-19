@@ -2724,6 +2724,1561 @@ return map;
 @override
 String toString() {return (StringBuffer('EvidenciaPagamentosCompanion(')..write('localId: $localId, ')..write('id: $id, ')..write('tipoArquivo: $tipoArquivo, ')..write('nomeArquivo: $nomeArquivo, ')..write('urlRemota: $urlRemota, ')..write('caminhoLocal: $caminhoLocal, ')..write('tamanhoBytes: $tamanhoBytes, ')..write('mimeType: $mimeType, ')..write('createdAt: $createdAt, ')..write('syncStatus: $syncStatus')..write(')')).toString();}
 }
+class $FuncionariosTable extends Funcionarios with TableInfo<$FuncionariosTable, FuncionarioData>{
+@override final GeneratedDatabase attachedDatabase;
+final String? _alias;
+$FuncionariosTable(this.attachedDatabase, [this._alias]);
+static const VerificationMeta _idMeta = const VerificationMeta('id');
+@override
+late final GeneratedColumn<String> id = GeneratedColumn<String>('id', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _createdAtMeta = const VerificationMeta('createdAt');
+@override
+late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>('created_at', aliasedName, false, type: DriftSqlType.dateTime, requiredDuringInsert: true);
+static const VerificationMeta _updatedAtMeta = const VerificationMeta('updatedAt');
+@override
+late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>('updated_at', aliasedName, false, type: DriftSqlType.dateTime, requiredDuringInsert: true);
+static const VerificationMeta _syncStatusMeta = const VerificationMeta('syncStatus');
+@override
+late final GeneratedColumnWithTypeConverter<SyncStatus, int> syncStatus = GeneratedColumn<int>('sync_status', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true).withConverter<SyncStatus>($FuncionariosTable.$convertersyncStatus);
+static const VerificationMeta _createdByMeta = const VerificationMeta('createdBy');
+@override
+late final GeneratedColumn<String> createdBy = GeneratedColumn<String>('created_by', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+static const VerificationMeta _updatedByMeta = const VerificationMeta('updatedBy');
+@override
+late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>('updated_by', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+static const VerificationMeta _isDeletedMeta = const VerificationMeta('isDeleted');
+@override
+late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>('is_deleted', aliasedName, false, type: DriftSqlType.bool, requiredDuringInsert: false, defaultConstraints: GeneratedColumn.constraintIsAlways('CHECK ("is_deleted" IN (0, 1))'), defaultValue: const Constant(false));
+static const VerificationMeta _localIdMeta = const VerificationMeta('localId');
+@override
+late final GeneratedColumn<int> localId = GeneratedColumn<int>('local_id', aliasedName, false, hasAutoIncrement: true, type: DriftSqlType.int, requiredDuringInsert: false, defaultConstraints: GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+static const VerificationMeta _numeroFuncionarioMeta = const VerificationMeta('numeroFuncionario');
+@override
+late final GeneratedColumn<String> numeroFuncionario = GeneratedColumn<String>('numero_funcionario', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true, defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+static const VerificationMeta _nomeCompletoMeta = const VerificationMeta('nomeCompleto');
+@override
+late final GeneratedColumn<String> nomeCompleto = GeneratedColumn<String>('nome_completo', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _cargoMeta = const VerificationMeta('cargo');
+@override
+late final GeneratedColumn<String> cargo = GeneratedColumn<String>('cargo', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _emailMeta = const VerificationMeta('email');
+@override
+late final GeneratedColumn<String> email = GeneratedColumn<String>('email', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+static const VerificationMeta _telefoneMeta = const VerificationMeta('telefone');
+@override
+late final GeneratedColumn<String> telefone = GeneratedColumn<String>('telefone', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _documentoIdentidadeMeta = const VerificationMeta('documentoIdentidade');
+@override
+late final GeneratedColumn<String> documentoIdentidade = GeneratedColumn<String>('documento_identidade', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+static const VerificationMeta _dataAdmissaoMeta = const VerificationMeta('dataAdmissao');
+@override
+late final GeneratedColumn<DateTime> dataAdmissao = GeneratedColumn<DateTime>('data_admissao', aliasedName, false, type: DriftSqlType.dateTime, requiredDuringInsert: true);
+static const VerificationMeta _salarioBaseMeta = const VerificationMeta('salarioBase');
+@override
+late final GeneratedColumn<double> salarioBase = GeneratedColumn<double>('salario_base', aliasedName, false, type: DriftSqlType.double, requiredDuringInsert: true);
+static const VerificationMeta _statusMeta = const VerificationMeta('status');
+@override
+late final GeneratedColumnWithTypeConverter<FuncionarioStatus, int> status = GeneratedColumn<int>('status', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true).withConverter<FuncionarioStatus>($FuncionariosTable.$converterstatus);
+static const VerificationMeta _ultimaPresencaMeta = const VerificationMeta('ultimaPresenca');
+@override
+late final GeneratedColumn<DateTime> ultimaPresenca = GeneratedColumn<DateTime>('ultima_presenca', aliasedName, true, type: DriftSqlType.dateTime, requiredDuringInsert: false);
+static const VerificationMeta _observacoesMeta = const VerificationMeta('observacoes');
+@override
+late final GeneratedColumn<String> observacoes = GeneratedColumn<String>('observacoes', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+@override
+List<GeneratedColumn> get $columns => [id, createdAt, updatedAt, syncStatus, createdBy, updatedBy, isDeleted, localId, numeroFuncionario, nomeCompleto, cargo, email, telefone, documentoIdentidade, dataAdmissao, salarioBase, status, ultimaPresenca, observacoes];
+@override
+String get aliasedName => _alias ?? actualTableName;
+@override
+ String get actualTableName => $name;
+static const String $name = 'funcionarios';
+@override
+VerificationContext validateIntegrity(Insertable<FuncionarioData> instance, {bool isInserting = false}) {
+final context = VerificationContext();
+final data = instance.toColumns(true);
+if (data.containsKey('id')) {
+context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));} else if (isInserting) {
+context.missing(_idMeta);
+}
+if (data.containsKey('created_at')) {
+context.handle(_createdAtMeta, createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));} else if (isInserting) {
+context.missing(_createdAtMeta);
+}
+if (data.containsKey('updated_at')) {
+context.handle(_updatedAtMeta, updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));} else if (isInserting) {
+context.missing(_updatedAtMeta);
+}
+context.handle(_syncStatusMeta, const VerificationResult.success());if (data.containsKey('created_by')) {
+context.handle(_createdByMeta, createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta));}if (data.containsKey('updated_by')) {
+context.handle(_updatedByMeta, updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta));}if (data.containsKey('is_deleted')) {
+context.handle(_isDeletedMeta, isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta));}if (data.containsKey('local_id')) {
+context.handle(_localIdMeta, localId.isAcceptableOrUnknown(data['local_id']!, _localIdMeta));}if (data.containsKey('numero_funcionario')) {
+context.handle(_numeroFuncionarioMeta, numeroFuncionario.isAcceptableOrUnknown(data['numero_funcionario']!, _numeroFuncionarioMeta));} else if (isInserting) {
+context.missing(_numeroFuncionarioMeta);
+}
+if (data.containsKey('nome_completo')) {
+context.handle(_nomeCompletoMeta, nomeCompleto.isAcceptableOrUnknown(data['nome_completo']!, _nomeCompletoMeta));} else if (isInserting) {
+context.missing(_nomeCompletoMeta);
+}
+if (data.containsKey('cargo')) {
+context.handle(_cargoMeta, cargo.isAcceptableOrUnknown(data['cargo']!, _cargoMeta));} else if (isInserting) {
+context.missing(_cargoMeta);
+}
+if (data.containsKey('email')) {
+context.handle(_emailMeta, email.isAcceptableOrUnknown(data['email']!, _emailMeta));}if (data.containsKey('telefone')) {
+context.handle(_telefoneMeta, telefone.isAcceptableOrUnknown(data['telefone']!, _telefoneMeta));} else if (isInserting) {
+context.missing(_telefoneMeta);
+}
+if (data.containsKey('documento_identidade')) {
+context.handle(_documentoIdentidadeMeta, documentoIdentidade.isAcceptableOrUnknown(data['documento_identidade']!, _documentoIdentidadeMeta));}if (data.containsKey('data_admissao')) {
+context.handle(_dataAdmissaoMeta, dataAdmissao.isAcceptableOrUnknown(data['data_admissao']!, _dataAdmissaoMeta));} else if (isInserting) {
+context.missing(_dataAdmissaoMeta);
+}
+if (data.containsKey('salario_base')) {
+context.handle(_salarioBaseMeta, salarioBase.isAcceptableOrUnknown(data['salario_base']!, _salarioBaseMeta));} else if (isInserting) {
+context.missing(_salarioBaseMeta);
+}
+context.handle(_statusMeta, const VerificationResult.success());if (data.containsKey('ultima_presenca')) {
+context.handle(_ultimaPresencaMeta, ultimaPresenca.isAcceptableOrUnknown(data['ultima_presenca']!, _ultimaPresencaMeta));}if (data.containsKey('observacoes')) {
+context.handle(_observacoesMeta, observacoes.isAcceptableOrUnknown(data['observacoes']!, _observacoesMeta));}return context;
+}
+@override
+Set<GeneratedColumn> get $primaryKey => {localId};
+@override FuncionarioData map(Map<String, dynamic> data, {String? tablePrefix})  {
+final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';return FuncionarioData(id: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}id'])!, createdAt: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!, updatedAt: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!, syncStatus: $FuncionariosTable.$convertersyncStatus.fromSql(attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}sync_status'])!), createdBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}created_by']), updatedBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}updated_by']), isDeleted: attachedDatabase.typeMapping.read(DriftSqlType.bool, data['${effectivePrefix}is_deleted'])!, localId: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}local_id'])!, numeroFuncionario: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}numero_funcionario'])!, nomeCompleto: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}nome_completo'])!, cargo: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}cargo'])!, email: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}email']), telefone: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}telefone'])!, documentoIdentidade: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}documento_identidade']), dataAdmissao: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}data_admissao'])!, salarioBase: attachedDatabase.typeMapping.read(DriftSqlType.double, data['${effectivePrefix}salario_base'])!, status: $FuncionariosTable.$converterstatus.fromSql(attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}status'])!), ultimaPresenca: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}ultima_presenca']), observacoes: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}observacoes']), );
+}
+@override
+$FuncionariosTable createAlias(String alias) {
+return $FuncionariosTable(attachedDatabase, alias);}static JsonTypeConverter2<SyncStatus,int,int> $convertersyncStatus = const EnumIndexConverter<SyncStatus>(SyncStatus.values);static JsonTypeConverter2<FuncionarioStatus,int,int> $converterstatus = const EnumIndexConverter<FuncionarioStatus>(FuncionarioStatus.values);}class FuncionarioData extends DataClass implements Insertable<FuncionarioData> 
+{
+final String id;
+final DateTime createdAt;
+final DateTime updatedAt;
+final SyncStatus syncStatus;
+final String? createdBy;
+final String? updatedBy;
+final bool isDeleted;
+final int localId;
+final String numeroFuncionario;
+final String nomeCompleto;
+final String cargo;
+final String? email;
+final String telefone;
+final String? documentoIdentidade;
+final DateTime dataAdmissao;
+final double salarioBase;
+final FuncionarioStatus status;
+final DateTime? ultimaPresenca;
+final String? observacoes;
+const FuncionarioData({required this.id, required this.createdAt, required this.updatedAt, required this.syncStatus, this.createdBy, this.updatedBy, required this.isDeleted, required this.localId, required this.numeroFuncionario, required this.nomeCompleto, required this.cargo, this.email, required this.telefone, this.documentoIdentidade, required this.dataAdmissao, required this.salarioBase, required this.status, this.ultimaPresenca, this.observacoes});@override
+Map<String, Expression> toColumns(bool nullToAbsent) {
+final map = <String, Expression> {};map['id'] = Variable<String>(id);
+map['created_at'] = Variable<DateTime>(createdAt);
+map['updated_at'] = Variable<DateTime>(updatedAt);
+{map['sync_status'] = Variable<int>($FuncionariosTable.$convertersyncStatus.toSql(syncStatus));
+}if (!nullToAbsent || createdBy != null){map['created_by'] = Variable<String>(createdBy);
+}if (!nullToAbsent || updatedBy != null){map['updated_by'] = Variable<String>(updatedBy);
+}map['is_deleted'] = Variable<bool>(isDeleted);
+map['local_id'] = Variable<int>(localId);
+map['numero_funcionario'] = Variable<String>(numeroFuncionario);
+map['nome_completo'] = Variable<String>(nomeCompleto);
+map['cargo'] = Variable<String>(cargo);
+if (!nullToAbsent || email != null){map['email'] = Variable<String>(email);
+}map['telefone'] = Variable<String>(telefone);
+if (!nullToAbsent || documentoIdentidade != null){map['documento_identidade'] = Variable<String>(documentoIdentidade);
+}map['data_admissao'] = Variable<DateTime>(dataAdmissao);
+map['salario_base'] = Variable<double>(salarioBase);
+{map['status'] = Variable<int>($FuncionariosTable.$converterstatus.toSql(status));
+}if (!nullToAbsent || ultimaPresenca != null){map['ultima_presenca'] = Variable<DateTime>(ultimaPresenca);
+}if (!nullToAbsent || observacoes != null){map['observacoes'] = Variable<String>(observacoes);
+}return map; 
+}
+FuncionariosCompanion toCompanion(bool nullToAbsent) {
+return FuncionariosCompanion(id: Value(id),createdAt: Value(createdAt),updatedAt: Value(updatedAt),syncStatus: Value(syncStatus),createdBy: createdBy == null && nullToAbsent ? const Value.absent() : Value(createdBy),updatedBy: updatedBy == null && nullToAbsent ? const Value.absent() : Value(updatedBy),isDeleted: Value(isDeleted),localId: Value(localId),numeroFuncionario: Value(numeroFuncionario),nomeCompleto: Value(nomeCompleto),cargo: Value(cargo),email: email == null && nullToAbsent ? const Value.absent() : Value(email),telefone: Value(telefone),documentoIdentidade: documentoIdentidade == null && nullToAbsent ? const Value.absent() : Value(documentoIdentidade),dataAdmissao: Value(dataAdmissao),salarioBase: Value(salarioBase),status: Value(status),ultimaPresenca: ultimaPresenca == null && nullToAbsent ? const Value.absent() : Value(ultimaPresenca),observacoes: observacoes == null && nullToAbsent ? const Value.absent() : Value(observacoes),);
+}
+factory FuncionarioData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
+serializer ??= driftRuntimeOptions.defaultSerializer;
+return FuncionarioData(id: serializer.fromJson<String>(json['id']),createdAt: serializer.fromJson<DateTime>(json['createdAt']),updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),syncStatus: $FuncionariosTable.$convertersyncStatus.fromJson(serializer.fromJson<int>(json['syncStatus'])),createdBy: serializer.fromJson<String?>(json['createdBy']),updatedBy: serializer.fromJson<String?>(json['updatedBy']),isDeleted: serializer.fromJson<bool>(json['isDeleted']),localId: serializer.fromJson<int>(json['localId']),numeroFuncionario: serializer.fromJson<String>(json['numeroFuncionario']),nomeCompleto: serializer.fromJson<String>(json['nomeCompleto']),cargo: serializer.fromJson<String>(json['cargo']),email: serializer.fromJson<String?>(json['email']),telefone: serializer.fromJson<String>(json['telefone']),documentoIdentidade: serializer.fromJson<String?>(json['documentoIdentidade']),dataAdmissao: serializer.fromJson<DateTime>(json['dataAdmissao']),salarioBase: serializer.fromJson<double>(json['salarioBase']),status: $FuncionariosTable.$converterstatus.fromJson(serializer.fromJson<int>(json['status'])),ultimaPresenca: serializer.fromJson<DateTime?>(json['ultimaPresenca']),observacoes: serializer.fromJson<String?>(json['observacoes']),);}
+@override Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+serializer ??= driftRuntimeOptions.defaultSerializer;
+return <String, dynamic>{
+'id': serializer.toJson<String>(id),'createdAt': serializer.toJson<DateTime>(createdAt),'updatedAt': serializer.toJson<DateTime>(updatedAt),'syncStatus': serializer.toJson<int>($FuncionariosTable.$convertersyncStatus.toJson(syncStatus)),'createdBy': serializer.toJson<String?>(createdBy),'updatedBy': serializer.toJson<String?>(updatedBy),'isDeleted': serializer.toJson<bool>(isDeleted),'localId': serializer.toJson<int>(localId),'numeroFuncionario': serializer.toJson<String>(numeroFuncionario),'nomeCompleto': serializer.toJson<String>(nomeCompleto),'cargo': serializer.toJson<String>(cargo),'email': serializer.toJson<String?>(email),'telefone': serializer.toJson<String>(telefone),'documentoIdentidade': serializer.toJson<String?>(documentoIdentidade),'dataAdmissao': serializer.toJson<DateTime>(dataAdmissao),'salarioBase': serializer.toJson<double>(salarioBase),'status': serializer.toJson<int>($FuncionariosTable.$converterstatus.toJson(status)),'ultimaPresenca': serializer.toJson<DateTime?>(ultimaPresenca),'observacoes': serializer.toJson<String?>(observacoes),};}FuncionarioData copyWith({String? id,DateTime? createdAt,DateTime? updatedAt,SyncStatus? syncStatus,Value<String?> createdBy = const Value.absent(),Value<String?> updatedBy = const Value.absent(),bool? isDeleted,int? localId,String? numeroFuncionario,String? nomeCompleto,String? cargo,Value<String?> email = const Value.absent(),String? telefone,Value<String?> documentoIdentidade = const Value.absent(),DateTime? dataAdmissao,double? salarioBase,FuncionarioStatus? status,Value<DateTime?> ultimaPresenca = const Value.absent(),Value<String?> observacoes = const Value.absent()}) => FuncionarioData(id: id ?? this.id,createdAt: createdAt ?? this.createdAt,updatedAt: updatedAt ?? this.updatedAt,syncStatus: syncStatus ?? this.syncStatus,createdBy: createdBy.present ? createdBy.value : this.createdBy,updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,isDeleted: isDeleted ?? this.isDeleted,localId: localId ?? this.localId,numeroFuncionario: numeroFuncionario ?? this.numeroFuncionario,nomeCompleto: nomeCompleto ?? this.nomeCompleto,cargo: cargo ?? this.cargo,email: email.present ? email.value : this.email,telefone: telefone ?? this.telefone,documentoIdentidade: documentoIdentidade.present ? documentoIdentidade.value : this.documentoIdentidade,dataAdmissao: dataAdmissao ?? this.dataAdmissao,salarioBase: salarioBase ?? this.salarioBase,status: status ?? this.status,ultimaPresenca: ultimaPresenca.present ? ultimaPresenca.value : this.ultimaPresenca,observacoes: observacoes.present ? observacoes.value : this.observacoes,);FuncionarioData copyWithCompanion(FuncionariosCompanion data) {
+return FuncionarioData(
+id: data.id.present ? data.id.value : this.id,createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,syncStatus: data.syncStatus.present ? data.syncStatus.value : this.syncStatus,createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,localId: data.localId.present ? data.localId.value : this.localId,numeroFuncionario: data.numeroFuncionario.present ? data.numeroFuncionario.value : this.numeroFuncionario,nomeCompleto: data.nomeCompleto.present ? data.nomeCompleto.value : this.nomeCompleto,cargo: data.cargo.present ? data.cargo.value : this.cargo,email: data.email.present ? data.email.value : this.email,telefone: data.telefone.present ? data.telefone.value : this.telefone,documentoIdentidade: data.documentoIdentidade.present ? data.documentoIdentidade.value : this.documentoIdentidade,dataAdmissao: data.dataAdmissao.present ? data.dataAdmissao.value : this.dataAdmissao,salarioBase: data.salarioBase.present ? data.salarioBase.value : this.salarioBase,status: data.status.present ? data.status.value : this.status,ultimaPresenca: data.ultimaPresenca.present ? data.ultimaPresenca.value : this.ultimaPresenca,observacoes: data.observacoes.present ? data.observacoes.value : this.observacoes,);
+}
+@override
+String toString() {return (StringBuffer('FuncionarioData(')..write('id: $id, ')..write('createdAt: $createdAt, ')..write('updatedAt: $updatedAt, ')..write('syncStatus: $syncStatus, ')..write('createdBy: $createdBy, ')..write('updatedBy: $updatedBy, ')..write('isDeleted: $isDeleted, ')..write('localId: $localId, ')..write('numeroFuncionario: $numeroFuncionario, ')..write('nomeCompleto: $nomeCompleto, ')..write('cargo: $cargo, ')..write('email: $email, ')..write('telefone: $telefone, ')..write('documentoIdentidade: $documentoIdentidade, ')..write('dataAdmissao: $dataAdmissao, ')..write('salarioBase: $salarioBase, ')..write('status: $status, ')..write('ultimaPresenca: $ultimaPresenca, ')..write('observacoes: $observacoes')..write(')')).toString();}
+@override
+ int get hashCode => Object.hash(id, createdAt, updatedAt, syncStatus, createdBy, updatedBy, isDeleted, localId, numeroFuncionario, nomeCompleto, cargo, email, telefone, documentoIdentidade, dataAdmissao, salarioBase, status, ultimaPresenca, observacoes);@override
+bool operator ==(Object other) => identical(this, other) || (other is FuncionarioData && other.id == this.id && other.createdAt == this.createdAt && other.updatedAt == this.updatedAt && other.syncStatus == this.syncStatus && other.createdBy == this.createdBy && other.updatedBy == this.updatedBy && other.isDeleted == this.isDeleted && other.localId == this.localId && other.numeroFuncionario == this.numeroFuncionario && other.nomeCompleto == this.nomeCompleto && other.cargo == this.cargo && other.email == this.email && other.telefone == this.telefone && other.documentoIdentidade == this.documentoIdentidade && other.dataAdmissao == this.dataAdmissao && other.salarioBase == this.salarioBase && other.status == this.status && other.ultimaPresenca == this.ultimaPresenca && other.observacoes == this.observacoes);
+}class FuncionariosCompanion extends UpdateCompanion<FuncionarioData> {
+final Value<String> id;
+final Value<DateTime> createdAt;
+final Value<DateTime> updatedAt;
+final Value<SyncStatus> syncStatus;
+final Value<String?> createdBy;
+final Value<String?> updatedBy;
+final Value<bool> isDeleted;
+final Value<int> localId;
+final Value<String> numeroFuncionario;
+final Value<String> nomeCompleto;
+final Value<String> cargo;
+final Value<String?> email;
+final Value<String> telefone;
+final Value<String?> documentoIdentidade;
+final Value<DateTime> dataAdmissao;
+final Value<double> salarioBase;
+final Value<FuncionarioStatus> status;
+final Value<DateTime?> ultimaPresenca;
+final Value<String?> observacoes;
+const FuncionariosCompanion({this.id = const Value.absent(),this.createdAt = const Value.absent(),this.updatedAt = const Value.absent(),this.syncStatus = const Value.absent(),this.createdBy = const Value.absent(),this.updatedBy = const Value.absent(),this.isDeleted = const Value.absent(),this.localId = const Value.absent(),this.numeroFuncionario = const Value.absent(),this.nomeCompleto = const Value.absent(),this.cargo = const Value.absent(),this.email = const Value.absent(),this.telefone = const Value.absent(),this.documentoIdentidade = const Value.absent(),this.dataAdmissao = const Value.absent(),this.salarioBase = const Value.absent(),this.status = const Value.absent(),this.ultimaPresenca = const Value.absent(),this.observacoes = const Value.absent(),});
+FuncionariosCompanion.insert({required String id,required DateTime createdAt,required DateTime updatedAt,required SyncStatus syncStatus,this.createdBy = const Value.absent(),this.updatedBy = const Value.absent(),this.isDeleted = const Value.absent(),this.localId = const Value.absent(),required String numeroFuncionario,required String nomeCompleto,required String cargo,this.email = const Value.absent(),required String telefone,this.documentoIdentidade = const Value.absent(),required DateTime dataAdmissao,required double salarioBase,required FuncionarioStatus status,this.ultimaPresenca = const Value.absent(),this.observacoes = const Value.absent(),}): id = Value(id), createdAt = Value(createdAt), updatedAt = Value(updatedAt), syncStatus = Value(syncStatus), numeroFuncionario = Value(numeroFuncionario), nomeCompleto = Value(nomeCompleto), cargo = Value(cargo), telefone = Value(telefone), dataAdmissao = Value(dataAdmissao), salarioBase = Value(salarioBase), status = Value(status);
+static Insertable<FuncionarioData> custom({Expression<String>? id, 
+Expression<DateTime>? createdAt, 
+Expression<DateTime>? updatedAt, 
+Expression<int>? syncStatus, 
+Expression<String>? createdBy, 
+Expression<String>? updatedBy, 
+Expression<bool>? isDeleted, 
+Expression<int>? localId, 
+Expression<String>? numeroFuncionario, 
+Expression<String>? nomeCompleto, 
+Expression<String>? cargo, 
+Expression<String>? email, 
+Expression<String>? telefone, 
+Expression<String>? documentoIdentidade, 
+Expression<DateTime>? dataAdmissao, 
+Expression<double>? salarioBase, 
+Expression<int>? status, 
+Expression<DateTime>? ultimaPresenca, 
+Expression<String>? observacoes, 
+}) {
+return RawValuesInsertable({if (id != null)'id': id,if (createdAt != null)'created_at': createdAt,if (updatedAt != null)'updated_at': updatedAt,if (syncStatus != null)'sync_status': syncStatus,if (createdBy != null)'created_by': createdBy,if (updatedBy != null)'updated_by': updatedBy,if (isDeleted != null)'is_deleted': isDeleted,if (localId != null)'local_id': localId,if (numeroFuncionario != null)'numero_funcionario': numeroFuncionario,if (nomeCompleto != null)'nome_completo': nomeCompleto,if (cargo != null)'cargo': cargo,if (email != null)'email': email,if (telefone != null)'telefone': telefone,if (documentoIdentidade != null)'documento_identidade': documentoIdentidade,if (dataAdmissao != null)'data_admissao': dataAdmissao,if (salarioBase != null)'salario_base': salarioBase,if (status != null)'status': status,if (ultimaPresenca != null)'ultima_presenca': ultimaPresenca,if (observacoes != null)'observacoes': observacoes,});
+}FuncionariosCompanion copyWith({Value<String>? id, Value<DateTime>? createdAt, Value<DateTime>? updatedAt, Value<SyncStatus>? syncStatus, Value<String?>? createdBy, Value<String?>? updatedBy, Value<bool>? isDeleted, Value<int>? localId, Value<String>? numeroFuncionario, Value<String>? nomeCompleto, Value<String>? cargo, Value<String?>? email, Value<String>? telefone, Value<String?>? documentoIdentidade, Value<DateTime>? dataAdmissao, Value<double>? salarioBase, Value<FuncionarioStatus>? status, Value<DateTime?>? ultimaPresenca, Value<String?>? observacoes}) {
+return FuncionariosCompanion(id: id ?? this.id,createdAt: createdAt ?? this.createdAt,updatedAt: updatedAt ?? this.updatedAt,syncStatus: syncStatus ?? this.syncStatus,createdBy: createdBy ?? this.createdBy,updatedBy: updatedBy ?? this.updatedBy,isDeleted: isDeleted ?? this.isDeleted,localId: localId ?? this.localId,numeroFuncionario: numeroFuncionario ?? this.numeroFuncionario,nomeCompleto: nomeCompleto ?? this.nomeCompleto,cargo: cargo ?? this.cargo,email: email ?? this.email,telefone: telefone ?? this.telefone,documentoIdentidade: documentoIdentidade ?? this.documentoIdentidade,dataAdmissao: dataAdmissao ?? this.dataAdmissao,salarioBase: salarioBase ?? this.salarioBase,status: status ?? this.status,ultimaPresenca: ultimaPresenca ?? this.ultimaPresenca,observacoes: observacoes ?? this.observacoes,);
+}
+@override
+Map<String, Expression> toColumns(bool nullToAbsent) {
+final map = <String, Expression> {};if (id.present) {
+map['id'] = Variable<String>(id.value);}
+if (createdAt.present) {
+map['created_at'] = Variable<DateTime>(createdAt.value);}
+if (updatedAt.present) {
+map['updated_at'] = Variable<DateTime>(updatedAt.value);}
+if (syncStatus.present) {
+map['sync_status'] = Variable<int>($FuncionariosTable.$convertersyncStatus.toSql(syncStatus.value));}
+if (createdBy.present) {
+map['created_by'] = Variable<String>(createdBy.value);}
+if (updatedBy.present) {
+map['updated_by'] = Variable<String>(updatedBy.value);}
+if (isDeleted.present) {
+map['is_deleted'] = Variable<bool>(isDeleted.value);}
+if (localId.present) {
+map['local_id'] = Variable<int>(localId.value);}
+if (numeroFuncionario.present) {
+map['numero_funcionario'] = Variable<String>(numeroFuncionario.value);}
+if (nomeCompleto.present) {
+map['nome_completo'] = Variable<String>(nomeCompleto.value);}
+if (cargo.present) {
+map['cargo'] = Variable<String>(cargo.value);}
+if (email.present) {
+map['email'] = Variable<String>(email.value);}
+if (telefone.present) {
+map['telefone'] = Variable<String>(telefone.value);}
+if (documentoIdentidade.present) {
+map['documento_identidade'] = Variable<String>(documentoIdentidade.value);}
+if (dataAdmissao.present) {
+map['data_admissao'] = Variable<DateTime>(dataAdmissao.value);}
+if (salarioBase.present) {
+map['salario_base'] = Variable<double>(salarioBase.value);}
+if (status.present) {
+map['status'] = Variable<int>($FuncionariosTable.$converterstatus.toSql(status.value));}
+if (ultimaPresenca.present) {
+map['ultima_presenca'] = Variable<DateTime>(ultimaPresenca.value);}
+if (observacoes.present) {
+map['observacoes'] = Variable<String>(observacoes.value);}
+return map; 
+}
+@override
+String toString() {return (StringBuffer('FuncionariosCompanion(')..write('id: $id, ')..write('createdAt: $createdAt, ')..write('updatedAt: $updatedAt, ')..write('syncStatus: $syncStatus, ')..write('createdBy: $createdBy, ')..write('updatedBy: $updatedBy, ')..write('isDeleted: $isDeleted, ')..write('localId: $localId, ')..write('numeroFuncionario: $numeroFuncionario, ')..write('nomeCompleto: $nomeCompleto, ')..write('cargo: $cargo, ')..write('email: $email, ')..write('telefone: $telefone, ')..write('documentoIdentidade: $documentoIdentidade, ')..write('dataAdmissao: $dataAdmissao, ')..write('salarioBase: $salarioBase, ')..write('status: $status, ')..write('ultimaPresenca: $ultimaPresenca, ')..write('observacoes: $observacoes')..write(')')).toString();}
+}
+class $SalariosTable extends Salarios with TableInfo<$SalariosTable, SalarioData>{
+@override final GeneratedDatabase attachedDatabase;
+final String? _alias;
+$SalariosTable(this.attachedDatabase, [this._alias]);
+static const VerificationMeta _idMeta = const VerificationMeta('id');
+@override
+late final GeneratedColumn<String> id = GeneratedColumn<String>('id', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _createdAtMeta = const VerificationMeta('createdAt');
+@override
+late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>('created_at', aliasedName, false, type: DriftSqlType.dateTime, requiredDuringInsert: true);
+static const VerificationMeta _updatedAtMeta = const VerificationMeta('updatedAt');
+@override
+late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>('updated_at', aliasedName, false, type: DriftSqlType.dateTime, requiredDuringInsert: true);
+static const VerificationMeta _syncStatusMeta = const VerificationMeta('syncStatus');
+@override
+late final GeneratedColumnWithTypeConverter<SyncStatus, int> syncStatus = GeneratedColumn<int>('sync_status', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true).withConverter<SyncStatus>($SalariosTable.$convertersyncStatus);
+static const VerificationMeta _createdByMeta = const VerificationMeta('createdBy');
+@override
+late final GeneratedColumn<String> createdBy = GeneratedColumn<String>('created_by', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+static const VerificationMeta _updatedByMeta = const VerificationMeta('updatedBy');
+@override
+late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>('updated_by', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+static const VerificationMeta _isDeletedMeta = const VerificationMeta('isDeleted');
+@override
+late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>('is_deleted', aliasedName, false, type: DriftSqlType.bool, requiredDuringInsert: false, defaultConstraints: GeneratedColumn.constraintIsAlways('CHECK ("is_deleted" IN (0, 1))'), defaultValue: const Constant(false));
+static const VerificationMeta _localIdMeta = const VerificationMeta('localId');
+@override
+late final GeneratedColumn<int> localId = GeneratedColumn<int>('local_id', aliasedName, false, hasAutoIncrement: true, type: DriftSqlType.int, requiredDuringInsert: false, defaultConstraints: GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+static const VerificationMeta _funcionarioIdMeta = const VerificationMeta('funcionarioId');
+@override
+late final GeneratedColumn<String> funcionarioId = GeneratedColumn<String>('funcionario_id', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _funcionarioNomeMeta = const VerificationMeta('funcionarioNome');
+@override
+late final GeneratedColumn<String> funcionarioNome = GeneratedColumn<String>('funcionario_nome', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _mesReferenciaMeta = const VerificationMeta('mesReferencia');
+@override
+late final GeneratedColumn<int> mesReferencia = GeneratedColumn<int>('mes_referencia', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true);
+static const VerificationMeta _anoReferenciaMeta = const VerificationMeta('anoReferencia');
+@override
+late final GeneratedColumn<int> anoReferencia = GeneratedColumn<int>('ano_referencia', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true);
+static const VerificationMeta _valorBaseMeta = const VerificationMeta('valorBase');
+@override
+late final GeneratedColumn<double> valorBase = GeneratedColumn<double>('valor_base', aliasedName, false, type: DriftSqlType.double, requiredDuringInsert: true);
+static const VerificationMeta _descontosMeta = const VerificationMeta('descontos');
+@override
+late final GeneratedColumn<double> descontos = GeneratedColumn<double>('descontos', aliasedName, false, type: DriftSqlType.double, requiredDuringInsert: true);
+static const VerificationMeta _bonusMeta = const VerificationMeta('bonus');
+@override
+late final GeneratedColumn<double> bonus = GeneratedColumn<double>('bonus', aliasedName, false, type: DriftSqlType.double, requiredDuringInsert: true);
+static const VerificationMeta _valorLiquidoMeta = const VerificationMeta('valorLiquido');
+@override
+late final GeneratedColumn<double> valorLiquido = GeneratedColumn<double>('valor_liquido', aliasedName, false, type: DriftSqlType.double, requiredDuringInsert: true);
+static const VerificationMeta _estadoMeta = const VerificationMeta('estado');
+@override
+late final GeneratedColumnWithTypeConverter<SalarioEstado, int> estado = GeneratedColumn<int>('estado', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true).withConverter<SalarioEstado>($SalariosTable.$converterestado);
+static const VerificationMeta _dataPagamentoMeta = const VerificationMeta('dataPagamento');
+@override
+late final GeneratedColumn<DateTime> dataPagamento = GeneratedColumn<DateTime>('data_pagamento', aliasedName, true, type: DriftSqlType.dateTime, requiredDuringInsert: false);
+static const VerificationMeta _observacaoMeta = const VerificationMeta('observacao');
+@override
+late final GeneratedColumn<String> observacao = GeneratedColumn<String>('observacao', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+@override
+List<GeneratedColumn> get $columns => [id, createdAt, updatedAt, syncStatus, createdBy, updatedBy, isDeleted, localId, funcionarioId, funcionarioNome, mesReferencia, anoReferencia, valorBase, descontos, bonus, valorLiquido, estado, dataPagamento, observacao];
+@override
+String get aliasedName => _alias ?? actualTableName;
+@override
+ String get actualTableName => $name;
+static const String $name = 'salarios';
+@override
+VerificationContext validateIntegrity(Insertable<SalarioData> instance, {bool isInserting = false}) {
+final context = VerificationContext();
+final data = instance.toColumns(true);
+if (data.containsKey('id')) {
+context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));} else if (isInserting) {
+context.missing(_idMeta);
+}
+if (data.containsKey('created_at')) {
+context.handle(_createdAtMeta, createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));} else if (isInserting) {
+context.missing(_createdAtMeta);
+}
+if (data.containsKey('updated_at')) {
+context.handle(_updatedAtMeta, updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));} else if (isInserting) {
+context.missing(_updatedAtMeta);
+}
+context.handle(_syncStatusMeta, const VerificationResult.success());if (data.containsKey('created_by')) {
+context.handle(_createdByMeta, createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta));}if (data.containsKey('updated_by')) {
+context.handle(_updatedByMeta, updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta));}if (data.containsKey('is_deleted')) {
+context.handle(_isDeletedMeta, isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta));}if (data.containsKey('local_id')) {
+context.handle(_localIdMeta, localId.isAcceptableOrUnknown(data['local_id']!, _localIdMeta));}if (data.containsKey('funcionario_id')) {
+context.handle(_funcionarioIdMeta, funcionarioId.isAcceptableOrUnknown(data['funcionario_id']!, _funcionarioIdMeta));} else if (isInserting) {
+context.missing(_funcionarioIdMeta);
+}
+if (data.containsKey('funcionario_nome')) {
+context.handle(_funcionarioNomeMeta, funcionarioNome.isAcceptableOrUnknown(data['funcionario_nome']!, _funcionarioNomeMeta));} else if (isInserting) {
+context.missing(_funcionarioNomeMeta);
+}
+if (data.containsKey('mes_referencia')) {
+context.handle(_mesReferenciaMeta, mesReferencia.isAcceptableOrUnknown(data['mes_referencia']!, _mesReferenciaMeta));} else if (isInserting) {
+context.missing(_mesReferenciaMeta);
+}
+if (data.containsKey('ano_referencia')) {
+context.handle(_anoReferenciaMeta, anoReferencia.isAcceptableOrUnknown(data['ano_referencia']!, _anoReferenciaMeta));} else if (isInserting) {
+context.missing(_anoReferenciaMeta);
+}
+if (data.containsKey('valor_base')) {
+context.handle(_valorBaseMeta, valorBase.isAcceptableOrUnknown(data['valor_base']!, _valorBaseMeta));} else if (isInserting) {
+context.missing(_valorBaseMeta);
+}
+if (data.containsKey('descontos')) {
+context.handle(_descontosMeta, descontos.isAcceptableOrUnknown(data['descontos']!, _descontosMeta));} else if (isInserting) {
+context.missing(_descontosMeta);
+}
+if (data.containsKey('bonus')) {
+context.handle(_bonusMeta, bonus.isAcceptableOrUnknown(data['bonus']!, _bonusMeta));} else if (isInserting) {
+context.missing(_bonusMeta);
+}
+if (data.containsKey('valor_liquido')) {
+context.handle(_valorLiquidoMeta, valorLiquido.isAcceptableOrUnknown(data['valor_liquido']!, _valorLiquidoMeta));} else if (isInserting) {
+context.missing(_valorLiquidoMeta);
+}
+context.handle(_estadoMeta, const VerificationResult.success());if (data.containsKey('data_pagamento')) {
+context.handle(_dataPagamentoMeta, dataPagamento.isAcceptableOrUnknown(data['data_pagamento']!, _dataPagamentoMeta));}if (data.containsKey('observacao')) {
+context.handle(_observacaoMeta, observacao.isAcceptableOrUnknown(data['observacao']!, _observacaoMeta));}return context;
+}
+@override
+Set<GeneratedColumn> get $primaryKey => {localId};
+@override SalarioData map(Map<String, dynamic> data, {String? tablePrefix})  {
+final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';return SalarioData(id: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}id'])!, createdAt: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!, updatedAt: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!, syncStatus: $SalariosTable.$convertersyncStatus.fromSql(attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}sync_status'])!), createdBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}created_by']), updatedBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}updated_by']), isDeleted: attachedDatabase.typeMapping.read(DriftSqlType.bool, data['${effectivePrefix}is_deleted'])!, localId: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}local_id'])!, funcionarioId: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}funcionario_id'])!, funcionarioNome: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}funcionario_nome'])!, mesReferencia: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}mes_referencia'])!, anoReferencia: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}ano_referencia'])!, valorBase: attachedDatabase.typeMapping.read(DriftSqlType.double, data['${effectivePrefix}valor_base'])!, descontos: attachedDatabase.typeMapping.read(DriftSqlType.double, data['${effectivePrefix}descontos'])!, bonus: attachedDatabase.typeMapping.read(DriftSqlType.double, data['${effectivePrefix}bonus'])!, valorLiquido: attachedDatabase.typeMapping.read(DriftSqlType.double, data['${effectivePrefix}valor_liquido'])!, estado: $SalariosTable.$converterestado.fromSql(attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}estado'])!), dataPagamento: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}data_pagamento']), observacao: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}observacao']), );
+}
+@override
+$SalariosTable createAlias(String alias) {
+return $SalariosTable(attachedDatabase, alias);}static JsonTypeConverter2<SyncStatus,int,int> $convertersyncStatus = const EnumIndexConverter<SyncStatus>(SyncStatus.values);static JsonTypeConverter2<SalarioEstado,int,int> $converterestado = const EnumIndexConverter<SalarioEstado>(SalarioEstado.values);}class SalarioData extends DataClass implements Insertable<SalarioData> 
+{
+final String id;
+final DateTime createdAt;
+final DateTime updatedAt;
+final SyncStatus syncStatus;
+final String? createdBy;
+final String? updatedBy;
+final bool isDeleted;
+final int localId;
+final String funcionarioId;
+final String funcionarioNome;
+final int mesReferencia;
+final int anoReferencia;
+final double valorBase;
+final double descontos;
+final double bonus;
+final double valorLiquido;
+final SalarioEstado estado;
+final DateTime? dataPagamento;
+final String? observacao;
+const SalarioData({required this.id, required this.createdAt, required this.updatedAt, required this.syncStatus, this.createdBy, this.updatedBy, required this.isDeleted, required this.localId, required this.funcionarioId, required this.funcionarioNome, required this.mesReferencia, required this.anoReferencia, required this.valorBase, required this.descontos, required this.bonus, required this.valorLiquido, required this.estado, this.dataPagamento, this.observacao});@override
+Map<String, Expression> toColumns(bool nullToAbsent) {
+final map = <String, Expression> {};map['id'] = Variable<String>(id);
+map['created_at'] = Variable<DateTime>(createdAt);
+map['updated_at'] = Variable<DateTime>(updatedAt);
+{map['sync_status'] = Variable<int>($SalariosTable.$convertersyncStatus.toSql(syncStatus));
+}if (!nullToAbsent || createdBy != null){map['created_by'] = Variable<String>(createdBy);
+}if (!nullToAbsent || updatedBy != null){map['updated_by'] = Variable<String>(updatedBy);
+}map['is_deleted'] = Variable<bool>(isDeleted);
+map['local_id'] = Variable<int>(localId);
+map['funcionario_id'] = Variable<String>(funcionarioId);
+map['funcionario_nome'] = Variable<String>(funcionarioNome);
+map['mes_referencia'] = Variable<int>(mesReferencia);
+map['ano_referencia'] = Variable<int>(anoReferencia);
+map['valor_base'] = Variable<double>(valorBase);
+map['descontos'] = Variable<double>(descontos);
+map['bonus'] = Variable<double>(bonus);
+map['valor_liquido'] = Variable<double>(valorLiquido);
+{map['estado'] = Variable<int>($SalariosTable.$converterestado.toSql(estado));
+}if (!nullToAbsent || dataPagamento != null){map['data_pagamento'] = Variable<DateTime>(dataPagamento);
+}if (!nullToAbsent || observacao != null){map['observacao'] = Variable<String>(observacao);
+}return map; 
+}
+SalariosCompanion toCompanion(bool nullToAbsent) {
+return SalariosCompanion(id: Value(id),createdAt: Value(createdAt),updatedAt: Value(updatedAt),syncStatus: Value(syncStatus),createdBy: createdBy == null && nullToAbsent ? const Value.absent() : Value(createdBy),updatedBy: updatedBy == null && nullToAbsent ? const Value.absent() : Value(updatedBy),isDeleted: Value(isDeleted),localId: Value(localId),funcionarioId: Value(funcionarioId),funcionarioNome: Value(funcionarioNome),mesReferencia: Value(mesReferencia),anoReferencia: Value(anoReferencia),valorBase: Value(valorBase),descontos: Value(descontos),bonus: Value(bonus),valorLiquido: Value(valorLiquido),estado: Value(estado),dataPagamento: dataPagamento == null && nullToAbsent ? const Value.absent() : Value(dataPagamento),observacao: observacao == null && nullToAbsent ? const Value.absent() : Value(observacao),);
+}
+factory SalarioData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
+serializer ??= driftRuntimeOptions.defaultSerializer;
+return SalarioData(id: serializer.fromJson<String>(json['id']),createdAt: serializer.fromJson<DateTime>(json['createdAt']),updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),syncStatus: $SalariosTable.$convertersyncStatus.fromJson(serializer.fromJson<int>(json['syncStatus'])),createdBy: serializer.fromJson<String?>(json['createdBy']),updatedBy: serializer.fromJson<String?>(json['updatedBy']),isDeleted: serializer.fromJson<bool>(json['isDeleted']),localId: serializer.fromJson<int>(json['localId']),funcionarioId: serializer.fromJson<String>(json['funcionarioId']),funcionarioNome: serializer.fromJson<String>(json['funcionarioNome']),mesReferencia: serializer.fromJson<int>(json['mesReferencia']),anoReferencia: serializer.fromJson<int>(json['anoReferencia']),valorBase: serializer.fromJson<double>(json['valorBase']),descontos: serializer.fromJson<double>(json['descontos']),bonus: serializer.fromJson<double>(json['bonus']),valorLiquido: serializer.fromJson<double>(json['valorLiquido']),estado: $SalariosTable.$converterestado.fromJson(serializer.fromJson<int>(json['estado'])),dataPagamento: serializer.fromJson<DateTime?>(json['dataPagamento']),observacao: serializer.fromJson<String?>(json['observacao']),);}
+@override Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+serializer ??= driftRuntimeOptions.defaultSerializer;
+return <String, dynamic>{
+'id': serializer.toJson<String>(id),'createdAt': serializer.toJson<DateTime>(createdAt),'updatedAt': serializer.toJson<DateTime>(updatedAt),'syncStatus': serializer.toJson<int>($SalariosTable.$convertersyncStatus.toJson(syncStatus)),'createdBy': serializer.toJson<String?>(createdBy),'updatedBy': serializer.toJson<String?>(updatedBy),'isDeleted': serializer.toJson<bool>(isDeleted),'localId': serializer.toJson<int>(localId),'funcionarioId': serializer.toJson<String>(funcionarioId),'funcionarioNome': serializer.toJson<String>(funcionarioNome),'mesReferencia': serializer.toJson<int>(mesReferencia),'anoReferencia': serializer.toJson<int>(anoReferencia),'valorBase': serializer.toJson<double>(valorBase),'descontos': serializer.toJson<double>(descontos),'bonus': serializer.toJson<double>(bonus),'valorLiquido': serializer.toJson<double>(valorLiquido),'estado': serializer.toJson<int>($SalariosTable.$converterestado.toJson(estado)),'dataPagamento': serializer.toJson<DateTime?>(dataPagamento),'observacao': serializer.toJson<String?>(observacao),};}SalarioData copyWith({String? id,DateTime? createdAt,DateTime? updatedAt,SyncStatus? syncStatus,Value<String?> createdBy = const Value.absent(),Value<String?> updatedBy = const Value.absent(),bool? isDeleted,int? localId,String? funcionarioId,String? funcionarioNome,int? mesReferencia,int? anoReferencia,double? valorBase,double? descontos,double? bonus,double? valorLiquido,SalarioEstado? estado,Value<DateTime?> dataPagamento = const Value.absent(),Value<String?> observacao = const Value.absent()}) => SalarioData(id: id ?? this.id,createdAt: createdAt ?? this.createdAt,updatedAt: updatedAt ?? this.updatedAt,syncStatus: syncStatus ?? this.syncStatus,createdBy: createdBy.present ? createdBy.value : this.createdBy,updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,isDeleted: isDeleted ?? this.isDeleted,localId: localId ?? this.localId,funcionarioId: funcionarioId ?? this.funcionarioId,funcionarioNome: funcionarioNome ?? this.funcionarioNome,mesReferencia: mesReferencia ?? this.mesReferencia,anoReferencia: anoReferencia ?? this.anoReferencia,valorBase: valorBase ?? this.valorBase,descontos: descontos ?? this.descontos,bonus: bonus ?? this.bonus,valorLiquido: valorLiquido ?? this.valorLiquido,estado: estado ?? this.estado,dataPagamento: dataPagamento.present ? dataPagamento.value : this.dataPagamento,observacao: observacao.present ? observacao.value : this.observacao,);SalarioData copyWithCompanion(SalariosCompanion data) {
+return SalarioData(
+id: data.id.present ? data.id.value : this.id,createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,syncStatus: data.syncStatus.present ? data.syncStatus.value : this.syncStatus,createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,localId: data.localId.present ? data.localId.value : this.localId,funcionarioId: data.funcionarioId.present ? data.funcionarioId.value : this.funcionarioId,funcionarioNome: data.funcionarioNome.present ? data.funcionarioNome.value : this.funcionarioNome,mesReferencia: data.mesReferencia.present ? data.mesReferencia.value : this.mesReferencia,anoReferencia: data.anoReferencia.present ? data.anoReferencia.value : this.anoReferencia,valorBase: data.valorBase.present ? data.valorBase.value : this.valorBase,descontos: data.descontos.present ? data.descontos.value : this.descontos,bonus: data.bonus.present ? data.bonus.value : this.bonus,valorLiquido: data.valorLiquido.present ? data.valorLiquido.value : this.valorLiquido,estado: data.estado.present ? data.estado.value : this.estado,dataPagamento: data.dataPagamento.present ? data.dataPagamento.value : this.dataPagamento,observacao: data.observacao.present ? data.observacao.value : this.observacao,);
+}
+@override
+String toString() {return (StringBuffer('SalarioData(')..write('id: $id, ')..write('createdAt: $createdAt, ')..write('updatedAt: $updatedAt, ')..write('syncStatus: $syncStatus, ')..write('createdBy: $createdBy, ')..write('updatedBy: $updatedBy, ')..write('isDeleted: $isDeleted, ')..write('localId: $localId, ')..write('funcionarioId: $funcionarioId, ')..write('funcionarioNome: $funcionarioNome, ')..write('mesReferencia: $mesReferencia, ')..write('anoReferencia: $anoReferencia, ')..write('valorBase: $valorBase, ')..write('descontos: $descontos, ')..write('bonus: $bonus, ')..write('valorLiquido: $valorLiquido, ')..write('estado: $estado, ')..write('dataPagamento: $dataPagamento, ')..write('observacao: $observacao')..write(')')).toString();}
+@override
+ int get hashCode => Object.hash(id, createdAt, updatedAt, syncStatus, createdBy, updatedBy, isDeleted, localId, funcionarioId, funcionarioNome, mesReferencia, anoReferencia, valorBase, descontos, bonus, valorLiquido, estado, dataPagamento, observacao);@override
+bool operator ==(Object other) => identical(this, other) || (other is SalarioData && other.id == this.id && other.createdAt == this.createdAt && other.updatedAt == this.updatedAt && other.syncStatus == this.syncStatus && other.createdBy == this.createdBy && other.updatedBy == this.updatedBy && other.isDeleted == this.isDeleted && other.localId == this.localId && other.funcionarioId == this.funcionarioId && other.funcionarioNome == this.funcionarioNome && other.mesReferencia == this.mesReferencia && other.anoReferencia == this.anoReferencia && other.valorBase == this.valorBase && other.descontos == this.descontos && other.bonus == this.bonus && other.valorLiquido == this.valorLiquido && other.estado == this.estado && other.dataPagamento == this.dataPagamento && other.observacao == this.observacao);
+}class SalariosCompanion extends UpdateCompanion<SalarioData> {
+final Value<String> id;
+final Value<DateTime> createdAt;
+final Value<DateTime> updatedAt;
+final Value<SyncStatus> syncStatus;
+final Value<String?> createdBy;
+final Value<String?> updatedBy;
+final Value<bool> isDeleted;
+final Value<int> localId;
+final Value<String> funcionarioId;
+final Value<String> funcionarioNome;
+final Value<int> mesReferencia;
+final Value<int> anoReferencia;
+final Value<double> valorBase;
+final Value<double> descontos;
+final Value<double> bonus;
+final Value<double> valorLiquido;
+final Value<SalarioEstado> estado;
+final Value<DateTime?> dataPagamento;
+final Value<String?> observacao;
+const SalariosCompanion({this.id = const Value.absent(),this.createdAt = const Value.absent(),this.updatedAt = const Value.absent(),this.syncStatus = const Value.absent(),this.createdBy = const Value.absent(),this.updatedBy = const Value.absent(),this.isDeleted = const Value.absent(),this.localId = const Value.absent(),this.funcionarioId = const Value.absent(),this.funcionarioNome = const Value.absent(),this.mesReferencia = const Value.absent(),this.anoReferencia = const Value.absent(),this.valorBase = const Value.absent(),this.descontos = const Value.absent(),this.bonus = const Value.absent(),this.valorLiquido = const Value.absent(),this.estado = const Value.absent(),this.dataPagamento = const Value.absent(),this.observacao = const Value.absent(),});
+SalariosCompanion.insert({required String id,required DateTime createdAt,required DateTime updatedAt,required SyncStatus syncStatus,this.createdBy = const Value.absent(),this.updatedBy = const Value.absent(),this.isDeleted = const Value.absent(),this.localId = const Value.absent(),required String funcionarioId,required String funcionarioNome,required int mesReferencia,required int anoReferencia,required double valorBase,required double descontos,required double bonus,required double valorLiquido,required SalarioEstado estado,this.dataPagamento = const Value.absent(),this.observacao = const Value.absent(),}): id = Value(id), createdAt = Value(createdAt), updatedAt = Value(updatedAt), syncStatus = Value(syncStatus), funcionarioId = Value(funcionarioId), funcionarioNome = Value(funcionarioNome), mesReferencia = Value(mesReferencia), anoReferencia = Value(anoReferencia), valorBase = Value(valorBase), descontos = Value(descontos), bonus = Value(bonus), valorLiquido = Value(valorLiquido), estado = Value(estado);
+static Insertable<SalarioData> custom({Expression<String>? id, 
+Expression<DateTime>? createdAt, 
+Expression<DateTime>? updatedAt, 
+Expression<int>? syncStatus, 
+Expression<String>? createdBy, 
+Expression<String>? updatedBy, 
+Expression<bool>? isDeleted, 
+Expression<int>? localId, 
+Expression<String>? funcionarioId, 
+Expression<String>? funcionarioNome, 
+Expression<int>? mesReferencia, 
+Expression<int>? anoReferencia, 
+Expression<double>? valorBase, 
+Expression<double>? descontos, 
+Expression<double>? bonus, 
+Expression<double>? valorLiquido, 
+Expression<int>? estado, 
+Expression<DateTime>? dataPagamento, 
+Expression<String>? observacao, 
+}) {
+return RawValuesInsertable({if (id != null)'id': id,if (createdAt != null)'created_at': createdAt,if (updatedAt != null)'updated_at': updatedAt,if (syncStatus != null)'sync_status': syncStatus,if (createdBy != null)'created_by': createdBy,if (updatedBy != null)'updated_by': updatedBy,if (isDeleted != null)'is_deleted': isDeleted,if (localId != null)'local_id': localId,if (funcionarioId != null)'funcionario_id': funcionarioId,if (funcionarioNome != null)'funcionario_nome': funcionarioNome,if (mesReferencia != null)'mes_referencia': mesReferencia,if (anoReferencia != null)'ano_referencia': anoReferencia,if (valorBase != null)'valor_base': valorBase,if (descontos != null)'descontos': descontos,if (bonus != null)'bonus': bonus,if (valorLiquido != null)'valor_liquido': valorLiquido,if (estado != null)'estado': estado,if (dataPagamento != null)'data_pagamento': dataPagamento,if (observacao != null)'observacao': observacao,});
+}SalariosCompanion copyWith({Value<String>? id, Value<DateTime>? createdAt, Value<DateTime>? updatedAt, Value<SyncStatus>? syncStatus, Value<String?>? createdBy, Value<String?>? updatedBy, Value<bool>? isDeleted, Value<int>? localId, Value<String>? funcionarioId, Value<String>? funcionarioNome, Value<int>? mesReferencia, Value<int>? anoReferencia, Value<double>? valorBase, Value<double>? descontos, Value<double>? bonus, Value<double>? valorLiquido, Value<SalarioEstado>? estado, Value<DateTime?>? dataPagamento, Value<String?>? observacao}) {
+return SalariosCompanion(id: id ?? this.id,createdAt: createdAt ?? this.createdAt,updatedAt: updatedAt ?? this.updatedAt,syncStatus: syncStatus ?? this.syncStatus,createdBy: createdBy ?? this.createdBy,updatedBy: updatedBy ?? this.updatedBy,isDeleted: isDeleted ?? this.isDeleted,localId: localId ?? this.localId,funcionarioId: funcionarioId ?? this.funcionarioId,funcionarioNome: funcionarioNome ?? this.funcionarioNome,mesReferencia: mesReferencia ?? this.mesReferencia,anoReferencia: anoReferencia ?? this.anoReferencia,valorBase: valorBase ?? this.valorBase,descontos: descontos ?? this.descontos,bonus: bonus ?? this.bonus,valorLiquido: valorLiquido ?? this.valorLiquido,estado: estado ?? this.estado,dataPagamento: dataPagamento ?? this.dataPagamento,observacao: observacao ?? this.observacao,);
+}
+@override
+Map<String, Expression> toColumns(bool nullToAbsent) {
+final map = <String, Expression> {};if (id.present) {
+map['id'] = Variable<String>(id.value);}
+if (createdAt.present) {
+map['created_at'] = Variable<DateTime>(createdAt.value);}
+if (updatedAt.present) {
+map['updated_at'] = Variable<DateTime>(updatedAt.value);}
+if (syncStatus.present) {
+map['sync_status'] = Variable<int>($SalariosTable.$convertersyncStatus.toSql(syncStatus.value));}
+if (createdBy.present) {
+map['created_by'] = Variable<String>(createdBy.value);}
+if (updatedBy.present) {
+map['updated_by'] = Variable<String>(updatedBy.value);}
+if (isDeleted.present) {
+map['is_deleted'] = Variable<bool>(isDeleted.value);}
+if (localId.present) {
+map['local_id'] = Variable<int>(localId.value);}
+if (funcionarioId.present) {
+map['funcionario_id'] = Variable<String>(funcionarioId.value);}
+if (funcionarioNome.present) {
+map['funcionario_nome'] = Variable<String>(funcionarioNome.value);}
+if (mesReferencia.present) {
+map['mes_referencia'] = Variable<int>(mesReferencia.value);}
+if (anoReferencia.present) {
+map['ano_referencia'] = Variable<int>(anoReferencia.value);}
+if (valorBase.present) {
+map['valor_base'] = Variable<double>(valorBase.value);}
+if (descontos.present) {
+map['descontos'] = Variable<double>(descontos.value);}
+if (bonus.present) {
+map['bonus'] = Variable<double>(bonus.value);}
+if (valorLiquido.present) {
+map['valor_liquido'] = Variable<double>(valorLiquido.value);}
+if (estado.present) {
+map['estado'] = Variable<int>($SalariosTable.$converterestado.toSql(estado.value));}
+if (dataPagamento.present) {
+map['data_pagamento'] = Variable<DateTime>(dataPagamento.value);}
+if (observacao.present) {
+map['observacao'] = Variable<String>(observacao.value);}
+return map; 
+}
+@override
+String toString() {return (StringBuffer('SalariosCompanion(')..write('id: $id, ')..write('createdAt: $createdAt, ')..write('updatedAt: $updatedAt, ')..write('syncStatus: $syncStatus, ')..write('createdBy: $createdBy, ')..write('updatedBy: $updatedBy, ')..write('isDeleted: $isDeleted, ')..write('localId: $localId, ')..write('funcionarioId: $funcionarioId, ')..write('funcionarioNome: $funcionarioNome, ')..write('mesReferencia: $mesReferencia, ')..write('anoReferencia: $anoReferencia, ')..write('valorBase: $valorBase, ')..write('descontos: $descontos, ')..write('bonus: $bonus, ')..write('valorLiquido: $valorLiquido, ')..write('estado: $estado, ')..write('dataPagamento: $dataPagamento, ')..write('observacao: $observacao')..write(')')).toString();}
+}
+class $PresencasFuncionariosTable extends PresencasFuncionarios with TableInfo<$PresencasFuncionariosTable, PresencaFuncionarioData>{
+@override final GeneratedDatabase attachedDatabase;
+final String? _alias;
+$PresencasFuncionariosTable(this.attachedDatabase, [this._alias]);
+static const VerificationMeta _localIdMeta = const VerificationMeta('localId');
+@override
+late final GeneratedColumn<int> localId = GeneratedColumn<int>('local_id', aliasedName, false, hasAutoIncrement: true, type: DriftSqlType.int, requiredDuringInsert: false, defaultConstraints: GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+static const VerificationMeta _idMeta = const VerificationMeta('id');
+@override
+late final GeneratedColumn<String> id = GeneratedColumn<String>('id', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _funcionarioIdMeta = const VerificationMeta('funcionarioId');
+@override
+late final GeneratedColumn<String> funcionarioId = GeneratedColumn<String>('funcionario_id', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _dataMeta = const VerificationMeta('data');
+@override
+late final GeneratedColumn<DateTime> data = GeneratedColumn<DateTime>('data', aliasedName, false, type: DriftSqlType.dateTime, requiredDuringInsert: true);
+static const VerificationMeta _presenteMeta = const VerificationMeta('presente');
+@override
+late final GeneratedColumn<bool> presente = GeneratedColumn<bool>('presente', aliasedName, false, type: DriftSqlType.bool, requiredDuringInsert: true, defaultConstraints: GeneratedColumn.constraintIsAlways('CHECK ("presente" IN (0, 1))'));
+static const VerificationMeta _observacaoMeta = const VerificationMeta('observacao');
+@override
+late final GeneratedColumn<String> observacao = GeneratedColumn<String>('observacao', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+@override
+List<GeneratedColumn> get $columns => [localId, id, funcionarioId, data, presente, observacao];
+@override
+String get aliasedName => _alias ?? actualTableName;
+@override
+ String get actualTableName => $name;
+static const String $name = 'presencas_funcionarios';
+@override
+VerificationContext validateIntegrity(Insertable<PresencaFuncionarioData> instance, {bool isInserting = false}) {
+final context = VerificationContext();
+final data = instance.toColumns(true);
+if (data.containsKey('local_id')) {
+context.handle(_localIdMeta, localId.isAcceptableOrUnknown(data['local_id']!, _localIdMeta));}if (data.containsKey('id')) {
+context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));} else if (isInserting) {
+context.missing(_idMeta);
+}
+if (data.containsKey('funcionario_id')) {
+context.handle(_funcionarioIdMeta, funcionarioId.isAcceptableOrUnknown(data['funcionario_id']!, _funcionarioIdMeta));} else if (isInserting) {
+context.missing(_funcionarioIdMeta);
+}
+if (data.containsKey('data')) {
+context.handle(_dataMeta, this.data.isAcceptableOrUnknown(data['data']!, _dataMeta));} else if (isInserting) {
+context.missing(_dataMeta);
+}
+if (data.containsKey('presente')) {
+context.handle(_presenteMeta, presente.isAcceptableOrUnknown(data['presente']!, _presenteMeta));} else if (isInserting) {
+context.missing(_presenteMeta);
+}
+if (data.containsKey('observacao')) {
+context.handle(_observacaoMeta, observacao.isAcceptableOrUnknown(data['observacao']!, _observacaoMeta));}return context;
+}
+@override
+Set<GeneratedColumn> get $primaryKey => {localId};
+@override PresencaFuncionarioData map(Map<String, dynamic> data, {String? tablePrefix})  {
+final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';return PresencaFuncionarioData(localId: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}local_id'])!, id: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}id'])!, funcionarioId: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}funcionario_id'])!, data: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}data'])!, presente: attachedDatabase.typeMapping.read(DriftSqlType.bool, data['${effectivePrefix}presente'])!, observacao: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}observacao']), );
+}
+@override
+$PresencasFuncionariosTable createAlias(String alias) {
+return $PresencasFuncionariosTable(attachedDatabase, alias);}}class PresencaFuncionarioData extends DataClass implements Insertable<PresencaFuncionarioData> 
+{
+final int localId;
+final String id;
+final String funcionarioId;
+final DateTime data;
+final bool presente;
+final String? observacao;
+const PresencaFuncionarioData({required this.localId, required this.id, required this.funcionarioId, required this.data, required this.presente, this.observacao});@override
+Map<String, Expression> toColumns(bool nullToAbsent) {
+final map = <String, Expression> {};map['local_id'] = Variable<int>(localId);
+map['id'] = Variable<String>(id);
+map['funcionario_id'] = Variable<String>(funcionarioId);
+map['data'] = Variable<DateTime>(data);
+map['presente'] = Variable<bool>(presente);
+if (!nullToAbsent || observacao != null){map['observacao'] = Variable<String>(observacao);
+}return map; 
+}
+PresencasFuncionariosCompanion toCompanion(bool nullToAbsent) {
+return PresencasFuncionariosCompanion(localId: Value(localId),id: Value(id),funcionarioId: Value(funcionarioId),data: Value(data),presente: Value(presente),observacao: observacao == null && nullToAbsent ? const Value.absent() : Value(observacao),);
+}
+factory PresencaFuncionarioData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
+serializer ??= driftRuntimeOptions.defaultSerializer;
+return PresencaFuncionarioData(localId: serializer.fromJson<int>(json['localId']),id: serializer.fromJson<String>(json['id']),funcionarioId: serializer.fromJson<String>(json['funcionarioId']),data: serializer.fromJson<DateTime>(json['data']),presente: serializer.fromJson<bool>(json['presente']),observacao: serializer.fromJson<String?>(json['observacao']),);}
+@override Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+serializer ??= driftRuntimeOptions.defaultSerializer;
+return <String, dynamic>{
+'localId': serializer.toJson<int>(localId),'id': serializer.toJson<String>(id),'funcionarioId': serializer.toJson<String>(funcionarioId),'data': serializer.toJson<DateTime>(data),'presente': serializer.toJson<bool>(presente),'observacao': serializer.toJson<String?>(observacao),};}PresencaFuncionarioData copyWith({int? localId,String? id,String? funcionarioId,DateTime? data,bool? presente,Value<String?> observacao = const Value.absent()}) => PresencaFuncionarioData(localId: localId ?? this.localId,id: id ?? this.id,funcionarioId: funcionarioId ?? this.funcionarioId,data: data ?? this.data,presente: presente ?? this.presente,observacao: observacao.present ? observacao.value : this.observacao,);PresencaFuncionarioData copyWithCompanion(PresencasFuncionariosCompanion data) {
+return PresencaFuncionarioData(
+localId: data.localId.present ? data.localId.value : this.localId,id: data.id.present ? data.id.value : this.id,funcionarioId: data.funcionarioId.present ? data.funcionarioId.value : this.funcionarioId,data: data.data.present ? data.data.value : this.data,presente: data.presente.present ? data.presente.value : this.presente,observacao: data.observacao.present ? data.observacao.value : this.observacao,);
+}
+@override
+String toString() {return (StringBuffer('PresencaFuncionarioData(')..write('localId: $localId, ')..write('id: $id, ')..write('funcionarioId: $funcionarioId, ')..write('data: $data, ')..write('presente: $presente, ')..write('observacao: $observacao')..write(')')).toString();}
+@override
+ int get hashCode => Object.hash(localId, id, funcionarioId, data, presente, observacao);@override
+bool operator ==(Object other) => identical(this, other) || (other is PresencaFuncionarioData && other.localId == this.localId && other.id == this.id && other.funcionarioId == this.funcionarioId && other.data == this.data && other.presente == this.presente && other.observacao == this.observacao);
+}class PresencasFuncionariosCompanion extends UpdateCompanion<PresencaFuncionarioData> {
+final Value<int> localId;
+final Value<String> id;
+final Value<String> funcionarioId;
+final Value<DateTime> data;
+final Value<bool> presente;
+final Value<String?> observacao;
+const PresencasFuncionariosCompanion({this.localId = const Value.absent(),this.id = const Value.absent(),this.funcionarioId = const Value.absent(),this.data = const Value.absent(),this.presente = const Value.absent(),this.observacao = const Value.absent(),});
+PresencasFuncionariosCompanion.insert({this.localId = const Value.absent(),required String id,required String funcionarioId,required DateTime data,required bool presente,this.observacao = const Value.absent(),}): id = Value(id), funcionarioId = Value(funcionarioId), data = Value(data), presente = Value(presente);
+static Insertable<PresencaFuncionarioData> custom({Expression<int>? localId, 
+Expression<String>? id, 
+Expression<String>? funcionarioId, 
+Expression<DateTime>? data, 
+Expression<bool>? presente, 
+Expression<String>? observacao, 
+}) {
+return RawValuesInsertable({if (localId != null)'local_id': localId,if (id != null)'id': id,if (funcionarioId != null)'funcionario_id': funcionarioId,if (data != null)'data': data,if (presente != null)'presente': presente,if (observacao != null)'observacao': observacao,});
+}PresencasFuncionariosCompanion copyWith({Value<int>? localId, Value<String>? id, Value<String>? funcionarioId, Value<DateTime>? data, Value<bool>? presente, Value<String?>? observacao}) {
+return PresencasFuncionariosCompanion(localId: localId ?? this.localId,id: id ?? this.id,funcionarioId: funcionarioId ?? this.funcionarioId,data: data ?? this.data,presente: presente ?? this.presente,observacao: observacao ?? this.observacao,);
+}
+@override
+Map<String, Expression> toColumns(bool nullToAbsent) {
+final map = <String, Expression> {};if (localId.present) {
+map['local_id'] = Variable<int>(localId.value);}
+if (id.present) {
+map['id'] = Variable<String>(id.value);}
+if (funcionarioId.present) {
+map['funcionario_id'] = Variable<String>(funcionarioId.value);}
+if (data.present) {
+map['data'] = Variable<DateTime>(data.value);}
+if (presente.present) {
+map['presente'] = Variable<bool>(presente.value);}
+if (observacao.present) {
+map['observacao'] = Variable<String>(observacao.value);}
+return map; 
+}
+@override
+String toString() {return (StringBuffer('PresencasFuncionariosCompanion(')..write('localId: $localId, ')..write('id: $id, ')..write('funcionarioId: $funcionarioId, ')..write('data: $data, ')..write('presente: $presente, ')..write('observacao: $observacao')..write(')')).toString();}
+}
+class $AtivosInventarioTable extends AtivosInventario with TableInfo<$AtivosInventarioTable, AtivoInventarioData>{
+@override final GeneratedDatabase attachedDatabase;
+final String? _alias;
+$AtivosInventarioTable(this.attachedDatabase, [this._alias]);
+static const VerificationMeta _idMeta = const VerificationMeta('id');
+@override
+late final GeneratedColumn<String> id = GeneratedColumn<String>('id', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _createdAtMeta = const VerificationMeta('createdAt');
+@override
+late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>('created_at', aliasedName, false, type: DriftSqlType.dateTime, requiredDuringInsert: true);
+static const VerificationMeta _updatedAtMeta = const VerificationMeta('updatedAt');
+@override
+late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>('updated_at', aliasedName, false, type: DriftSqlType.dateTime, requiredDuringInsert: true);
+static const VerificationMeta _syncStatusMeta = const VerificationMeta('syncStatus');
+@override
+late final GeneratedColumnWithTypeConverter<SyncStatus, int> syncStatus = GeneratedColumn<int>('sync_status', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true).withConverter<SyncStatus>($AtivosInventarioTable.$convertersyncStatus);
+static const VerificationMeta _createdByMeta = const VerificationMeta('createdBy');
+@override
+late final GeneratedColumn<String> createdBy = GeneratedColumn<String>('created_by', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+static const VerificationMeta _updatedByMeta = const VerificationMeta('updatedBy');
+@override
+late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>('updated_by', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+static const VerificationMeta _isDeletedMeta = const VerificationMeta('isDeleted');
+@override
+late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>('is_deleted', aliasedName, false, type: DriftSqlType.bool, requiredDuringInsert: false, defaultConstraints: GeneratedColumn.constraintIsAlways('CHECK ("is_deleted" IN (0, 1))'), defaultValue: const Constant(false));
+static const VerificationMeta _localIdMeta = const VerificationMeta('localId');
+@override
+late final GeneratedColumn<int> localId = GeneratedColumn<int>('local_id', aliasedName, false, hasAutoIncrement: true, type: DriftSqlType.int, requiredDuringInsert: false, defaultConstraints: GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+static const VerificationMeta _codigoMeta = const VerificationMeta('codigo');
+@override
+late final GeneratedColumn<String> codigo = GeneratedColumn<String>('codigo', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true, defaultConstraints: GeneratedColumn.constraintIsAlways('UNIQUE'));
+static const VerificationMeta _nomeMeta = const VerificationMeta('nome');
+@override
+late final GeneratedColumn<String> nome = GeneratedColumn<String>('nome', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _categoriaMeta = const VerificationMeta('categoria');
+@override
+late final GeneratedColumn<String> categoria = GeneratedColumn<String>('categoria', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _localizacaoMeta = const VerificationMeta('localizacao');
+@override
+late final GeneratedColumn<String> localizacao = GeneratedColumn<String>('localizacao', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _estadoMeta = const VerificationMeta('estado');
+@override
+late final GeneratedColumnWithTypeConverter<AtivoEstado, int> estado = GeneratedColumn<int>('estado', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true).withConverter<AtivoEstado>($AtivosInventarioTable.$converterestado);
+static const VerificationMeta _valorAquisicaoMeta = const VerificationMeta('valorAquisicao');
+@override
+late final GeneratedColumn<double> valorAquisicao = GeneratedColumn<double>('valor_aquisicao', aliasedName, false, type: DriftSqlType.double, requiredDuringInsert: true);
+static const VerificationMeta _dataAquisicaoMeta = const VerificationMeta('dataAquisicao');
+@override
+late final GeneratedColumn<DateTime> dataAquisicao = GeneratedColumn<DateTime>('data_aquisicao', aliasedName, false, type: DriftSqlType.dateTime, requiredDuringInsert: true);
+static const VerificationMeta _ultimaManutencaoMeta = const VerificationMeta('ultimaManutencao');
+@override
+late final GeneratedColumn<DateTime> ultimaManutencao = GeneratedColumn<DateTime>('ultima_manutencao', aliasedName, true, type: DriftSqlType.dateTime, requiredDuringInsert: false);
+static const VerificationMeta _observacoesMeta = const VerificationMeta('observacoes');
+@override
+late final GeneratedColumn<String> observacoes = GeneratedColumn<String>('observacoes', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+@override
+List<GeneratedColumn> get $columns => [id, createdAt, updatedAt, syncStatus, createdBy, updatedBy, isDeleted, localId, codigo, nome, categoria, localizacao, estado, valorAquisicao, dataAquisicao, ultimaManutencao, observacoes];
+@override
+String get aliasedName => _alias ?? actualTableName;
+@override
+ String get actualTableName => $name;
+static const String $name = 'ativos_inventario';
+@override
+VerificationContext validateIntegrity(Insertable<AtivoInventarioData> instance, {bool isInserting = false}) {
+final context = VerificationContext();
+final data = instance.toColumns(true);
+if (data.containsKey('id')) {
+context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));} else if (isInserting) {
+context.missing(_idMeta);
+}
+if (data.containsKey('created_at')) {
+context.handle(_createdAtMeta, createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));} else if (isInserting) {
+context.missing(_createdAtMeta);
+}
+if (data.containsKey('updated_at')) {
+context.handle(_updatedAtMeta, updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));} else if (isInserting) {
+context.missing(_updatedAtMeta);
+}
+context.handle(_syncStatusMeta, const VerificationResult.success());if (data.containsKey('created_by')) {
+context.handle(_createdByMeta, createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta));}if (data.containsKey('updated_by')) {
+context.handle(_updatedByMeta, updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta));}if (data.containsKey('is_deleted')) {
+context.handle(_isDeletedMeta, isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta));}if (data.containsKey('local_id')) {
+context.handle(_localIdMeta, localId.isAcceptableOrUnknown(data['local_id']!, _localIdMeta));}if (data.containsKey('codigo')) {
+context.handle(_codigoMeta, codigo.isAcceptableOrUnknown(data['codigo']!, _codigoMeta));} else if (isInserting) {
+context.missing(_codigoMeta);
+}
+if (data.containsKey('nome')) {
+context.handle(_nomeMeta, nome.isAcceptableOrUnknown(data['nome']!, _nomeMeta));} else if (isInserting) {
+context.missing(_nomeMeta);
+}
+if (data.containsKey('categoria')) {
+context.handle(_categoriaMeta, categoria.isAcceptableOrUnknown(data['categoria']!, _categoriaMeta));} else if (isInserting) {
+context.missing(_categoriaMeta);
+}
+if (data.containsKey('localizacao')) {
+context.handle(_localizacaoMeta, localizacao.isAcceptableOrUnknown(data['localizacao']!, _localizacaoMeta));} else if (isInserting) {
+context.missing(_localizacaoMeta);
+}
+context.handle(_estadoMeta, const VerificationResult.success());if (data.containsKey('valor_aquisicao')) {
+context.handle(_valorAquisicaoMeta, valorAquisicao.isAcceptableOrUnknown(data['valor_aquisicao']!, _valorAquisicaoMeta));} else if (isInserting) {
+context.missing(_valorAquisicaoMeta);
+}
+if (data.containsKey('data_aquisicao')) {
+context.handle(_dataAquisicaoMeta, dataAquisicao.isAcceptableOrUnknown(data['data_aquisicao']!, _dataAquisicaoMeta));} else if (isInserting) {
+context.missing(_dataAquisicaoMeta);
+}
+if (data.containsKey('ultima_manutencao')) {
+context.handle(_ultimaManutencaoMeta, ultimaManutencao.isAcceptableOrUnknown(data['ultima_manutencao']!, _ultimaManutencaoMeta));}if (data.containsKey('observacoes')) {
+context.handle(_observacoesMeta, observacoes.isAcceptableOrUnknown(data['observacoes']!, _observacoesMeta));}return context;
+}
+@override
+Set<GeneratedColumn> get $primaryKey => {localId};
+@override AtivoInventarioData map(Map<String, dynamic> data, {String? tablePrefix})  {
+final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';return AtivoInventarioData(id: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}id'])!, createdAt: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!, updatedAt: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!, syncStatus: $AtivosInventarioTable.$convertersyncStatus.fromSql(attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}sync_status'])!), createdBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}created_by']), updatedBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}updated_by']), isDeleted: attachedDatabase.typeMapping.read(DriftSqlType.bool, data['${effectivePrefix}is_deleted'])!, localId: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}local_id'])!, codigo: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}codigo'])!, nome: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}nome'])!, categoria: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}categoria'])!, localizacao: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}localizacao'])!, estado: $AtivosInventarioTable.$converterestado.fromSql(attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}estado'])!), valorAquisicao: attachedDatabase.typeMapping.read(DriftSqlType.double, data['${effectivePrefix}valor_aquisicao'])!, dataAquisicao: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}data_aquisicao'])!, ultimaManutencao: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}ultima_manutencao']), observacoes: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}observacoes']), );
+}
+@override
+$AtivosInventarioTable createAlias(String alias) {
+return $AtivosInventarioTable(attachedDatabase, alias);}static JsonTypeConverter2<SyncStatus,int,int> $convertersyncStatus = const EnumIndexConverter<SyncStatus>(SyncStatus.values);static JsonTypeConverter2<AtivoEstado,int,int> $converterestado = const EnumIndexConverter<AtivoEstado>(AtivoEstado.values);}class AtivoInventarioData extends DataClass implements Insertable<AtivoInventarioData> 
+{
+final String id;
+final DateTime createdAt;
+final DateTime updatedAt;
+final SyncStatus syncStatus;
+final String? createdBy;
+final String? updatedBy;
+final bool isDeleted;
+final int localId;
+final String codigo;
+final String nome;
+final String categoria;
+final String localizacao;
+final AtivoEstado estado;
+final double valorAquisicao;
+final DateTime dataAquisicao;
+final DateTime? ultimaManutencao;
+final String? observacoes;
+const AtivoInventarioData({required this.id, required this.createdAt, required this.updatedAt, required this.syncStatus, this.createdBy, this.updatedBy, required this.isDeleted, required this.localId, required this.codigo, required this.nome, required this.categoria, required this.localizacao, required this.estado, required this.valorAquisicao, required this.dataAquisicao, this.ultimaManutencao, this.observacoes});@override
+Map<String, Expression> toColumns(bool nullToAbsent) {
+final map = <String, Expression> {};map['id'] = Variable<String>(id);
+map['created_at'] = Variable<DateTime>(createdAt);
+map['updated_at'] = Variable<DateTime>(updatedAt);
+{map['sync_status'] = Variable<int>($AtivosInventarioTable.$convertersyncStatus.toSql(syncStatus));
+}if (!nullToAbsent || createdBy != null){map['created_by'] = Variable<String>(createdBy);
+}if (!nullToAbsent || updatedBy != null){map['updated_by'] = Variable<String>(updatedBy);
+}map['is_deleted'] = Variable<bool>(isDeleted);
+map['local_id'] = Variable<int>(localId);
+map['codigo'] = Variable<String>(codigo);
+map['nome'] = Variable<String>(nome);
+map['categoria'] = Variable<String>(categoria);
+map['localizacao'] = Variable<String>(localizacao);
+{map['estado'] = Variable<int>($AtivosInventarioTable.$converterestado.toSql(estado));
+}map['valor_aquisicao'] = Variable<double>(valorAquisicao);
+map['data_aquisicao'] = Variable<DateTime>(dataAquisicao);
+if (!nullToAbsent || ultimaManutencao != null){map['ultima_manutencao'] = Variable<DateTime>(ultimaManutencao);
+}if (!nullToAbsent || observacoes != null){map['observacoes'] = Variable<String>(observacoes);
+}return map; 
+}
+AtivosInventarioCompanion toCompanion(bool nullToAbsent) {
+return AtivosInventarioCompanion(id: Value(id),createdAt: Value(createdAt),updatedAt: Value(updatedAt),syncStatus: Value(syncStatus),createdBy: createdBy == null && nullToAbsent ? const Value.absent() : Value(createdBy),updatedBy: updatedBy == null && nullToAbsent ? const Value.absent() : Value(updatedBy),isDeleted: Value(isDeleted),localId: Value(localId),codigo: Value(codigo),nome: Value(nome),categoria: Value(categoria),localizacao: Value(localizacao),estado: Value(estado),valorAquisicao: Value(valorAquisicao),dataAquisicao: Value(dataAquisicao),ultimaManutencao: ultimaManutencao == null && nullToAbsent ? const Value.absent() : Value(ultimaManutencao),observacoes: observacoes == null && nullToAbsent ? const Value.absent() : Value(observacoes),);
+}
+factory AtivoInventarioData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
+serializer ??= driftRuntimeOptions.defaultSerializer;
+return AtivoInventarioData(id: serializer.fromJson<String>(json['id']),createdAt: serializer.fromJson<DateTime>(json['createdAt']),updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),syncStatus: $AtivosInventarioTable.$convertersyncStatus.fromJson(serializer.fromJson<int>(json['syncStatus'])),createdBy: serializer.fromJson<String?>(json['createdBy']),updatedBy: serializer.fromJson<String?>(json['updatedBy']),isDeleted: serializer.fromJson<bool>(json['isDeleted']),localId: serializer.fromJson<int>(json['localId']),codigo: serializer.fromJson<String>(json['codigo']),nome: serializer.fromJson<String>(json['nome']),categoria: serializer.fromJson<String>(json['categoria']),localizacao: serializer.fromJson<String>(json['localizacao']),estado: $AtivosInventarioTable.$converterestado.fromJson(serializer.fromJson<int>(json['estado'])),valorAquisicao: serializer.fromJson<double>(json['valorAquisicao']),dataAquisicao: serializer.fromJson<DateTime>(json['dataAquisicao']),ultimaManutencao: serializer.fromJson<DateTime?>(json['ultimaManutencao']),observacoes: serializer.fromJson<String?>(json['observacoes']),);}
+@override Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+serializer ??= driftRuntimeOptions.defaultSerializer;
+return <String, dynamic>{
+'id': serializer.toJson<String>(id),'createdAt': serializer.toJson<DateTime>(createdAt),'updatedAt': serializer.toJson<DateTime>(updatedAt),'syncStatus': serializer.toJson<int>($AtivosInventarioTable.$convertersyncStatus.toJson(syncStatus)),'createdBy': serializer.toJson<String?>(createdBy),'updatedBy': serializer.toJson<String?>(updatedBy),'isDeleted': serializer.toJson<bool>(isDeleted),'localId': serializer.toJson<int>(localId),'codigo': serializer.toJson<String>(codigo),'nome': serializer.toJson<String>(nome),'categoria': serializer.toJson<String>(categoria),'localizacao': serializer.toJson<String>(localizacao),'estado': serializer.toJson<int>($AtivosInventarioTable.$converterestado.toJson(estado)),'valorAquisicao': serializer.toJson<double>(valorAquisicao),'dataAquisicao': serializer.toJson<DateTime>(dataAquisicao),'ultimaManutencao': serializer.toJson<DateTime?>(ultimaManutencao),'observacoes': serializer.toJson<String?>(observacoes),};}AtivoInventarioData copyWith({String? id,DateTime? createdAt,DateTime? updatedAt,SyncStatus? syncStatus,Value<String?> createdBy = const Value.absent(),Value<String?> updatedBy = const Value.absent(),bool? isDeleted,int? localId,String? codigo,String? nome,String? categoria,String? localizacao,AtivoEstado? estado,double? valorAquisicao,DateTime? dataAquisicao,Value<DateTime?> ultimaManutencao = const Value.absent(),Value<String?> observacoes = const Value.absent()}) => AtivoInventarioData(id: id ?? this.id,createdAt: createdAt ?? this.createdAt,updatedAt: updatedAt ?? this.updatedAt,syncStatus: syncStatus ?? this.syncStatus,createdBy: createdBy.present ? createdBy.value : this.createdBy,updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,isDeleted: isDeleted ?? this.isDeleted,localId: localId ?? this.localId,codigo: codigo ?? this.codigo,nome: nome ?? this.nome,categoria: categoria ?? this.categoria,localizacao: localizacao ?? this.localizacao,estado: estado ?? this.estado,valorAquisicao: valorAquisicao ?? this.valorAquisicao,dataAquisicao: dataAquisicao ?? this.dataAquisicao,ultimaManutencao: ultimaManutencao.present ? ultimaManutencao.value : this.ultimaManutencao,observacoes: observacoes.present ? observacoes.value : this.observacoes,);AtivoInventarioData copyWithCompanion(AtivosInventarioCompanion data) {
+return AtivoInventarioData(
+id: data.id.present ? data.id.value : this.id,createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,syncStatus: data.syncStatus.present ? data.syncStatus.value : this.syncStatus,createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,localId: data.localId.present ? data.localId.value : this.localId,codigo: data.codigo.present ? data.codigo.value : this.codigo,nome: data.nome.present ? data.nome.value : this.nome,categoria: data.categoria.present ? data.categoria.value : this.categoria,localizacao: data.localizacao.present ? data.localizacao.value : this.localizacao,estado: data.estado.present ? data.estado.value : this.estado,valorAquisicao: data.valorAquisicao.present ? data.valorAquisicao.value : this.valorAquisicao,dataAquisicao: data.dataAquisicao.present ? data.dataAquisicao.value : this.dataAquisicao,ultimaManutencao: data.ultimaManutencao.present ? data.ultimaManutencao.value : this.ultimaManutencao,observacoes: data.observacoes.present ? data.observacoes.value : this.observacoes,);
+}
+@override
+String toString() {return (StringBuffer('AtivoInventarioData(')..write('id: $id, ')..write('createdAt: $createdAt, ')..write('updatedAt: $updatedAt, ')..write('syncStatus: $syncStatus, ')..write('createdBy: $createdBy, ')..write('updatedBy: $updatedBy, ')..write('isDeleted: $isDeleted, ')..write('localId: $localId, ')..write('codigo: $codigo, ')..write('nome: $nome, ')..write('categoria: $categoria, ')..write('localizacao: $localizacao, ')..write('estado: $estado, ')..write('valorAquisicao: $valorAquisicao, ')..write('dataAquisicao: $dataAquisicao, ')..write('ultimaManutencao: $ultimaManutencao, ')..write('observacoes: $observacoes')..write(')')).toString();}
+@override
+ int get hashCode => Object.hash(id, createdAt, updatedAt, syncStatus, createdBy, updatedBy, isDeleted, localId, codigo, nome, categoria, localizacao, estado, valorAquisicao, dataAquisicao, ultimaManutencao, observacoes);@override
+bool operator ==(Object other) => identical(this, other) || (other is AtivoInventarioData && other.id == this.id && other.createdAt == this.createdAt && other.updatedAt == this.updatedAt && other.syncStatus == this.syncStatus && other.createdBy == this.createdBy && other.updatedBy == this.updatedBy && other.isDeleted == this.isDeleted && other.localId == this.localId && other.codigo == this.codigo && other.nome == this.nome && other.categoria == this.categoria && other.localizacao == this.localizacao && other.estado == this.estado && other.valorAquisicao == this.valorAquisicao && other.dataAquisicao == this.dataAquisicao && other.ultimaManutencao == this.ultimaManutencao && other.observacoes == this.observacoes);
+}class AtivosInventarioCompanion extends UpdateCompanion<AtivoInventarioData> {
+final Value<String> id;
+final Value<DateTime> createdAt;
+final Value<DateTime> updatedAt;
+final Value<SyncStatus> syncStatus;
+final Value<String?> createdBy;
+final Value<String?> updatedBy;
+final Value<bool> isDeleted;
+final Value<int> localId;
+final Value<String> codigo;
+final Value<String> nome;
+final Value<String> categoria;
+final Value<String> localizacao;
+final Value<AtivoEstado> estado;
+final Value<double> valorAquisicao;
+final Value<DateTime> dataAquisicao;
+final Value<DateTime?> ultimaManutencao;
+final Value<String?> observacoes;
+const AtivosInventarioCompanion({this.id = const Value.absent(),this.createdAt = const Value.absent(),this.updatedAt = const Value.absent(),this.syncStatus = const Value.absent(),this.createdBy = const Value.absent(),this.updatedBy = const Value.absent(),this.isDeleted = const Value.absent(),this.localId = const Value.absent(),this.codigo = const Value.absent(),this.nome = const Value.absent(),this.categoria = const Value.absent(),this.localizacao = const Value.absent(),this.estado = const Value.absent(),this.valorAquisicao = const Value.absent(),this.dataAquisicao = const Value.absent(),this.ultimaManutencao = const Value.absent(),this.observacoes = const Value.absent(),});
+AtivosInventarioCompanion.insert({required String id,required DateTime createdAt,required DateTime updatedAt,required SyncStatus syncStatus,this.createdBy = const Value.absent(),this.updatedBy = const Value.absent(),this.isDeleted = const Value.absent(),this.localId = const Value.absent(),required String codigo,required String nome,required String categoria,required String localizacao,required AtivoEstado estado,required double valorAquisicao,required DateTime dataAquisicao,this.ultimaManutencao = const Value.absent(),this.observacoes = const Value.absent(),}): id = Value(id), createdAt = Value(createdAt), updatedAt = Value(updatedAt), syncStatus = Value(syncStatus), codigo = Value(codigo), nome = Value(nome), categoria = Value(categoria), localizacao = Value(localizacao), estado = Value(estado), valorAquisicao = Value(valorAquisicao), dataAquisicao = Value(dataAquisicao);
+static Insertable<AtivoInventarioData> custom({Expression<String>? id, 
+Expression<DateTime>? createdAt, 
+Expression<DateTime>? updatedAt, 
+Expression<int>? syncStatus, 
+Expression<String>? createdBy, 
+Expression<String>? updatedBy, 
+Expression<bool>? isDeleted, 
+Expression<int>? localId, 
+Expression<String>? codigo, 
+Expression<String>? nome, 
+Expression<String>? categoria, 
+Expression<String>? localizacao, 
+Expression<int>? estado, 
+Expression<double>? valorAquisicao, 
+Expression<DateTime>? dataAquisicao, 
+Expression<DateTime>? ultimaManutencao, 
+Expression<String>? observacoes, 
+}) {
+return RawValuesInsertable({if (id != null)'id': id,if (createdAt != null)'created_at': createdAt,if (updatedAt != null)'updated_at': updatedAt,if (syncStatus != null)'sync_status': syncStatus,if (createdBy != null)'created_by': createdBy,if (updatedBy != null)'updated_by': updatedBy,if (isDeleted != null)'is_deleted': isDeleted,if (localId != null)'local_id': localId,if (codigo != null)'codigo': codigo,if (nome != null)'nome': nome,if (categoria != null)'categoria': categoria,if (localizacao != null)'localizacao': localizacao,if (estado != null)'estado': estado,if (valorAquisicao != null)'valor_aquisicao': valorAquisicao,if (dataAquisicao != null)'data_aquisicao': dataAquisicao,if (ultimaManutencao != null)'ultima_manutencao': ultimaManutencao,if (observacoes != null)'observacoes': observacoes,});
+}AtivosInventarioCompanion copyWith({Value<String>? id, Value<DateTime>? createdAt, Value<DateTime>? updatedAt, Value<SyncStatus>? syncStatus, Value<String?>? createdBy, Value<String?>? updatedBy, Value<bool>? isDeleted, Value<int>? localId, Value<String>? codigo, Value<String>? nome, Value<String>? categoria, Value<String>? localizacao, Value<AtivoEstado>? estado, Value<double>? valorAquisicao, Value<DateTime>? dataAquisicao, Value<DateTime?>? ultimaManutencao, Value<String?>? observacoes}) {
+return AtivosInventarioCompanion(id: id ?? this.id,createdAt: createdAt ?? this.createdAt,updatedAt: updatedAt ?? this.updatedAt,syncStatus: syncStatus ?? this.syncStatus,createdBy: createdBy ?? this.createdBy,updatedBy: updatedBy ?? this.updatedBy,isDeleted: isDeleted ?? this.isDeleted,localId: localId ?? this.localId,codigo: codigo ?? this.codigo,nome: nome ?? this.nome,categoria: categoria ?? this.categoria,localizacao: localizacao ?? this.localizacao,estado: estado ?? this.estado,valorAquisicao: valorAquisicao ?? this.valorAquisicao,dataAquisicao: dataAquisicao ?? this.dataAquisicao,ultimaManutencao: ultimaManutencao ?? this.ultimaManutencao,observacoes: observacoes ?? this.observacoes,);
+}
+@override
+Map<String, Expression> toColumns(bool nullToAbsent) {
+final map = <String, Expression> {};if (id.present) {
+map['id'] = Variable<String>(id.value);}
+if (createdAt.present) {
+map['created_at'] = Variable<DateTime>(createdAt.value);}
+if (updatedAt.present) {
+map['updated_at'] = Variable<DateTime>(updatedAt.value);}
+if (syncStatus.present) {
+map['sync_status'] = Variable<int>($AtivosInventarioTable.$convertersyncStatus.toSql(syncStatus.value));}
+if (createdBy.present) {
+map['created_by'] = Variable<String>(createdBy.value);}
+if (updatedBy.present) {
+map['updated_by'] = Variable<String>(updatedBy.value);}
+if (isDeleted.present) {
+map['is_deleted'] = Variable<bool>(isDeleted.value);}
+if (localId.present) {
+map['local_id'] = Variable<int>(localId.value);}
+if (codigo.present) {
+map['codigo'] = Variable<String>(codigo.value);}
+if (nome.present) {
+map['nome'] = Variable<String>(nome.value);}
+if (categoria.present) {
+map['categoria'] = Variable<String>(categoria.value);}
+if (localizacao.present) {
+map['localizacao'] = Variable<String>(localizacao.value);}
+if (estado.present) {
+map['estado'] = Variable<int>($AtivosInventarioTable.$converterestado.toSql(estado.value));}
+if (valorAquisicao.present) {
+map['valor_aquisicao'] = Variable<double>(valorAquisicao.value);}
+if (dataAquisicao.present) {
+map['data_aquisicao'] = Variable<DateTime>(dataAquisicao.value);}
+if (ultimaManutencao.present) {
+map['ultima_manutencao'] = Variable<DateTime>(ultimaManutencao.value);}
+if (observacoes.present) {
+map['observacoes'] = Variable<String>(observacoes.value);}
+return map; 
+}
+@override
+String toString() {return (StringBuffer('AtivosInventarioCompanion(')..write('id: $id, ')..write('createdAt: $createdAt, ')..write('updatedAt: $updatedAt, ')..write('syncStatus: $syncStatus, ')..write('createdBy: $createdBy, ')..write('updatedBy: $updatedBy, ')..write('isDeleted: $isDeleted, ')..write('localId: $localId, ')..write('codigo: $codigo, ')..write('nome: $nome, ')..write('categoria: $categoria, ')..write('localizacao: $localizacao, ')..write('estado: $estado, ')..write('valorAquisicao: $valorAquisicao, ')..write('dataAquisicao: $dataAquisicao, ')..write('ultimaManutencao: $ultimaManutencao, ')..write('observacoes: $observacoes')..write(')')).toString();}
+}
+class $ManutencoesAtivoTable extends ManutencoesAtivo with TableInfo<$ManutencoesAtivoTable, ManutencaoAtivoData>{
+@override final GeneratedDatabase attachedDatabase;
+final String? _alias;
+$ManutencoesAtivoTable(this.attachedDatabase, [this._alias]);
+static const VerificationMeta _localIdMeta = const VerificationMeta('localId');
+@override
+late final GeneratedColumn<int> localId = GeneratedColumn<int>('local_id', aliasedName, false, hasAutoIncrement: true, type: DriftSqlType.int, requiredDuringInsert: false, defaultConstraints: GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+static const VerificationMeta _idMeta = const VerificationMeta('id');
+@override
+late final GeneratedColumn<String> id = GeneratedColumn<String>('id', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _ativoIdMeta = const VerificationMeta('ativoId');
+@override
+late final GeneratedColumn<String> ativoId = GeneratedColumn<String>('ativo_id', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _dataMeta = const VerificationMeta('data');
+@override
+late final GeneratedColumn<DateTime> data = GeneratedColumn<DateTime>('data', aliasedName, false, type: DriftSqlType.dateTime, requiredDuringInsert: true);
+static const VerificationMeta _descricaoMeta = const VerificationMeta('descricao');
+@override
+late final GeneratedColumn<String> descricao = GeneratedColumn<String>('descricao', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _custoMeta = const VerificationMeta('custo');
+@override
+late final GeneratedColumn<double> custo = GeneratedColumn<double>('custo', aliasedName, false, type: DriftSqlType.double, requiredDuringInsert: true);
+static const VerificationMeta _realizadoPorMeta = const VerificationMeta('realizadoPor');
+@override
+late final GeneratedColumn<String> realizadoPor = GeneratedColumn<String>('realizado_por', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+@override
+List<GeneratedColumn> get $columns => [localId, id, ativoId, data, descricao, custo, realizadoPor];
+@override
+String get aliasedName => _alias ?? actualTableName;
+@override
+ String get actualTableName => $name;
+static const String $name = 'manutencoes_ativo';
+@override
+VerificationContext validateIntegrity(Insertable<ManutencaoAtivoData> instance, {bool isInserting = false}) {
+final context = VerificationContext();
+final data = instance.toColumns(true);
+if (data.containsKey('local_id')) {
+context.handle(_localIdMeta, localId.isAcceptableOrUnknown(data['local_id']!, _localIdMeta));}if (data.containsKey('id')) {
+context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));} else if (isInserting) {
+context.missing(_idMeta);
+}
+if (data.containsKey('ativo_id')) {
+context.handle(_ativoIdMeta, ativoId.isAcceptableOrUnknown(data['ativo_id']!, _ativoIdMeta));} else if (isInserting) {
+context.missing(_ativoIdMeta);
+}
+if (data.containsKey('data')) {
+context.handle(_dataMeta, this.data.isAcceptableOrUnknown(data['data']!, _dataMeta));} else if (isInserting) {
+context.missing(_dataMeta);
+}
+if (data.containsKey('descricao')) {
+context.handle(_descricaoMeta, descricao.isAcceptableOrUnknown(data['descricao']!, _descricaoMeta));} else if (isInserting) {
+context.missing(_descricaoMeta);
+}
+if (data.containsKey('custo')) {
+context.handle(_custoMeta, custo.isAcceptableOrUnknown(data['custo']!, _custoMeta));} else if (isInserting) {
+context.missing(_custoMeta);
+}
+if (data.containsKey('realizado_por')) {
+context.handle(_realizadoPorMeta, realizadoPor.isAcceptableOrUnknown(data['realizado_por']!, _realizadoPorMeta));}return context;
+}
+@override
+Set<GeneratedColumn> get $primaryKey => {localId};
+@override ManutencaoAtivoData map(Map<String, dynamic> data, {String? tablePrefix})  {
+final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';return ManutencaoAtivoData(localId: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}local_id'])!, id: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}id'])!, ativoId: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}ativo_id'])!, data: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}data'])!, descricao: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}descricao'])!, custo: attachedDatabase.typeMapping.read(DriftSqlType.double, data['${effectivePrefix}custo'])!, realizadoPor: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}realizado_por']), );
+}
+@override
+$ManutencoesAtivoTable createAlias(String alias) {
+return $ManutencoesAtivoTable(attachedDatabase, alias);}}class ManutencaoAtivoData extends DataClass implements Insertable<ManutencaoAtivoData> 
+{
+final int localId;
+final String id;
+final String ativoId;
+final DateTime data;
+final String descricao;
+final double custo;
+final String? realizadoPor;
+const ManutencaoAtivoData({required this.localId, required this.id, required this.ativoId, required this.data, required this.descricao, required this.custo, this.realizadoPor});@override
+Map<String, Expression> toColumns(bool nullToAbsent) {
+final map = <String, Expression> {};map['local_id'] = Variable<int>(localId);
+map['id'] = Variable<String>(id);
+map['ativo_id'] = Variable<String>(ativoId);
+map['data'] = Variable<DateTime>(data);
+map['descricao'] = Variable<String>(descricao);
+map['custo'] = Variable<double>(custo);
+if (!nullToAbsent || realizadoPor != null){map['realizado_por'] = Variable<String>(realizadoPor);
+}return map; 
+}
+ManutencoesAtivoCompanion toCompanion(bool nullToAbsent) {
+return ManutencoesAtivoCompanion(localId: Value(localId),id: Value(id),ativoId: Value(ativoId),data: Value(data),descricao: Value(descricao),custo: Value(custo),realizadoPor: realizadoPor == null && nullToAbsent ? const Value.absent() : Value(realizadoPor),);
+}
+factory ManutencaoAtivoData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
+serializer ??= driftRuntimeOptions.defaultSerializer;
+return ManutencaoAtivoData(localId: serializer.fromJson<int>(json['localId']),id: serializer.fromJson<String>(json['id']),ativoId: serializer.fromJson<String>(json['ativoId']),data: serializer.fromJson<DateTime>(json['data']),descricao: serializer.fromJson<String>(json['descricao']),custo: serializer.fromJson<double>(json['custo']),realizadoPor: serializer.fromJson<String?>(json['realizadoPor']),);}
+@override Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+serializer ??= driftRuntimeOptions.defaultSerializer;
+return <String, dynamic>{
+'localId': serializer.toJson<int>(localId),'id': serializer.toJson<String>(id),'ativoId': serializer.toJson<String>(ativoId),'data': serializer.toJson<DateTime>(data),'descricao': serializer.toJson<String>(descricao),'custo': serializer.toJson<double>(custo),'realizadoPor': serializer.toJson<String?>(realizadoPor),};}ManutencaoAtivoData copyWith({int? localId,String? id,String? ativoId,DateTime? data,String? descricao,double? custo,Value<String?> realizadoPor = const Value.absent()}) => ManutencaoAtivoData(localId: localId ?? this.localId,id: id ?? this.id,ativoId: ativoId ?? this.ativoId,data: data ?? this.data,descricao: descricao ?? this.descricao,custo: custo ?? this.custo,realizadoPor: realizadoPor.present ? realizadoPor.value : this.realizadoPor,);ManutencaoAtivoData copyWithCompanion(ManutencoesAtivoCompanion data) {
+return ManutencaoAtivoData(
+localId: data.localId.present ? data.localId.value : this.localId,id: data.id.present ? data.id.value : this.id,ativoId: data.ativoId.present ? data.ativoId.value : this.ativoId,data: data.data.present ? data.data.value : this.data,descricao: data.descricao.present ? data.descricao.value : this.descricao,custo: data.custo.present ? data.custo.value : this.custo,realizadoPor: data.realizadoPor.present ? data.realizadoPor.value : this.realizadoPor,);
+}
+@override
+String toString() {return (StringBuffer('ManutencaoAtivoData(')..write('localId: $localId, ')..write('id: $id, ')..write('ativoId: $ativoId, ')..write('data: $data, ')..write('descricao: $descricao, ')..write('custo: $custo, ')..write('realizadoPor: $realizadoPor')..write(')')).toString();}
+@override
+ int get hashCode => Object.hash(localId, id, ativoId, data, descricao, custo, realizadoPor);@override
+bool operator ==(Object other) => identical(this, other) || (other is ManutencaoAtivoData && other.localId == this.localId && other.id == this.id && other.ativoId == this.ativoId && other.data == this.data && other.descricao == this.descricao && other.custo == this.custo && other.realizadoPor == this.realizadoPor);
+}class ManutencoesAtivoCompanion extends UpdateCompanion<ManutencaoAtivoData> {
+final Value<int> localId;
+final Value<String> id;
+final Value<String> ativoId;
+final Value<DateTime> data;
+final Value<String> descricao;
+final Value<double> custo;
+final Value<String?> realizadoPor;
+const ManutencoesAtivoCompanion({this.localId = const Value.absent(),this.id = const Value.absent(),this.ativoId = const Value.absent(),this.data = const Value.absent(),this.descricao = const Value.absent(),this.custo = const Value.absent(),this.realizadoPor = const Value.absent(),});
+ManutencoesAtivoCompanion.insert({this.localId = const Value.absent(),required String id,required String ativoId,required DateTime data,required String descricao,required double custo,this.realizadoPor = const Value.absent(),}): id = Value(id), ativoId = Value(ativoId), data = Value(data), descricao = Value(descricao), custo = Value(custo);
+static Insertable<ManutencaoAtivoData> custom({Expression<int>? localId, 
+Expression<String>? id, 
+Expression<String>? ativoId, 
+Expression<DateTime>? data, 
+Expression<String>? descricao, 
+Expression<double>? custo, 
+Expression<String>? realizadoPor, 
+}) {
+return RawValuesInsertable({if (localId != null)'local_id': localId,if (id != null)'id': id,if (ativoId != null)'ativo_id': ativoId,if (data != null)'data': data,if (descricao != null)'descricao': descricao,if (custo != null)'custo': custo,if (realizadoPor != null)'realizado_por': realizadoPor,});
+}ManutencoesAtivoCompanion copyWith({Value<int>? localId, Value<String>? id, Value<String>? ativoId, Value<DateTime>? data, Value<String>? descricao, Value<double>? custo, Value<String?>? realizadoPor}) {
+return ManutencoesAtivoCompanion(localId: localId ?? this.localId,id: id ?? this.id,ativoId: ativoId ?? this.ativoId,data: data ?? this.data,descricao: descricao ?? this.descricao,custo: custo ?? this.custo,realizadoPor: realizadoPor ?? this.realizadoPor,);
+}
+@override
+Map<String, Expression> toColumns(bool nullToAbsent) {
+final map = <String, Expression> {};if (localId.present) {
+map['local_id'] = Variable<int>(localId.value);}
+if (id.present) {
+map['id'] = Variable<String>(id.value);}
+if (ativoId.present) {
+map['ativo_id'] = Variable<String>(ativoId.value);}
+if (data.present) {
+map['data'] = Variable<DateTime>(data.value);}
+if (descricao.present) {
+map['descricao'] = Variable<String>(descricao.value);}
+if (custo.present) {
+map['custo'] = Variable<double>(custo.value);}
+if (realizadoPor.present) {
+map['realizado_por'] = Variable<String>(realizadoPor.value);}
+return map; 
+}
+@override
+String toString() {return (StringBuffer('ManutencoesAtivoCompanion(')..write('localId: $localId, ')..write('id: $id, ')..write('ativoId: $ativoId, ')..write('data: $data, ')..write('descricao: $descricao, ')..write('custo: $custo, ')..write('realizadoPor: $realizadoPor')..write(')')).toString();}
+}
+class $NotasAvaliacaoTable extends NotasAvaliacao with TableInfo<$NotasAvaliacaoTable, NotaAvaliacaoData>{
+@override final GeneratedDatabase attachedDatabase;
+final String? _alias;
+$NotasAvaliacaoTable(this.attachedDatabase, [this._alias]);
+static const VerificationMeta _idMeta = const VerificationMeta('id');
+@override
+late final GeneratedColumn<String> id = GeneratedColumn<String>('id', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _createdAtMeta = const VerificationMeta('createdAt');
+@override
+late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>('created_at', aliasedName, false, type: DriftSqlType.dateTime, requiredDuringInsert: true);
+static const VerificationMeta _updatedAtMeta = const VerificationMeta('updatedAt');
+@override
+late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>('updated_at', aliasedName, false, type: DriftSqlType.dateTime, requiredDuringInsert: true);
+static const VerificationMeta _syncStatusMeta = const VerificationMeta('syncStatus');
+@override
+late final GeneratedColumnWithTypeConverter<SyncStatus, int> syncStatus = GeneratedColumn<int>('sync_status', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true).withConverter<SyncStatus>($NotasAvaliacaoTable.$convertersyncStatus);
+static const VerificationMeta _createdByMeta = const VerificationMeta('createdBy');
+@override
+late final GeneratedColumn<String> createdBy = GeneratedColumn<String>('created_by', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+static const VerificationMeta _updatedByMeta = const VerificationMeta('updatedBy');
+@override
+late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>('updated_by', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+static const VerificationMeta _isDeletedMeta = const VerificationMeta('isDeleted');
+@override
+late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>('is_deleted', aliasedName, false, type: DriftSqlType.bool, requiredDuringInsert: false, defaultConstraints: GeneratedColumn.constraintIsAlways('CHECK ("is_deleted" IN (0, 1))'), defaultValue: const Constant(false));
+static const VerificationMeta _localIdMeta = const VerificationMeta('localId');
+@override
+late final GeneratedColumn<int> localId = GeneratedColumn<int>('local_id', aliasedName, false, hasAutoIncrement: true, type: DriftSqlType.int, requiredDuringInsert: false, defaultConstraints: GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+static const VerificationMeta _alunoIdMeta = const VerificationMeta('alunoId');
+@override
+late final GeneratedColumn<String> alunoId = GeneratedColumn<String>('aluno_id', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _disciplinaMeta = const VerificationMeta('disciplina');
+@override
+late final GeneratedColumn<String> disciplina = GeneratedColumn<String>('disciplina', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _trimestreMeta = const VerificationMeta('trimestre');
+@override
+late final GeneratedColumn<int> trimestre = GeneratedColumn<int>('trimestre', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true);
+static const VerificationMeta _anoLectivoMeta = const VerificationMeta('anoLectivo');
+@override
+late final GeneratedColumn<String> anoLectivo = GeneratedColumn<String>('ano_lectivo', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _valorMeta = const VerificationMeta('valor');
+@override
+late final GeneratedColumn<double> valor = GeneratedColumn<double>('valor', aliasedName, false, type: DriftSqlType.double, requiredDuringInsert: true);
+static const VerificationMeta _observacaoMeta = const VerificationMeta('observacao');
+@override
+late final GeneratedColumn<String> observacao = GeneratedColumn<String>('observacao', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+@override
+List<GeneratedColumn> get $columns => [id, createdAt, updatedAt, syncStatus, createdBy, updatedBy, isDeleted, localId, alunoId, disciplina, trimestre, anoLectivo, valor, observacao];
+@override
+String get aliasedName => _alias ?? actualTableName;
+@override
+ String get actualTableName => $name;
+static const String $name = 'notas_avaliacao';
+@override
+VerificationContext validateIntegrity(Insertable<NotaAvaliacaoData> instance, {bool isInserting = false}) {
+final context = VerificationContext();
+final data = instance.toColumns(true);
+if (data.containsKey('id')) {
+context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));} else if (isInserting) {
+context.missing(_idMeta);
+}
+if (data.containsKey('created_at')) {
+context.handle(_createdAtMeta, createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));} else if (isInserting) {
+context.missing(_createdAtMeta);
+}
+if (data.containsKey('updated_at')) {
+context.handle(_updatedAtMeta, updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));} else if (isInserting) {
+context.missing(_updatedAtMeta);
+}
+context.handle(_syncStatusMeta, const VerificationResult.success());if (data.containsKey('created_by')) {
+context.handle(_createdByMeta, createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta));}if (data.containsKey('updated_by')) {
+context.handle(_updatedByMeta, updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta));}if (data.containsKey('is_deleted')) {
+context.handle(_isDeletedMeta, isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta));}if (data.containsKey('local_id')) {
+context.handle(_localIdMeta, localId.isAcceptableOrUnknown(data['local_id']!, _localIdMeta));}if (data.containsKey('aluno_id')) {
+context.handle(_alunoIdMeta, alunoId.isAcceptableOrUnknown(data['aluno_id']!, _alunoIdMeta));} else if (isInserting) {
+context.missing(_alunoIdMeta);
+}
+if (data.containsKey('disciplina')) {
+context.handle(_disciplinaMeta, disciplina.isAcceptableOrUnknown(data['disciplina']!, _disciplinaMeta));} else if (isInserting) {
+context.missing(_disciplinaMeta);
+}
+if (data.containsKey('trimestre')) {
+context.handle(_trimestreMeta, trimestre.isAcceptableOrUnknown(data['trimestre']!, _trimestreMeta));} else if (isInserting) {
+context.missing(_trimestreMeta);
+}
+if (data.containsKey('ano_lectivo')) {
+context.handle(_anoLectivoMeta, anoLectivo.isAcceptableOrUnknown(data['ano_lectivo']!, _anoLectivoMeta));} else if (isInserting) {
+context.missing(_anoLectivoMeta);
+}
+if (data.containsKey('valor')) {
+context.handle(_valorMeta, valor.isAcceptableOrUnknown(data['valor']!, _valorMeta));} else if (isInserting) {
+context.missing(_valorMeta);
+}
+if (data.containsKey('observacao')) {
+context.handle(_observacaoMeta, observacao.isAcceptableOrUnknown(data['observacao']!, _observacaoMeta));}return context;
+}
+@override
+Set<GeneratedColumn> get $primaryKey => {localId};
+@override NotaAvaliacaoData map(Map<String, dynamic> data, {String? tablePrefix})  {
+final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';return NotaAvaliacaoData(id: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}id'])!, createdAt: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!, updatedAt: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!, syncStatus: $NotasAvaliacaoTable.$convertersyncStatus.fromSql(attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}sync_status'])!), createdBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}created_by']), updatedBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}updated_by']), isDeleted: attachedDatabase.typeMapping.read(DriftSqlType.bool, data['${effectivePrefix}is_deleted'])!, localId: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}local_id'])!, alunoId: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}aluno_id'])!, disciplina: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}disciplina'])!, trimestre: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}trimestre'])!, anoLectivo: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}ano_lectivo'])!, valor: attachedDatabase.typeMapping.read(DriftSqlType.double, data['${effectivePrefix}valor'])!, observacao: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}observacao']), );
+}
+@override
+$NotasAvaliacaoTable createAlias(String alias) {
+return $NotasAvaliacaoTable(attachedDatabase, alias);}static JsonTypeConverter2<SyncStatus,int,int> $convertersyncStatus = const EnumIndexConverter<SyncStatus>(SyncStatus.values);}class NotaAvaliacaoData extends DataClass implements Insertable<NotaAvaliacaoData> 
+{
+final String id;
+final DateTime createdAt;
+final DateTime updatedAt;
+final SyncStatus syncStatus;
+final String? createdBy;
+final String? updatedBy;
+final bool isDeleted;
+final int localId;
+final String alunoId;
+final String disciplina;
+final int trimestre;
+final String anoLectivo;
+final double valor;
+final String? observacao;
+const NotaAvaliacaoData({required this.id, required this.createdAt, required this.updatedAt, required this.syncStatus, this.createdBy, this.updatedBy, required this.isDeleted, required this.localId, required this.alunoId, required this.disciplina, required this.trimestre, required this.anoLectivo, required this.valor, this.observacao});@override
+Map<String, Expression> toColumns(bool nullToAbsent) {
+final map = <String, Expression> {};map['id'] = Variable<String>(id);
+map['created_at'] = Variable<DateTime>(createdAt);
+map['updated_at'] = Variable<DateTime>(updatedAt);
+{map['sync_status'] = Variable<int>($NotasAvaliacaoTable.$convertersyncStatus.toSql(syncStatus));
+}if (!nullToAbsent || createdBy != null){map['created_by'] = Variable<String>(createdBy);
+}if (!nullToAbsent || updatedBy != null){map['updated_by'] = Variable<String>(updatedBy);
+}map['is_deleted'] = Variable<bool>(isDeleted);
+map['local_id'] = Variable<int>(localId);
+map['aluno_id'] = Variable<String>(alunoId);
+map['disciplina'] = Variable<String>(disciplina);
+map['trimestre'] = Variable<int>(trimestre);
+map['ano_lectivo'] = Variable<String>(anoLectivo);
+map['valor'] = Variable<double>(valor);
+if (!nullToAbsent || observacao != null){map['observacao'] = Variable<String>(observacao);
+}return map; 
+}
+NotasAvaliacaoCompanion toCompanion(bool nullToAbsent) {
+return NotasAvaliacaoCompanion(id: Value(id),createdAt: Value(createdAt),updatedAt: Value(updatedAt),syncStatus: Value(syncStatus),createdBy: createdBy == null && nullToAbsent ? const Value.absent() : Value(createdBy),updatedBy: updatedBy == null && nullToAbsent ? const Value.absent() : Value(updatedBy),isDeleted: Value(isDeleted),localId: Value(localId),alunoId: Value(alunoId),disciplina: Value(disciplina),trimestre: Value(trimestre),anoLectivo: Value(anoLectivo),valor: Value(valor),observacao: observacao == null && nullToAbsent ? const Value.absent() : Value(observacao),);
+}
+factory NotaAvaliacaoData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
+serializer ??= driftRuntimeOptions.defaultSerializer;
+return NotaAvaliacaoData(id: serializer.fromJson<String>(json['id']),createdAt: serializer.fromJson<DateTime>(json['createdAt']),updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),syncStatus: $NotasAvaliacaoTable.$convertersyncStatus.fromJson(serializer.fromJson<int>(json['syncStatus'])),createdBy: serializer.fromJson<String?>(json['createdBy']),updatedBy: serializer.fromJson<String?>(json['updatedBy']),isDeleted: serializer.fromJson<bool>(json['isDeleted']),localId: serializer.fromJson<int>(json['localId']),alunoId: serializer.fromJson<String>(json['alunoId']),disciplina: serializer.fromJson<String>(json['disciplina']),trimestre: serializer.fromJson<int>(json['trimestre']),anoLectivo: serializer.fromJson<String>(json['anoLectivo']),valor: serializer.fromJson<double>(json['valor']),observacao: serializer.fromJson<String?>(json['observacao']),);}
+@override Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+serializer ??= driftRuntimeOptions.defaultSerializer;
+return <String, dynamic>{
+'id': serializer.toJson<String>(id),'createdAt': serializer.toJson<DateTime>(createdAt),'updatedAt': serializer.toJson<DateTime>(updatedAt),'syncStatus': serializer.toJson<int>($NotasAvaliacaoTable.$convertersyncStatus.toJson(syncStatus)),'createdBy': serializer.toJson<String?>(createdBy),'updatedBy': serializer.toJson<String?>(updatedBy),'isDeleted': serializer.toJson<bool>(isDeleted),'localId': serializer.toJson<int>(localId),'alunoId': serializer.toJson<String>(alunoId),'disciplina': serializer.toJson<String>(disciplina),'trimestre': serializer.toJson<int>(trimestre),'anoLectivo': serializer.toJson<String>(anoLectivo),'valor': serializer.toJson<double>(valor),'observacao': serializer.toJson<String?>(observacao),};}NotaAvaliacaoData copyWith({String? id,DateTime? createdAt,DateTime? updatedAt,SyncStatus? syncStatus,Value<String?> createdBy = const Value.absent(),Value<String?> updatedBy = const Value.absent(),bool? isDeleted,int? localId,String? alunoId,String? disciplina,int? trimestre,String? anoLectivo,double? valor,Value<String?> observacao = const Value.absent()}) => NotaAvaliacaoData(id: id ?? this.id,createdAt: createdAt ?? this.createdAt,updatedAt: updatedAt ?? this.updatedAt,syncStatus: syncStatus ?? this.syncStatus,createdBy: createdBy.present ? createdBy.value : this.createdBy,updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,isDeleted: isDeleted ?? this.isDeleted,localId: localId ?? this.localId,alunoId: alunoId ?? this.alunoId,disciplina: disciplina ?? this.disciplina,trimestre: trimestre ?? this.trimestre,anoLectivo: anoLectivo ?? this.anoLectivo,valor: valor ?? this.valor,observacao: observacao.present ? observacao.value : this.observacao,);NotaAvaliacaoData copyWithCompanion(NotasAvaliacaoCompanion data) {
+return NotaAvaliacaoData(
+id: data.id.present ? data.id.value : this.id,createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,syncStatus: data.syncStatus.present ? data.syncStatus.value : this.syncStatus,createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,localId: data.localId.present ? data.localId.value : this.localId,alunoId: data.alunoId.present ? data.alunoId.value : this.alunoId,disciplina: data.disciplina.present ? data.disciplina.value : this.disciplina,trimestre: data.trimestre.present ? data.trimestre.value : this.trimestre,anoLectivo: data.anoLectivo.present ? data.anoLectivo.value : this.anoLectivo,valor: data.valor.present ? data.valor.value : this.valor,observacao: data.observacao.present ? data.observacao.value : this.observacao,);
+}
+@override
+String toString() {return (StringBuffer('NotaAvaliacaoData(')..write('id: $id, ')..write('createdAt: $createdAt, ')..write('updatedAt: $updatedAt, ')..write('syncStatus: $syncStatus, ')..write('createdBy: $createdBy, ')..write('updatedBy: $updatedBy, ')..write('isDeleted: $isDeleted, ')..write('localId: $localId, ')..write('alunoId: $alunoId, ')..write('disciplina: $disciplina, ')..write('trimestre: $trimestre, ')..write('anoLectivo: $anoLectivo, ')..write('valor: $valor, ')..write('observacao: $observacao')..write(')')).toString();}
+@override
+ int get hashCode => Object.hash(id, createdAt, updatedAt, syncStatus, createdBy, updatedBy, isDeleted, localId, alunoId, disciplina, trimestre, anoLectivo, valor, observacao);@override
+bool operator ==(Object other) => identical(this, other) || (other is NotaAvaliacaoData && other.id == this.id && other.createdAt == this.createdAt && other.updatedAt == this.updatedAt && other.syncStatus == this.syncStatus && other.createdBy == this.createdBy && other.updatedBy == this.updatedBy && other.isDeleted == this.isDeleted && other.localId == this.localId && other.alunoId == this.alunoId && other.disciplina == this.disciplina && other.trimestre == this.trimestre && other.anoLectivo == this.anoLectivo && other.valor == this.valor && other.observacao == this.observacao);
+}class NotasAvaliacaoCompanion extends UpdateCompanion<NotaAvaliacaoData> {
+final Value<String> id;
+final Value<DateTime> createdAt;
+final Value<DateTime> updatedAt;
+final Value<SyncStatus> syncStatus;
+final Value<String?> createdBy;
+final Value<String?> updatedBy;
+final Value<bool> isDeleted;
+final Value<int> localId;
+final Value<String> alunoId;
+final Value<String> disciplina;
+final Value<int> trimestre;
+final Value<String> anoLectivo;
+final Value<double> valor;
+final Value<String?> observacao;
+const NotasAvaliacaoCompanion({this.id = const Value.absent(),this.createdAt = const Value.absent(),this.updatedAt = const Value.absent(),this.syncStatus = const Value.absent(),this.createdBy = const Value.absent(),this.updatedBy = const Value.absent(),this.isDeleted = const Value.absent(),this.localId = const Value.absent(),this.alunoId = const Value.absent(),this.disciplina = const Value.absent(),this.trimestre = const Value.absent(),this.anoLectivo = const Value.absent(),this.valor = const Value.absent(),this.observacao = const Value.absent(),});
+NotasAvaliacaoCompanion.insert({required String id,required DateTime createdAt,required DateTime updatedAt,required SyncStatus syncStatus,this.createdBy = const Value.absent(),this.updatedBy = const Value.absent(),this.isDeleted = const Value.absent(),this.localId = const Value.absent(),required String alunoId,required String disciplina,required int trimestre,required String anoLectivo,required double valor,this.observacao = const Value.absent(),}): id = Value(id), createdAt = Value(createdAt), updatedAt = Value(updatedAt), syncStatus = Value(syncStatus), alunoId = Value(alunoId), disciplina = Value(disciplina), trimestre = Value(trimestre), anoLectivo = Value(anoLectivo), valor = Value(valor);
+static Insertable<NotaAvaliacaoData> custom({Expression<String>? id, 
+Expression<DateTime>? createdAt, 
+Expression<DateTime>? updatedAt, 
+Expression<int>? syncStatus, 
+Expression<String>? createdBy, 
+Expression<String>? updatedBy, 
+Expression<bool>? isDeleted, 
+Expression<int>? localId, 
+Expression<String>? alunoId, 
+Expression<String>? disciplina, 
+Expression<int>? trimestre, 
+Expression<String>? anoLectivo, 
+Expression<double>? valor, 
+Expression<String>? observacao, 
+}) {
+return RawValuesInsertable({if (id != null)'id': id,if (createdAt != null)'created_at': createdAt,if (updatedAt != null)'updated_at': updatedAt,if (syncStatus != null)'sync_status': syncStatus,if (createdBy != null)'created_by': createdBy,if (updatedBy != null)'updated_by': updatedBy,if (isDeleted != null)'is_deleted': isDeleted,if (localId != null)'local_id': localId,if (alunoId != null)'aluno_id': alunoId,if (disciplina != null)'disciplina': disciplina,if (trimestre != null)'trimestre': trimestre,if (anoLectivo != null)'ano_lectivo': anoLectivo,if (valor != null)'valor': valor,if (observacao != null)'observacao': observacao,});
+}NotasAvaliacaoCompanion copyWith({Value<String>? id, Value<DateTime>? createdAt, Value<DateTime>? updatedAt, Value<SyncStatus>? syncStatus, Value<String?>? createdBy, Value<String?>? updatedBy, Value<bool>? isDeleted, Value<int>? localId, Value<String>? alunoId, Value<String>? disciplina, Value<int>? trimestre, Value<String>? anoLectivo, Value<double>? valor, Value<String?>? observacao}) {
+return NotasAvaliacaoCompanion(id: id ?? this.id,createdAt: createdAt ?? this.createdAt,updatedAt: updatedAt ?? this.updatedAt,syncStatus: syncStatus ?? this.syncStatus,createdBy: createdBy ?? this.createdBy,updatedBy: updatedBy ?? this.updatedBy,isDeleted: isDeleted ?? this.isDeleted,localId: localId ?? this.localId,alunoId: alunoId ?? this.alunoId,disciplina: disciplina ?? this.disciplina,trimestre: trimestre ?? this.trimestre,anoLectivo: anoLectivo ?? this.anoLectivo,valor: valor ?? this.valor,observacao: observacao ?? this.observacao,);
+}
+@override
+Map<String, Expression> toColumns(bool nullToAbsent) {
+final map = <String, Expression> {};if (id.present) {
+map['id'] = Variable<String>(id.value);}
+if (createdAt.present) {
+map['created_at'] = Variable<DateTime>(createdAt.value);}
+if (updatedAt.present) {
+map['updated_at'] = Variable<DateTime>(updatedAt.value);}
+if (syncStatus.present) {
+map['sync_status'] = Variable<int>($NotasAvaliacaoTable.$convertersyncStatus.toSql(syncStatus.value));}
+if (createdBy.present) {
+map['created_by'] = Variable<String>(createdBy.value);}
+if (updatedBy.present) {
+map['updated_by'] = Variable<String>(updatedBy.value);}
+if (isDeleted.present) {
+map['is_deleted'] = Variable<bool>(isDeleted.value);}
+if (localId.present) {
+map['local_id'] = Variable<int>(localId.value);}
+if (alunoId.present) {
+map['aluno_id'] = Variable<String>(alunoId.value);}
+if (disciplina.present) {
+map['disciplina'] = Variable<String>(disciplina.value);}
+if (trimestre.present) {
+map['trimestre'] = Variable<int>(trimestre.value);}
+if (anoLectivo.present) {
+map['ano_lectivo'] = Variable<String>(anoLectivo.value);}
+if (valor.present) {
+map['valor'] = Variable<double>(valor.value);}
+if (observacao.present) {
+map['observacao'] = Variable<String>(observacao.value);}
+return map; 
+}
+@override
+String toString() {return (StringBuffer('NotasAvaliacaoCompanion(')..write('id: $id, ')..write('createdAt: $createdAt, ')..write('updatedAt: $updatedAt, ')..write('syncStatus: $syncStatus, ')..write('createdBy: $createdBy, ')..write('updatedBy: $updatedBy, ')..write('isDeleted: $isDeleted, ')..write('localId: $localId, ')..write('alunoId: $alunoId, ')..write('disciplina: $disciplina, ')..write('trimestre: $trimestre, ')..write('anoLectivo: $anoLectivo, ')..write('valor: $valor, ')..write('observacao: $observacao')..write(')')).toString();}
+}
+class $HorariosAulaTable extends HorariosAula with TableInfo<$HorariosAulaTable, HorarioAulaData>{
+@override final GeneratedDatabase attachedDatabase;
+final String? _alias;
+$HorariosAulaTable(this.attachedDatabase, [this._alias]);
+static const VerificationMeta _idMeta = const VerificationMeta('id');
+@override
+late final GeneratedColumn<String> id = GeneratedColumn<String>('id', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _createdAtMeta = const VerificationMeta('createdAt');
+@override
+late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>('created_at', aliasedName, false, type: DriftSqlType.dateTime, requiredDuringInsert: true);
+static const VerificationMeta _updatedAtMeta = const VerificationMeta('updatedAt');
+@override
+late final GeneratedColumn<DateTime> updatedAt = GeneratedColumn<DateTime>('updated_at', aliasedName, false, type: DriftSqlType.dateTime, requiredDuringInsert: true);
+static const VerificationMeta _syncStatusMeta = const VerificationMeta('syncStatus');
+@override
+late final GeneratedColumnWithTypeConverter<SyncStatus, int> syncStatus = GeneratedColumn<int>('sync_status', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true).withConverter<SyncStatus>($HorariosAulaTable.$convertersyncStatus);
+static const VerificationMeta _createdByMeta = const VerificationMeta('createdBy');
+@override
+late final GeneratedColumn<String> createdBy = GeneratedColumn<String>('created_by', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+static const VerificationMeta _updatedByMeta = const VerificationMeta('updatedBy');
+@override
+late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>('updated_by', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+static const VerificationMeta _isDeletedMeta = const VerificationMeta('isDeleted');
+@override
+late final GeneratedColumn<bool> isDeleted = GeneratedColumn<bool>('is_deleted', aliasedName, false, type: DriftSqlType.bool, requiredDuringInsert: false, defaultConstraints: GeneratedColumn.constraintIsAlways('CHECK ("is_deleted" IN (0, 1))'), defaultValue: const Constant(false));
+static const VerificationMeta _localIdMeta = const VerificationMeta('localId');
+@override
+late final GeneratedColumn<int> localId = GeneratedColumn<int>('local_id', aliasedName, false, hasAutoIncrement: true, type: DriftSqlType.int, requiredDuringInsert: false, defaultConstraints: GeneratedColumn.constraintIsAlways('PRIMARY KEY AUTOINCREMENT'));
+static const VerificationMeta _turmaIdMeta = const VerificationMeta('turmaId');
+@override
+late final GeneratedColumn<String> turmaId = GeneratedColumn<String>('turma_id', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _diaSemanaMeta = const VerificationMeta('diaSemana');
+@override
+late final GeneratedColumn<int> diaSemana = GeneratedColumn<int>('dia_semana', aliasedName, false, type: DriftSqlType.int, requiredDuringInsert: true);
+static const VerificationMeta _horaInicioMeta = const VerificationMeta('horaInicio');
+@override
+late final GeneratedColumn<String> horaInicio = GeneratedColumn<String>('hora_inicio', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _horaFimMeta = const VerificationMeta('horaFim');
+@override
+late final GeneratedColumn<String> horaFim = GeneratedColumn<String>('hora_fim', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _disciplinaMeta = const VerificationMeta('disciplina');
+@override
+late final GeneratedColumn<String> disciplina = GeneratedColumn<String>('disciplina', aliasedName, false, type: DriftSqlType.string, requiredDuringInsert: true);
+static const VerificationMeta _professorMeta = const VerificationMeta('professor');
+@override
+late final GeneratedColumn<String> professor = GeneratedColumn<String>('professor', aliasedName, true, type: DriftSqlType.string, requiredDuringInsert: false);
+@override
+List<GeneratedColumn> get $columns => [id, createdAt, updatedAt, syncStatus, createdBy, updatedBy, isDeleted, localId, turmaId, diaSemana, horaInicio, horaFim, disciplina, professor];
+@override
+String get aliasedName => _alias ?? actualTableName;
+@override
+ String get actualTableName => $name;
+static const String $name = 'horarios_aula';
+@override
+VerificationContext validateIntegrity(Insertable<HorarioAulaData> instance, {bool isInserting = false}) {
+final context = VerificationContext();
+final data = instance.toColumns(true);
+if (data.containsKey('id')) {
+context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));} else if (isInserting) {
+context.missing(_idMeta);
+}
+if (data.containsKey('created_at')) {
+context.handle(_createdAtMeta, createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));} else if (isInserting) {
+context.missing(_createdAtMeta);
+}
+if (data.containsKey('updated_at')) {
+context.handle(_updatedAtMeta, updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));} else if (isInserting) {
+context.missing(_updatedAtMeta);
+}
+context.handle(_syncStatusMeta, const VerificationResult.success());if (data.containsKey('created_by')) {
+context.handle(_createdByMeta, createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta));}if (data.containsKey('updated_by')) {
+context.handle(_updatedByMeta, updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta));}if (data.containsKey('is_deleted')) {
+context.handle(_isDeletedMeta, isDeleted.isAcceptableOrUnknown(data['is_deleted']!, _isDeletedMeta));}if (data.containsKey('local_id')) {
+context.handle(_localIdMeta, localId.isAcceptableOrUnknown(data['local_id']!, _localIdMeta));}if (data.containsKey('turma_id')) {
+context.handle(_turmaIdMeta, turmaId.isAcceptableOrUnknown(data['turma_id']!, _turmaIdMeta));} else if (isInserting) {
+context.missing(_turmaIdMeta);
+}
+if (data.containsKey('dia_semana')) {
+context.handle(_diaSemanaMeta, diaSemana.isAcceptableOrUnknown(data['dia_semana']!, _diaSemanaMeta));} else if (isInserting) {
+context.missing(_diaSemanaMeta);
+}
+if (data.containsKey('hora_inicio')) {
+context.handle(_horaInicioMeta, horaInicio.isAcceptableOrUnknown(data['hora_inicio']!, _horaInicioMeta));} else if (isInserting) {
+context.missing(_horaInicioMeta);
+}
+if (data.containsKey('hora_fim')) {
+context.handle(_horaFimMeta, horaFim.isAcceptableOrUnknown(data['hora_fim']!, _horaFimMeta));} else if (isInserting) {
+context.missing(_horaFimMeta);
+}
+if (data.containsKey('disciplina')) {
+context.handle(_disciplinaMeta, disciplina.isAcceptableOrUnknown(data['disciplina']!, _disciplinaMeta));} else if (isInserting) {
+context.missing(_disciplinaMeta);
+}
+if (data.containsKey('professor')) {
+context.handle(_professorMeta, professor.isAcceptableOrUnknown(data['professor']!, _professorMeta));}return context;
+}
+@override
+Set<GeneratedColumn> get $primaryKey => {localId};
+@override HorarioAulaData map(Map<String, dynamic> data, {String? tablePrefix})  {
+final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';return HorarioAulaData(id: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}id'])!, createdAt: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}created_at'])!, updatedAt: attachedDatabase.typeMapping.read(DriftSqlType.dateTime, data['${effectivePrefix}updated_at'])!, syncStatus: $HorariosAulaTable.$convertersyncStatus.fromSql(attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}sync_status'])!), createdBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}created_by']), updatedBy: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}updated_by']), isDeleted: attachedDatabase.typeMapping.read(DriftSqlType.bool, data['${effectivePrefix}is_deleted'])!, localId: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}local_id'])!, turmaId: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}turma_id'])!, diaSemana: attachedDatabase.typeMapping.read(DriftSqlType.int, data['${effectivePrefix}dia_semana'])!, horaInicio: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}hora_inicio'])!, horaFim: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}hora_fim'])!, disciplina: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}disciplina'])!, professor: attachedDatabase.typeMapping.read(DriftSqlType.string, data['${effectivePrefix}professor']), );
+}
+@override
+$HorariosAulaTable createAlias(String alias) {
+return $HorariosAulaTable(attachedDatabase, alias);}static JsonTypeConverter2<SyncStatus,int,int> $convertersyncStatus = const EnumIndexConverter<SyncStatus>(SyncStatus.values);}class HorarioAulaData extends DataClass implements Insertable<HorarioAulaData> 
+{
+final String id;
+final DateTime createdAt;
+final DateTime updatedAt;
+final SyncStatus syncStatus;
+final String? createdBy;
+final String? updatedBy;
+final bool isDeleted;
+final int localId;
+final String turmaId;
+final int diaSemana;
+final String horaInicio;
+final String horaFim;
+final String disciplina;
+final String? professor;
+const HorarioAulaData({required this.id, required this.createdAt, required this.updatedAt, required this.syncStatus, this.createdBy, this.updatedBy, required this.isDeleted, required this.localId, required this.turmaId, required this.diaSemana, required this.horaInicio, required this.horaFim, required this.disciplina, this.professor});@override
+Map<String, Expression> toColumns(bool nullToAbsent) {
+final map = <String, Expression> {};map['id'] = Variable<String>(id);
+map['created_at'] = Variable<DateTime>(createdAt);
+map['updated_at'] = Variable<DateTime>(updatedAt);
+{map['sync_status'] = Variable<int>($HorariosAulaTable.$convertersyncStatus.toSql(syncStatus));
+}if (!nullToAbsent || createdBy != null){map['created_by'] = Variable<String>(createdBy);
+}if (!nullToAbsent || updatedBy != null){map['updated_by'] = Variable<String>(updatedBy);
+}map['is_deleted'] = Variable<bool>(isDeleted);
+map['local_id'] = Variable<int>(localId);
+map['turma_id'] = Variable<String>(turmaId);
+map['dia_semana'] = Variable<int>(diaSemana);
+map['hora_inicio'] = Variable<String>(horaInicio);
+map['hora_fim'] = Variable<String>(horaFim);
+map['disciplina'] = Variable<String>(disciplina);
+if (!nullToAbsent || professor != null){map['professor'] = Variable<String>(professor);
+}return map; 
+}
+HorariosAulaCompanion toCompanion(bool nullToAbsent) {
+return HorariosAulaCompanion(id: Value(id),createdAt: Value(createdAt),updatedAt: Value(updatedAt),syncStatus: Value(syncStatus),createdBy: createdBy == null && nullToAbsent ? const Value.absent() : Value(createdBy),updatedBy: updatedBy == null && nullToAbsent ? const Value.absent() : Value(updatedBy),isDeleted: Value(isDeleted),localId: Value(localId),turmaId: Value(turmaId),diaSemana: Value(diaSemana),horaInicio: Value(horaInicio),horaFim: Value(horaFim),disciplina: Value(disciplina),professor: professor == null && nullToAbsent ? const Value.absent() : Value(professor),);
+}
+factory HorarioAulaData.fromJson(Map<String, dynamic> json, {ValueSerializer? serializer}) {
+serializer ??= driftRuntimeOptions.defaultSerializer;
+return HorarioAulaData(id: serializer.fromJson<String>(json['id']),createdAt: serializer.fromJson<DateTime>(json['createdAt']),updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),syncStatus: $HorariosAulaTable.$convertersyncStatus.fromJson(serializer.fromJson<int>(json['syncStatus'])),createdBy: serializer.fromJson<String?>(json['createdBy']),updatedBy: serializer.fromJson<String?>(json['updatedBy']),isDeleted: serializer.fromJson<bool>(json['isDeleted']),localId: serializer.fromJson<int>(json['localId']),turmaId: serializer.fromJson<String>(json['turmaId']),diaSemana: serializer.fromJson<int>(json['diaSemana']),horaInicio: serializer.fromJson<String>(json['horaInicio']),horaFim: serializer.fromJson<String>(json['horaFim']),disciplina: serializer.fromJson<String>(json['disciplina']),professor: serializer.fromJson<String?>(json['professor']),);}
+@override Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+serializer ??= driftRuntimeOptions.defaultSerializer;
+return <String, dynamic>{
+'id': serializer.toJson<String>(id),'createdAt': serializer.toJson<DateTime>(createdAt),'updatedAt': serializer.toJson<DateTime>(updatedAt),'syncStatus': serializer.toJson<int>($HorariosAulaTable.$convertersyncStatus.toJson(syncStatus)),'createdBy': serializer.toJson<String?>(createdBy),'updatedBy': serializer.toJson<String?>(updatedBy),'isDeleted': serializer.toJson<bool>(isDeleted),'localId': serializer.toJson<int>(localId),'turmaId': serializer.toJson<String>(turmaId),'diaSemana': serializer.toJson<int>(diaSemana),'horaInicio': serializer.toJson<String>(horaInicio),'horaFim': serializer.toJson<String>(horaFim),'disciplina': serializer.toJson<String>(disciplina),'professor': serializer.toJson<String?>(professor),};}HorarioAulaData copyWith({String? id,DateTime? createdAt,DateTime? updatedAt,SyncStatus? syncStatus,Value<String?> createdBy = const Value.absent(),Value<String?> updatedBy = const Value.absent(),bool? isDeleted,int? localId,String? turmaId,int? diaSemana,String? horaInicio,String? horaFim,String? disciplina,Value<String?> professor = const Value.absent()}) => HorarioAulaData(id: id ?? this.id,createdAt: createdAt ?? this.createdAt,updatedAt: updatedAt ?? this.updatedAt,syncStatus: syncStatus ?? this.syncStatus,createdBy: createdBy.present ? createdBy.value : this.createdBy,updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,isDeleted: isDeleted ?? this.isDeleted,localId: localId ?? this.localId,turmaId: turmaId ?? this.turmaId,diaSemana: diaSemana ?? this.diaSemana,horaInicio: horaInicio ?? this.horaInicio,horaFim: horaFim ?? this.horaFim,disciplina: disciplina ?? this.disciplina,professor: professor.present ? professor.value : this.professor,);HorarioAulaData copyWithCompanion(HorariosAulaCompanion data) {
+return HorarioAulaData(
+id: data.id.present ? data.id.value : this.id,createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,syncStatus: data.syncStatus.present ? data.syncStatus.value : this.syncStatus,createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,isDeleted: data.isDeleted.present ? data.isDeleted.value : this.isDeleted,localId: data.localId.present ? data.localId.value : this.localId,turmaId: data.turmaId.present ? data.turmaId.value : this.turmaId,diaSemana: data.diaSemana.present ? data.diaSemana.value : this.diaSemana,horaInicio: data.horaInicio.present ? data.horaInicio.value : this.horaInicio,horaFim: data.horaFim.present ? data.horaFim.value : this.horaFim,disciplina: data.disciplina.present ? data.disciplina.value : this.disciplina,professor: data.professor.present ? data.professor.value : this.professor,);
+}
+@override
+String toString() {return (StringBuffer('HorarioAulaData(')..write('id: $id, ')..write('createdAt: $createdAt, ')..write('updatedAt: $updatedAt, ')..write('syncStatus: $syncStatus, ')..write('createdBy: $createdBy, ')..write('updatedBy: $updatedBy, ')..write('isDeleted: $isDeleted, ')..write('localId: $localId, ')..write('turmaId: $turmaId, ')..write('diaSemana: $diaSemana, ')..write('horaInicio: $horaInicio, ')..write('horaFim: $horaFim, ')..write('disciplina: $disciplina, ')..write('professor: $professor')..write(')')).toString();}
+@override
+ int get hashCode => Object.hash(id, createdAt, updatedAt, syncStatus, createdBy, updatedBy, isDeleted, localId, turmaId, diaSemana, horaInicio, horaFim, disciplina, professor);@override
+bool operator ==(Object other) => identical(this, other) || (other is HorarioAulaData && other.id == this.id && other.createdAt == this.createdAt && other.updatedAt == this.updatedAt && other.syncStatus == this.syncStatus && other.createdBy == this.createdBy && other.updatedBy == this.updatedBy && other.isDeleted == this.isDeleted && other.localId == this.localId && other.turmaId == this.turmaId && other.diaSemana == this.diaSemana && other.horaInicio == this.horaInicio && other.horaFim == this.horaFim && other.disciplina == this.disciplina && other.professor == this.professor);
+}class HorariosAulaCompanion extends UpdateCompanion<HorarioAulaData> {
+final Value<String> id;
+final Value<DateTime> createdAt;
+final Value<DateTime> updatedAt;
+final Value<SyncStatus> syncStatus;
+final Value<String?> createdBy;
+final Value<String?> updatedBy;
+final Value<bool> isDeleted;
+final Value<int> localId;
+final Value<String> turmaId;
+final Value<int> diaSemana;
+final Value<String> horaInicio;
+final Value<String> horaFim;
+final Value<String> disciplina;
+final Value<String?> professor;
+const HorariosAulaCompanion({this.id = const Value.absent(),this.createdAt = const Value.absent(),this.updatedAt = const Value.absent(),this.syncStatus = const Value.absent(),this.createdBy = const Value.absent(),this.updatedBy = const Value.absent(),this.isDeleted = const Value.absent(),this.localId = const Value.absent(),this.turmaId = const Value.absent(),this.diaSemana = const Value.absent(),this.horaInicio = const Value.absent(),this.horaFim = const Value.absent(),this.disciplina = const Value.absent(),this.professor = const Value.absent(),});
+HorariosAulaCompanion.insert({required String id,required DateTime createdAt,required DateTime updatedAt,required SyncStatus syncStatus,this.createdBy = const Value.absent(),this.updatedBy = const Value.absent(),this.isDeleted = const Value.absent(),this.localId = const Value.absent(),required String turmaId,required int diaSemana,required String horaInicio,required String horaFim,required String disciplina,this.professor = const Value.absent(),}): id = Value(id), createdAt = Value(createdAt), updatedAt = Value(updatedAt), syncStatus = Value(syncStatus), turmaId = Value(turmaId), diaSemana = Value(diaSemana), horaInicio = Value(horaInicio), horaFim = Value(horaFim), disciplina = Value(disciplina);
+static Insertable<HorarioAulaData> custom({Expression<String>? id, 
+Expression<DateTime>? createdAt, 
+Expression<DateTime>? updatedAt, 
+Expression<int>? syncStatus, 
+Expression<String>? createdBy, 
+Expression<String>? updatedBy, 
+Expression<bool>? isDeleted, 
+Expression<int>? localId, 
+Expression<String>? turmaId, 
+Expression<int>? diaSemana, 
+Expression<String>? horaInicio, 
+Expression<String>? horaFim, 
+Expression<String>? disciplina, 
+Expression<String>? professor, 
+}) {
+return RawValuesInsertable({if (id != null)'id': id,if (createdAt != null)'created_at': createdAt,if (updatedAt != null)'updated_at': updatedAt,if (syncStatus != null)'sync_status': syncStatus,if (createdBy != null)'created_by': createdBy,if (updatedBy != null)'updated_by': updatedBy,if (isDeleted != null)'is_deleted': isDeleted,if (localId != null)'local_id': localId,if (turmaId != null)'turma_id': turmaId,if (diaSemana != null)'dia_semana': diaSemana,if (horaInicio != null)'hora_inicio': horaInicio,if (horaFim != null)'hora_fim': horaFim,if (disciplina != null)'disciplina': disciplina,if (professor != null)'professor': professor,});
+}HorariosAulaCompanion copyWith({Value<String>? id, Value<DateTime>? createdAt, Value<DateTime>? updatedAt, Value<SyncStatus>? syncStatus, Value<String?>? createdBy, Value<String?>? updatedBy, Value<bool>? isDeleted, Value<int>? localId, Value<String>? turmaId, Value<int>? diaSemana, Value<String>? horaInicio, Value<String>? horaFim, Value<String>? disciplina, Value<String?>? professor}) {
+return HorariosAulaCompanion(id: id ?? this.id,createdAt: createdAt ?? this.createdAt,updatedAt: updatedAt ?? this.updatedAt,syncStatus: syncStatus ?? this.syncStatus,createdBy: createdBy ?? this.createdBy,updatedBy: updatedBy ?? this.updatedBy,isDeleted: isDeleted ?? this.isDeleted,localId: localId ?? this.localId,turmaId: turmaId ?? this.turmaId,diaSemana: diaSemana ?? this.diaSemana,horaInicio: horaInicio ?? this.horaInicio,horaFim: horaFim ?? this.horaFim,disciplina: disciplina ?? this.disciplina,professor: professor ?? this.professor,);
+}
+@override
+Map<String, Expression> toColumns(bool nullToAbsent) {
+final map = <String, Expression> {};if (id.present) {
+map['id'] = Variable<String>(id.value);}
+if (createdAt.present) {
+map['created_at'] = Variable<DateTime>(createdAt.value);}
+if (updatedAt.present) {
+map['updated_at'] = Variable<DateTime>(updatedAt.value);}
+if (syncStatus.present) {
+map['sync_status'] = Variable<int>($HorariosAulaTable.$convertersyncStatus.toSql(syncStatus.value));}
+if (createdBy.present) {
+map['created_by'] = Variable<String>(createdBy.value);}
+if (updatedBy.present) {
+map['updated_by'] = Variable<String>(updatedBy.value);}
+if (isDeleted.present) {
+map['is_deleted'] = Variable<bool>(isDeleted.value);}
+if (localId.present) {
+map['local_id'] = Variable<int>(localId.value);}
+if (turmaId.present) {
+map['turma_id'] = Variable<String>(turmaId.value);}
+if (diaSemana.present) {
+map['dia_semana'] = Variable<int>(diaSemana.value);}
+if (horaInicio.present) {
+map['hora_inicio'] = Variable<String>(horaInicio.value);}
+if (horaFim.present) {
+map['hora_fim'] = Variable<String>(horaFim.value);}
+if (disciplina.present) {
+map['disciplina'] = Variable<String>(disciplina.value);}
+if (professor.present) {
+map['professor'] = Variable<String>(professor.value);}
+return map; 
+}
+@override
+String toString() {return (StringBuffer('HorariosAulaCompanion(')..write('id: $id, ')..write('createdAt: $createdAt, ')..write('updatedAt: $updatedAt, ')..write('syncStatus: $syncStatus, ')..write('createdBy: $createdBy, ')..write('updatedBy: $updatedBy, ')..write('isDeleted: $isDeleted, ')..write('localId: $localId, ')..write('turmaId: $turmaId, ')..write('diaSemana: $diaSemana, ')..write('horaInicio: $horaInicio, ')..write('horaFim: $horaFim, ')..write('disciplina: $disciplina, ')..write('professor: $professor')..write(')')).toString();}
+}
 abstract class _$AppDatabase extends GeneratedDatabase{
 _$AppDatabase(QueryExecutor e): super(e);
 $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2738,10 +4293,17 @@ late final $NotificacoesInternasTable notificacoesInternas = $NotificacoesIntern
 late final $MensalidadesTable mensalidades = $MensalidadesTable(this);
 late final $ConfiguracoesTable configuracoes = $ConfiguracoesTable(this);
 late final $EvidenciaPagamentosTable evidenciaPagamentos = $EvidenciaPagamentosTable(this);
+late final $FuncionariosTable funcionarios = $FuncionariosTable(this);
+late final $SalariosTable salarios = $SalariosTable(this);
+late final $PresencasFuncionariosTable presencasFuncionarios = $PresencasFuncionariosTable(this);
+late final $AtivosInventarioTable ativosInventario = $AtivosInventarioTable(this);
+late final $ManutencoesAtivoTable manutencoesAtivo = $ManutencoesAtivoTable(this);
+late final $NotasAvaliacaoTable notasAvaliacao = $NotasAvaliacaoTable(this);
+late final $HorariosAulaTable horariosAula = $HorariosAulaTable(this);
 @override
 Iterable<TableInfo<Table, Object?>> get allTables => allSchemaEntities.whereType<TableInfo<Table, Object?>>();
 @override
-List<DatabaseSchemaEntity> get allSchemaEntities => [alunos, custosMensais, turmas, anosLectivos, matriculas, pagamentos, auditorias, notificacoesInternas, mensalidades, configuracoes, evidenciaPagamentos];
+List<DatabaseSchemaEntity> get allSchemaEntities => [alunos, custosMensais, turmas, anosLectivos, matriculas, pagamentos, auditorias, notificacoesInternas, mensalidades, configuracoes, evidenciaPagamentos, funcionarios, salarios, presencasFuncionarios, ativosInventario, manutencoesAtivo, notasAvaliacao, horariosAula];
 }
 typedef $$AlunosTableCreateCompanionBuilder = AlunosCompanion Function({required String id,required DateTime createdAt,required DateTime updatedAt,required SyncStatus syncStatus,Value<String?> createdBy,Value<String?> updatedBy,Value<bool> isDeleted,Value<int> localId,required String numeroAluno,required String nomeCompleto,required DateTime dataNascimento,required String sexo,required String morada,required String escolaQueFrequenta,required String anoEscolaridade,required bool possuiCondicaoMedica,Value<String?> descricaoCondicaoMedica,required String nomeEncarregado,required String telefonePrincipal,Value<String?> telefoneAlternativo,Value<String?> email,Value<String?> comoConheceuInstituicao,required DateTime dataInscricao,Value<String?> observacoes,required double valorPagamentoInscricao,required bool isentoPagamento,Value<String?> comprovativoInscricaoUrl,Value<String?> comprovativoInscricaoLocal,required AlunoStatus status,});
 typedef $$AlunosTableUpdateCompanionBuilder = AlunosCompanion Function({Value<String> id,Value<DateTime> createdAt,Value<DateTime> updatedAt,Value<SyncStatus> syncStatus,Value<String?> createdBy,Value<String?> updatedBy,Value<bool> isDeleted,Value<int> localId,Value<String> numeroAluno,Value<String> nomeCompleto,Value<DateTime> dataNascimento,Value<String> sexo,Value<String> morada,Value<String> escolaQueFrequenta,Value<String> anoEscolaridade,Value<bool> possuiCondicaoMedica,Value<String?> descricaoCondicaoMedica,Value<String> nomeEncarregado,Value<String> telefonePrincipal,Value<String?> telefoneAlternativo,Value<String?> email,Value<String?> comoConheceuInstituicao,Value<DateTime> dataInscricao,Value<String?> observacoes,Value<double> valorPagamentoInscricao,Value<bool> isentoPagamento,Value<String?> comprovativoInscricaoUrl,Value<String?> comprovativoInscricaoLocal,Value<AlunoStatus> status,});
@@ -5987,6 +7549,1882 @@ GeneratedColumn<DateTime> get createdAt => $composableBuilder(
     (EvidenciaPagamentoData,BaseReferences<_$AppDatabase,$EvidenciaPagamentosTable,EvidenciaPagamentoData>),
     EvidenciaPagamentoData,
     PrefetchHooks Function()
+    >;typedef $$FuncionariosTableCreateCompanionBuilder = FuncionariosCompanion Function({required String id,required DateTime createdAt,required DateTime updatedAt,required SyncStatus syncStatus,Value<String?> createdBy,Value<String?> updatedBy,Value<bool> isDeleted,Value<int> localId,required String numeroFuncionario,required String nomeCompleto,required String cargo,Value<String?> email,required String telefone,Value<String?> documentoIdentidade,required DateTime dataAdmissao,required double salarioBase,required FuncionarioStatus status,Value<DateTime?> ultimaPresenca,Value<String?> observacoes,});
+typedef $$FuncionariosTableUpdateCompanionBuilder = FuncionariosCompanion Function({Value<String> id,Value<DateTime> createdAt,Value<DateTime> updatedAt,Value<SyncStatus> syncStatus,Value<String?> createdBy,Value<String?> updatedBy,Value<bool> isDeleted,Value<int> localId,Value<String> numeroFuncionario,Value<String> nomeCompleto,Value<String> cargo,Value<String?> email,Value<String> telefone,Value<String?> documentoIdentidade,Value<DateTime> dataAdmissao,Value<double> salarioBase,Value<FuncionarioStatus> status,Value<DateTime?> ultimaPresenca,Value<String?> observacoes,});
+class $$FuncionariosTableFilterComposer extends Composer<
+        _$AppDatabase,
+        $FuncionariosTable> {
+        $$FuncionariosTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+          ColumnWithTypeConverterFilters<SyncStatus,SyncStatus,int> get syncStatus => $composableBuilder(
+      column: $table.syncStatus,
+      builder: (column) => 
+      ColumnWithTypeConverterFilters(column));
+      
+ColumnFilters<String> get createdBy => $composableBuilder(
+      column: $table.createdBy,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get updatedBy => $composableBuilder(
+      column: $table.updatedBy,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<bool> get isDeleted => $composableBuilder(
+      column: $table.isDeleted,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get numeroFuncionario => $composableBuilder(
+      column: $table.numeroFuncionario,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get nomeCompleto => $composableBuilder(
+      column: $table.nomeCompleto,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get cargo => $composableBuilder(
+      column: $table.cargo,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get email => $composableBuilder(
+      column: $table.email,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get telefone => $composableBuilder(
+      column: $table.telefone,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get documentoIdentidade => $composableBuilder(
+      column: $table.documentoIdentidade,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<DateTime> get dataAdmissao => $composableBuilder(
+      column: $table.dataAdmissao,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<double> get salarioBase => $composableBuilder(
+      column: $table.salarioBase,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+          ColumnWithTypeConverterFilters<FuncionarioStatus,FuncionarioStatus,int> get status => $composableBuilder(
+      column: $table.status,
+      builder: (column) => 
+      ColumnWithTypeConverterFilters(column));
+      
+ColumnFilters<DateTime> get ultimaPresenca => $composableBuilder(
+      column: $table.ultimaPresenca,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get observacoes => $composableBuilder(
+      column: $table.observacoes,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+        }
+      class $$FuncionariosTableOrderingComposer extends Composer<
+        _$AppDatabase,
+        $FuncionariosTable> {
+        $$FuncionariosTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<int> get syncStatus => $composableBuilder(
+      column: $table.syncStatus,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get createdBy => $composableBuilder(
+      column: $table.createdBy,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get updatedBy => $composableBuilder(
+      column: $table.updatedBy,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<bool> get isDeleted => $composableBuilder(
+      column: $table.isDeleted,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get numeroFuncionario => $composableBuilder(
+      column: $table.numeroFuncionario,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get nomeCompleto => $composableBuilder(
+      column: $table.nomeCompleto,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get cargo => $composableBuilder(
+      column: $table.cargo,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get email => $composableBuilder(
+      column: $table.email,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get telefone => $composableBuilder(
+      column: $table.telefone,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get documentoIdentidade => $composableBuilder(
+      column: $table.documentoIdentidade,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<DateTime> get dataAdmissao => $composableBuilder(
+      column: $table.dataAdmissao,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<double> get salarioBase => $composableBuilder(
+      column: $table.salarioBase,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<int> get status => $composableBuilder(
+      column: $table.status,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<DateTime> get ultimaPresenca => $composableBuilder(
+      column: $table.ultimaPresenca,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get observacoes => $composableBuilder(
+      column: $table.observacoes,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+        }
+      class $$FuncionariosTableAnnotationComposer extends Composer<
+        _$AppDatabase,
+        $FuncionariosTable> {
+        $$FuncionariosTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          GeneratedColumn<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => column);
+      
+GeneratedColumn<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt,
+      builder: (column) => column);
+      
+GeneratedColumn<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt,
+      builder: (column) => column);
+      
+          GeneratedColumnWithTypeConverter<SyncStatus,int> get syncStatus => $composableBuilder(
+      column: $table.syncStatus,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get createdBy => $composableBuilder(
+      column: $table.createdBy,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get updatedBy => $composableBuilder(
+      column: $table.updatedBy,
+      builder: (column) => column);
+      
+GeneratedColumn<bool> get isDeleted => $composableBuilder(
+      column: $table.isDeleted,
+      builder: (column) => column);
+      
+GeneratedColumn<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get numeroFuncionario => $composableBuilder(
+      column: $table.numeroFuncionario,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get nomeCompleto => $composableBuilder(
+      column: $table.nomeCompleto,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get cargo => $composableBuilder(
+      column: $table.cargo,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get email => $composableBuilder(
+      column: $table.email,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get telefone => $composableBuilder(
+      column: $table.telefone,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get documentoIdentidade => $composableBuilder(
+      column: $table.documentoIdentidade,
+      builder: (column) => column);
+      
+GeneratedColumn<DateTime> get dataAdmissao => $composableBuilder(
+      column: $table.dataAdmissao,
+      builder: (column) => column);
+      
+GeneratedColumn<double> get salarioBase => $composableBuilder(
+      column: $table.salarioBase,
+      builder: (column) => column);
+      
+          GeneratedColumnWithTypeConverter<FuncionarioStatus,int> get status => $composableBuilder(
+      column: $table.status,
+      builder: (column) => column);
+      
+GeneratedColumn<DateTime> get ultimaPresenca => $composableBuilder(
+      column: $table.ultimaPresenca,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get observacoes => $composableBuilder(
+      column: $table.observacoes,
+      builder: (column) => column);
+      
+        }
+      class $$FuncionariosTableTableManager extends RootTableManager    <_$AppDatabase,
+    $FuncionariosTable,
+    FuncionarioData,
+    $$FuncionariosTableFilterComposer,
+    $$FuncionariosTableOrderingComposer,
+    $$FuncionariosTableAnnotationComposer,
+    $$FuncionariosTableCreateCompanionBuilder,
+    $$FuncionariosTableUpdateCompanionBuilder,
+    (FuncionarioData,BaseReferences<_$AppDatabase,$FuncionariosTable,FuncionarioData>),
+    FuncionarioData,
+    PrefetchHooks Function()
+    > {
+    $$FuncionariosTableTableManager(_$AppDatabase db, $FuncionariosTable table) : super(
+      TableManagerState(
+        db: db,
+        table: table,
+        createFilteringComposer: () => $$FuncionariosTableFilterComposer($db: db,$table:table),
+        createOrderingComposer: () => $$FuncionariosTableOrderingComposer($db: db,$table:table),
+        createComputedFieldComposer: () => $$FuncionariosTableAnnotationComposer($db: db,$table:table),
+        updateCompanionCallback: ({Value<String> id = const Value.absent(),Value<DateTime> createdAt = const Value.absent(),Value<DateTime> updatedAt = const Value.absent(),Value<SyncStatus> syncStatus = const Value.absent(),Value<String?> createdBy = const Value.absent(),Value<String?> updatedBy = const Value.absent(),Value<bool> isDeleted = const Value.absent(),Value<int> localId = const Value.absent(),Value<String> numeroFuncionario = const Value.absent(),Value<String> nomeCompleto = const Value.absent(),Value<String> cargo = const Value.absent(),Value<String?> email = const Value.absent(),Value<String> telefone = const Value.absent(),Value<String?> documentoIdentidade = const Value.absent(),Value<DateTime> dataAdmissao = const Value.absent(),Value<double> salarioBase = const Value.absent(),Value<FuncionarioStatus> status = const Value.absent(),Value<DateTime?> ultimaPresenca = const Value.absent(),Value<String?> observacoes = const Value.absent(),})=> FuncionariosCompanion(id: id,createdAt: createdAt,updatedAt: updatedAt,syncStatus: syncStatus,createdBy: createdBy,updatedBy: updatedBy,isDeleted: isDeleted,localId: localId,numeroFuncionario: numeroFuncionario,nomeCompleto: nomeCompleto,cargo: cargo,email: email,telefone: telefone,documentoIdentidade: documentoIdentidade,dataAdmissao: dataAdmissao,salarioBase: salarioBase,status: status,ultimaPresenca: ultimaPresenca,observacoes: observacoes,),
+        createCompanionCallback: ({required String id,required DateTime createdAt,required DateTime updatedAt,required SyncStatus syncStatus,Value<String?> createdBy = const Value.absent(),Value<String?> updatedBy = const Value.absent(),Value<bool> isDeleted = const Value.absent(),Value<int> localId = const Value.absent(),required String numeroFuncionario,required String nomeCompleto,required String cargo,Value<String?> email = const Value.absent(),required String telefone,Value<String?> documentoIdentidade = const Value.absent(),required DateTime dataAdmissao,required double salarioBase,required FuncionarioStatus status,Value<DateTime?> ultimaPresenca = const Value.absent(),Value<String?> observacoes = const Value.absent(),})=> FuncionariosCompanion.insert(id: id,createdAt: createdAt,updatedAt: updatedAt,syncStatus: syncStatus,createdBy: createdBy,updatedBy: updatedBy,isDeleted: isDeleted,localId: localId,numeroFuncionario: numeroFuncionario,nomeCompleto: nomeCompleto,cargo: cargo,email: email,telefone: telefone,documentoIdentidade: documentoIdentidade,dataAdmissao: dataAdmissao,salarioBase: salarioBase,status: status,ultimaPresenca: ultimaPresenca,observacoes: observacoes,),
+        withReferenceMapper: (p0) => p0
+              .map(
+                  (e) =>
+                     (e.readTable(table), BaseReferences(db, table, e))
+                  )
+              .toList(),
+        prefetchHooksCallback: null,
+        ));
+        }
+    typedef $$FuncionariosTableProcessedTableManager = ProcessedTableManager    <_$AppDatabase,
+    $FuncionariosTable,
+    FuncionarioData,
+    $$FuncionariosTableFilterComposer,
+    $$FuncionariosTableOrderingComposer,
+    $$FuncionariosTableAnnotationComposer,
+    $$FuncionariosTableCreateCompanionBuilder,
+    $$FuncionariosTableUpdateCompanionBuilder,
+    (FuncionarioData,BaseReferences<_$AppDatabase,$FuncionariosTable,FuncionarioData>),
+    FuncionarioData,
+    PrefetchHooks Function()
+    >;typedef $$SalariosTableCreateCompanionBuilder = SalariosCompanion Function({required String id,required DateTime createdAt,required DateTime updatedAt,required SyncStatus syncStatus,Value<String?> createdBy,Value<String?> updatedBy,Value<bool> isDeleted,Value<int> localId,required String funcionarioId,required String funcionarioNome,required int mesReferencia,required int anoReferencia,required double valorBase,required double descontos,required double bonus,required double valorLiquido,required SalarioEstado estado,Value<DateTime?> dataPagamento,Value<String?> observacao,});
+typedef $$SalariosTableUpdateCompanionBuilder = SalariosCompanion Function({Value<String> id,Value<DateTime> createdAt,Value<DateTime> updatedAt,Value<SyncStatus> syncStatus,Value<String?> createdBy,Value<String?> updatedBy,Value<bool> isDeleted,Value<int> localId,Value<String> funcionarioId,Value<String> funcionarioNome,Value<int> mesReferencia,Value<int> anoReferencia,Value<double> valorBase,Value<double> descontos,Value<double> bonus,Value<double> valorLiquido,Value<SalarioEstado> estado,Value<DateTime?> dataPagamento,Value<String?> observacao,});
+class $$SalariosTableFilterComposer extends Composer<
+        _$AppDatabase,
+        $SalariosTable> {
+        $$SalariosTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+          ColumnWithTypeConverterFilters<SyncStatus,SyncStatus,int> get syncStatus => $composableBuilder(
+      column: $table.syncStatus,
+      builder: (column) => 
+      ColumnWithTypeConverterFilters(column));
+      
+ColumnFilters<String> get createdBy => $composableBuilder(
+      column: $table.createdBy,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get updatedBy => $composableBuilder(
+      column: $table.updatedBy,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<bool> get isDeleted => $composableBuilder(
+      column: $table.isDeleted,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get funcionarioId => $composableBuilder(
+      column: $table.funcionarioId,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get funcionarioNome => $composableBuilder(
+      column: $table.funcionarioNome,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<int> get mesReferencia => $composableBuilder(
+      column: $table.mesReferencia,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<int> get anoReferencia => $composableBuilder(
+      column: $table.anoReferencia,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<double> get valorBase => $composableBuilder(
+      column: $table.valorBase,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<double> get descontos => $composableBuilder(
+      column: $table.descontos,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<double> get bonus => $composableBuilder(
+      column: $table.bonus,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<double> get valorLiquido => $composableBuilder(
+      column: $table.valorLiquido,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+          ColumnWithTypeConverterFilters<SalarioEstado,SalarioEstado,int> get estado => $composableBuilder(
+      column: $table.estado,
+      builder: (column) => 
+      ColumnWithTypeConverterFilters(column));
+      
+ColumnFilters<DateTime> get dataPagamento => $composableBuilder(
+      column: $table.dataPagamento,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get observacao => $composableBuilder(
+      column: $table.observacao,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+        }
+      class $$SalariosTableOrderingComposer extends Composer<
+        _$AppDatabase,
+        $SalariosTable> {
+        $$SalariosTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<int> get syncStatus => $composableBuilder(
+      column: $table.syncStatus,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get createdBy => $composableBuilder(
+      column: $table.createdBy,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get updatedBy => $composableBuilder(
+      column: $table.updatedBy,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<bool> get isDeleted => $composableBuilder(
+      column: $table.isDeleted,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get funcionarioId => $composableBuilder(
+      column: $table.funcionarioId,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get funcionarioNome => $composableBuilder(
+      column: $table.funcionarioNome,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<int> get mesReferencia => $composableBuilder(
+      column: $table.mesReferencia,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<int> get anoReferencia => $composableBuilder(
+      column: $table.anoReferencia,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<double> get valorBase => $composableBuilder(
+      column: $table.valorBase,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<double> get descontos => $composableBuilder(
+      column: $table.descontos,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<double> get bonus => $composableBuilder(
+      column: $table.bonus,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<double> get valorLiquido => $composableBuilder(
+      column: $table.valorLiquido,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<int> get estado => $composableBuilder(
+      column: $table.estado,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<DateTime> get dataPagamento => $composableBuilder(
+      column: $table.dataPagamento,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get observacao => $composableBuilder(
+      column: $table.observacao,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+        }
+      class $$SalariosTableAnnotationComposer extends Composer<
+        _$AppDatabase,
+        $SalariosTable> {
+        $$SalariosTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          GeneratedColumn<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => column);
+      
+GeneratedColumn<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt,
+      builder: (column) => column);
+      
+GeneratedColumn<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt,
+      builder: (column) => column);
+      
+          GeneratedColumnWithTypeConverter<SyncStatus,int> get syncStatus => $composableBuilder(
+      column: $table.syncStatus,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get createdBy => $composableBuilder(
+      column: $table.createdBy,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get updatedBy => $composableBuilder(
+      column: $table.updatedBy,
+      builder: (column) => column);
+      
+GeneratedColumn<bool> get isDeleted => $composableBuilder(
+      column: $table.isDeleted,
+      builder: (column) => column);
+      
+GeneratedColumn<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get funcionarioId => $composableBuilder(
+      column: $table.funcionarioId,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get funcionarioNome => $composableBuilder(
+      column: $table.funcionarioNome,
+      builder: (column) => column);
+      
+GeneratedColumn<int> get mesReferencia => $composableBuilder(
+      column: $table.mesReferencia,
+      builder: (column) => column);
+      
+GeneratedColumn<int> get anoReferencia => $composableBuilder(
+      column: $table.anoReferencia,
+      builder: (column) => column);
+      
+GeneratedColumn<double> get valorBase => $composableBuilder(
+      column: $table.valorBase,
+      builder: (column) => column);
+      
+GeneratedColumn<double> get descontos => $composableBuilder(
+      column: $table.descontos,
+      builder: (column) => column);
+      
+GeneratedColumn<double> get bonus => $composableBuilder(
+      column: $table.bonus,
+      builder: (column) => column);
+      
+GeneratedColumn<double> get valorLiquido => $composableBuilder(
+      column: $table.valorLiquido,
+      builder: (column) => column);
+      
+          GeneratedColumnWithTypeConverter<SalarioEstado,int> get estado => $composableBuilder(
+      column: $table.estado,
+      builder: (column) => column);
+      
+GeneratedColumn<DateTime> get dataPagamento => $composableBuilder(
+      column: $table.dataPagamento,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get observacao => $composableBuilder(
+      column: $table.observacao,
+      builder: (column) => column);
+      
+        }
+      class $$SalariosTableTableManager extends RootTableManager    <_$AppDatabase,
+    $SalariosTable,
+    SalarioData,
+    $$SalariosTableFilterComposer,
+    $$SalariosTableOrderingComposer,
+    $$SalariosTableAnnotationComposer,
+    $$SalariosTableCreateCompanionBuilder,
+    $$SalariosTableUpdateCompanionBuilder,
+    (SalarioData,BaseReferences<_$AppDatabase,$SalariosTable,SalarioData>),
+    SalarioData,
+    PrefetchHooks Function()
+    > {
+    $$SalariosTableTableManager(_$AppDatabase db, $SalariosTable table) : super(
+      TableManagerState(
+        db: db,
+        table: table,
+        createFilteringComposer: () => $$SalariosTableFilterComposer($db: db,$table:table),
+        createOrderingComposer: () => $$SalariosTableOrderingComposer($db: db,$table:table),
+        createComputedFieldComposer: () => $$SalariosTableAnnotationComposer($db: db,$table:table),
+        updateCompanionCallback: ({Value<String> id = const Value.absent(),Value<DateTime> createdAt = const Value.absent(),Value<DateTime> updatedAt = const Value.absent(),Value<SyncStatus> syncStatus = const Value.absent(),Value<String?> createdBy = const Value.absent(),Value<String?> updatedBy = const Value.absent(),Value<bool> isDeleted = const Value.absent(),Value<int> localId = const Value.absent(),Value<String> funcionarioId = const Value.absent(),Value<String> funcionarioNome = const Value.absent(),Value<int> mesReferencia = const Value.absent(),Value<int> anoReferencia = const Value.absent(),Value<double> valorBase = const Value.absent(),Value<double> descontos = const Value.absent(),Value<double> bonus = const Value.absent(),Value<double> valorLiquido = const Value.absent(),Value<SalarioEstado> estado = const Value.absent(),Value<DateTime?> dataPagamento = const Value.absent(),Value<String?> observacao = const Value.absent(),})=> SalariosCompanion(id: id,createdAt: createdAt,updatedAt: updatedAt,syncStatus: syncStatus,createdBy: createdBy,updatedBy: updatedBy,isDeleted: isDeleted,localId: localId,funcionarioId: funcionarioId,funcionarioNome: funcionarioNome,mesReferencia: mesReferencia,anoReferencia: anoReferencia,valorBase: valorBase,descontos: descontos,bonus: bonus,valorLiquido: valorLiquido,estado: estado,dataPagamento: dataPagamento,observacao: observacao,),
+        createCompanionCallback: ({required String id,required DateTime createdAt,required DateTime updatedAt,required SyncStatus syncStatus,Value<String?> createdBy = const Value.absent(),Value<String?> updatedBy = const Value.absent(),Value<bool> isDeleted = const Value.absent(),Value<int> localId = const Value.absent(),required String funcionarioId,required String funcionarioNome,required int mesReferencia,required int anoReferencia,required double valorBase,required double descontos,required double bonus,required double valorLiquido,required SalarioEstado estado,Value<DateTime?> dataPagamento = const Value.absent(),Value<String?> observacao = const Value.absent(),})=> SalariosCompanion.insert(id: id,createdAt: createdAt,updatedAt: updatedAt,syncStatus: syncStatus,createdBy: createdBy,updatedBy: updatedBy,isDeleted: isDeleted,localId: localId,funcionarioId: funcionarioId,funcionarioNome: funcionarioNome,mesReferencia: mesReferencia,anoReferencia: anoReferencia,valorBase: valorBase,descontos: descontos,bonus: bonus,valorLiquido: valorLiquido,estado: estado,dataPagamento: dataPagamento,observacao: observacao,),
+        withReferenceMapper: (p0) => p0
+              .map(
+                  (e) =>
+                     (e.readTable(table), BaseReferences(db, table, e))
+                  )
+              .toList(),
+        prefetchHooksCallback: null,
+        ));
+        }
+    typedef $$SalariosTableProcessedTableManager = ProcessedTableManager    <_$AppDatabase,
+    $SalariosTable,
+    SalarioData,
+    $$SalariosTableFilterComposer,
+    $$SalariosTableOrderingComposer,
+    $$SalariosTableAnnotationComposer,
+    $$SalariosTableCreateCompanionBuilder,
+    $$SalariosTableUpdateCompanionBuilder,
+    (SalarioData,BaseReferences<_$AppDatabase,$SalariosTable,SalarioData>),
+    SalarioData,
+    PrefetchHooks Function()
+    >;typedef $$PresencasFuncionariosTableCreateCompanionBuilder = PresencasFuncionariosCompanion Function({Value<int> localId,required String id,required String funcionarioId,required DateTime data,required bool presente,Value<String?> observacao,});
+typedef $$PresencasFuncionariosTableUpdateCompanionBuilder = PresencasFuncionariosCompanion Function({Value<int> localId,Value<String> id,Value<String> funcionarioId,Value<DateTime> data,Value<bool> presente,Value<String?> observacao,});
+class $$PresencasFuncionariosTableFilterComposer extends Composer<
+        _$AppDatabase,
+        $PresencasFuncionariosTable> {
+        $$PresencasFuncionariosTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          ColumnFilters<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get funcionarioId => $composableBuilder(
+      column: $table.funcionarioId,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<DateTime> get data => $composableBuilder(
+      column: $table.data,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<bool> get presente => $composableBuilder(
+      column: $table.presente,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get observacao => $composableBuilder(
+      column: $table.observacao,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+        }
+      class $$PresencasFuncionariosTableOrderingComposer extends Composer<
+        _$AppDatabase,
+        $PresencasFuncionariosTable> {
+        $$PresencasFuncionariosTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          ColumnOrderings<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get funcionarioId => $composableBuilder(
+      column: $table.funcionarioId,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<DateTime> get data => $composableBuilder(
+      column: $table.data,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<bool> get presente => $composableBuilder(
+      column: $table.presente,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get observacao => $composableBuilder(
+      column: $table.observacao,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+        }
+      class $$PresencasFuncionariosTableAnnotationComposer extends Composer<
+        _$AppDatabase,
+        $PresencasFuncionariosTable> {
+        $$PresencasFuncionariosTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          GeneratedColumn<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get funcionarioId => $composableBuilder(
+      column: $table.funcionarioId,
+      builder: (column) => column);
+      
+GeneratedColumn<DateTime> get data => $composableBuilder(
+      column: $table.data,
+      builder: (column) => column);
+      
+GeneratedColumn<bool> get presente => $composableBuilder(
+      column: $table.presente,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get observacao => $composableBuilder(
+      column: $table.observacao,
+      builder: (column) => column);
+      
+        }
+      class $$PresencasFuncionariosTableTableManager extends RootTableManager    <_$AppDatabase,
+    $PresencasFuncionariosTable,
+    PresencaFuncionarioData,
+    $$PresencasFuncionariosTableFilterComposer,
+    $$PresencasFuncionariosTableOrderingComposer,
+    $$PresencasFuncionariosTableAnnotationComposer,
+    $$PresencasFuncionariosTableCreateCompanionBuilder,
+    $$PresencasFuncionariosTableUpdateCompanionBuilder,
+    (PresencaFuncionarioData,BaseReferences<_$AppDatabase,$PresencasFuncionariosTable,PresencaFuncionarioData>),
+    PresencaFuncionarioData,
+    PrefetchHooks Function()
+    > {
+    $$PresencasFuncionariosTableTableManager(_$AppDatabase db, $PresencasFuncionariosTable table) : super(
+      TableManagerState(
+        db: db,
+        table: table,
+        createFilteringComposer: () => $$PresencasFuncionariosTableFilterComposer($db: db,$table:table),
+        createOrderingComposer: () => $$PresencasFuncionariosTableOrderingComposer($db: db,$table:table),
+        createComputedFieldComposer: () => $$PresencasFuncionariosTableAnnotationComposer($db: db,$table:table),
+        updateCompanionCallback: ({Value<int> localId = const Value.absent(),Value<String> id = const Value.absent(),Value<String> funcionarioId = const Value.absent(),Value<DateTime> data = const Value.absent(),Value<bool> presente = const Value.absent(),Value<String?> observacao = const Value.absent(),})=> PresencasFuncionariosCompanion(localId: localId,id: id,funcionarioId: funcionarioId,data: data,presente: presente,observacao: observacao,),
+        createCompanionCallback: ({Value<int> localId = const Value.absent(),required String id,required String funcionarioId,required DateTime data,required bool presente,Value<String?> observacao = const Value.absent(),})=> PresencasFuncionariosCompanion.insert(localId: localId,id: id,funcionarioId: funcionarioId,data: data,presente: presente,observacao: observacao,),
+        withReferenceMapper: (p0) => p0
+              .map(
+                  (e) =>
+                     (e.readTable(table), BaseReferences(db, table, e))
+                  )
+              .toList(),
+        prefetchHooksCallback: null,
+        ));
+        }
+    typedef $$PresencasFuncionariosTableProcessedTableManager = ProcessedTableManager    <_$AppDatabase,
+    $PresencasFuncionariosTable,
+    PresencaFuncionarioData,
+    $$PresencasFuncionariosTableFilterComposer,
+    $$PresencasFuncionariosTableOrderingComposer,
+    $$PresencasFuncionariosTableAnnotationComposer,
+    $$PresencasFuncionariosTableCreateCompanionBuilder,
+    $$PresencasFuncionariosTableUpdateCompanionBuilder,
+    (PresencaFuncionarioData,BaseReferences<_$AppDatabase,$PresencasFuncionariosTable,PresencaFuncionarioData>),
+    PresencaFuncionarioData,
+    PrefetchHooks Function()
+    >;typedef $$AtivosInventarioTableCreateCompanionBuilder = AtivosInventarioCompanion Function({required String id,required DateTime createdAt,required DateTime updatedAt,required SyncStatus syncStatus,Value<String?> createdBy,Value<String?> updatedBy,Value<bool> isDeleted,Value<int> localId,required String codigo,required String nome,required String categoria,required String localizacao,required AtivoEstado estado,required double valorAquisicao,required DateTime dataAquisicao,Value<DateTime?> ultimaManutencao,Value<String?> observacoes,});
+typedef $$AtivosInventarioTableUpdateCompanionBuilder = AtivosInventarioCompanion Function({Value<String> id,Value<DateTime> createdAt,Value<DateTime> updatedAt,Value<SyncStatus> syncStatus,Value<String?> createdBy,Value<String?> updatedBy,Value<bool> isDeleted,Value<int> localId,Value<String> codigo,Value<String> nome,Value<String> categoria,Value<String> localizacao,Value<AtivoEstado> estado,Value<double> valorAquisicao,Value<DateTime> dataAquisicao,Value<DateTime?> ultimaManutencao,Value<String?> observacoes,});
+class $$AtivosInventarioTableFilterComposer extends Composer<
+        _$AppDatabase,
+        $AtivosInventarioTable> {
+        $$AtivosInventarioTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+          ColumnWithTypeConverterFilters<SyncStatus,SyncStatus,int> get syncStatus => $composableBuilder(
+      column: $table.syncStatus,
+      builder: (column) => 
+      ColumnWithTypeConverterFilters(column));
+      
+ColumnFilters<String> get createdBy => $composableBuilder(
+      column: $table.createdBy,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get updatedBy => $composableBuilder(
+      column: $table.updatedBy,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<bool> get isDeleted => $composableBuilder(
+      column: $table.isDeleted,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get codigo => $composableBuilder(
+      column: $table.codigo,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get nome => $composableBuilder(
+      column: $table.nome,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get categoria => $composableBuilder(
+      column: $table.categoria,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get localizacao => $composableBuilder(
+      column: $table.localizacao,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+          ColumnWithTypeConverterFilters<AtivoEstado,AtivoEstado,int> get estado => $composableBuilder(
+      column: $table.estado,
+      builder: (column) => 
+      ColumnWithTypeConverterFilters(column));
+      
+ColumnFilters<double> get valorAquisicao => $composableBuilder(
+      column: $table.valorAquisicao,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<DateTime> get dataAquisicao => $composableBuilder(
+      column: $table.dataAquisicao,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<DateTime> get ultimaManutencao => $composableBuilder(
+      column: $table.ultimaManutencao,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get observacoes => $composableBuilder(
+      column: $table.observacoes,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+        }
+      class $$AtivosInventarioTableOrderingComposer extends Composer<
+        _$AppDatabase,
+        $AtivosInventarioTable> {
+        $$AtivosInventarioTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<int> get syncStatus => $composableBuilder(
+      column: $table.syncStatus,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get createdBy => $composableBuilder(
+      column: $table.createdBy,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get updatedBy => $composableBuilder(
+      column: $table.updatedBy,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<bool> get isDeleted => $composableBuilder(
+      column: $table.isDeleted,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get codigo => $composableBuilder(
+      column: $table.codigo,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get nome => $composableBuilder(
+      column: $table.nome,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get categoria => $composableBuilder(
+      column: $table.categoria,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get localizacao => $composableBuilder(
+      column: $table.localizacao,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<int> get estado => $composableBuilder(
+      column: $table.estado,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<double> get valorAquisicao => $composableBuilder(
+      column: $table.valorAquisicao,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<DateTime> get dataAquisicao => $composableBuilder(
+      column: $table.dataAquisicao,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<DateTime> get ultimaManutencao => $composableBuilder(
+      column: $table.ultimaManutencao,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get observacoes => $composableBuilder(
+      column: $table.observacoes,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+        }
+      class $$AtivosInventarioTableAnnotationComposer extends Composer<
+        _$AppDatabase,
+        $AtivosInventarioTable> {
+        $$AtivosInventarioTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          GeneratedColumn<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => column);
+      
+GeneratedColumn<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt,
+      builder: (column) => column);
+      
+GeneratedColumn<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt,
+      builder: (column) => column);
+      
+          GeneratedColumnWithTypeConverter<SyncStatus,int> get syncStatus => $composableBuilder(
+      column: $table.syncStatus,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get createdBy => $composableBuilder(
+      column: $table.createdBy,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get updatedBy => $composableBuilder(
+      column: $table.updatedBy,
+      builder: (column) => column);
+      
+GeneratedColumn<bool> get isDeleted => $composableBuilder(
+      column: $table.isDeleted,
+      builder: (column) => column);
+      
+GeneratedColumn<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get codigo => $composableBuilder(
+      column: $table.codigo,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get nome => $composableBuilder(
+      column: $table.nome,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get categoria => $composableBuilder(
+      column: $table.categoria,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get localizacao => $composableBuilder(
+      column: $table.localizacao,
+      builder: (column) => column);
+      
+          GeneratedColumnWithTypeConverter<AtivoEstado,int> get estado => $composableBuilder(
+      column: $table.estado,
+      builder: (column) => column);
+      
+GeneratedColumn<double> get valorAquisicao => $composableBuilder(
+      column: $table.valorAquisicao,
+      builder: (column) => column);
+      
+GeneratedColumn<DateTime> get dataAquisicao => $composableBuilder(
+      column: $table.dataAquisicao,
+      builder: (column) => column);
+      
+GeneratedColumn<DateTime> get ultimaManutencao => $composableBuilder(
+      column: $table.ultimaManutencao,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get observacoes => $composableBuilder(
+      column: $table.observacoes,
+      builder: (column) => column);
+      
+        }
+      class $$AtivosInventarioTableTableManager extends RootTableManager    <_$AppDatabase,
+    $AtivosInventarioTable,
+    AtivoInventarioData,
+    $$AtivosInventarioTableFilterComposer,
+    $$AtivosInventarioTableOrderingComposer,
+    $$AtivosInventarioTableAnnotationComposer,
+    $$AtivosInventarioTableCreateCompanionBuilder,
+    $$AtivosInventarioTableUpdateCompanionBuilder,
+    (AtivoInventarioData,BaseReferences<_$AppDatabase,$AtivosInventarioTable,AtivoInventarioData>),
+    AtivoInventarioData,
+    PrefetchHooks Function()
+    > {
+    $$AtivosInventarioTableTableManager(_$AppDatabase db, $AtivosInventarioTable table) : super(
+      TableManagerState(
+        db: db,
+        table: table,
+        createFilteringComposer: () => $$AtivosInventarioTableFilterComposer($db: db,$table:table),
+        createOrderingComposer: () => $$AtivosInventarioTableOrderingComposer($db: db,$table:table),
+        createComputedFieldComposer: () => $$AtivosInventarioTableAnnotationComposer($db: db,$table:table),
+        updateCompanionCallback: ({Value<String> id = const Value.absent(),Value<DateTime> createdAt = const Value.absent(),Value<DateTime> updatedAt = const Value.absent(),Value<SyncStatus> syncStatus = const Value.absent(),Value<String?> createdBy = const Value.absent(),Value<String?> updatedBy = const Value.absent(),Value<bool> isDeleted = const Value.absent(),Value<int> localId = const Value.absent(),Value<String> codigo = const Value.absent(),Value<String> nome = const Value.absent(),Value<String> categoria = const Value.absent(),Value<String> localizacao = const Value.absent(),Value<AtivoEstado> estado = const Value.absent(),Value<double> valorAquisicao = const Value.absent(),Value<DateTime> dataAquisicao = const Value.absent(),Value<DateTime?> ultimaManutencao = const Value.absent(),Value<String?> observacoes = const Value.absent(),})=> AtivosInventarioCompanion(id: id,createdAt: createdAt,updatedAt: updatedAt,syncStatus: syncStatus,createdBy: createdBy,updatedBy: updatedBy,isDeleted: isDeleted,localId: localId,codigo: codigo,nome: nome,categoria: categoria,localizacao: localizacao,estado: estado,valorAquisicao: valorAquisicao,dataAquisicao: dataAquisicao,ultimaManutencao: ultimaManutencao,observacoes: observacoes,),
+        createCompanionCallback: ({required String id,required DateTime createdAt,required DateTime updatedAt,required SyncStatus syncStatus,Value<String?> createdBy = const Value.absent(),Value<String?> updatedBy = const Value.absent(),Value<bool> isDeleted = const Value.absent(),Value<int> localId = const Value.absent(),required String codigo,required String nome,required String categoria,required String localizacao,required AtivoEstado estado,required double valorAquisicao,required DateTime dataAquisicao,Value<DateTime?> ultimaManutencao = const Value.absent(),Value<String?> observacoes = const Value.absent(),})=> AtivosInventarioCompanion.insert(id: id,createdAt: createdAt,updatedAt: updatedAt,syncStatus: syncStatus,createdBy: createdBy,updatedBy: updatedBy,isDeleted: isDeleted,localId: localId,codigo: codigo,nome: nome,categoria: categoria,localizacao: localizacao,estado: estado,valorAquisicao: valorAquisicao,dataAquisicao: dataAquisicao,ultimaManutencao: ultimaManutencao,observacoes: observacoes,),
+        withReferenceMapper: (p0) => p0
+              .map(
+                  (e) =>
+                     (e.readTable(table), BaseReferences(db, table, e))
+                  )
+              .toList(),
+        prefetchHooksCallback: null,
+        ));
+        }
+    typedef $$AtivosInventarioTableProcessedTableManager = ProcessedTableManager    <_$AppDatabase,
+    $AtivosInventarioTable,
+    AtivoInventarioData,
+    $$AtivosInventarioTableFilterComposer,
+    $$AtivosInventarioTableOrderingComposer,
+    $$AtivosInventarioTableAnnotationComposer,
+    $$AtivosInventarioTableCreateCompanionBuilder,
+    $$AtivosInventarioTableUpdateCompanionBuilder,
+    (AtivoInventarioData,BaseReferences<_$AppDatabase,$AtivosInventarioTable,AtivoInventarioData>),
+    AtivoInventarioData,
+    PrefetchHooks Function()
+    >;typedef $$ManutencoesAtivoTableCreateCompanionBuilder = ManutencoesAtivoCompanion Function({Value<int> localId,required String id,required String ativoId,required DateTime data,required String descricao,required double custo,Value<String?> realizadoPor,});
+typedef $$ManutencoesAtivoTableUpdateCompanionBuilder = ManutencoesAtivoCompanion Function({Value<int> localId,Value<String> id,Value<String> ativoId,Value<DateTime> data,Value<String> descricao,Value<double> custo,Value<String?> realizadoPor,});
+class $$ManutencoesAtivoTableFilterComposer extends Composer<
+        _$AppDatabase,
+        $ManutencoesAtivoTable> {
+        $$ManutencoesAtivoTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          ColumnFilters<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get ativoId => $composableBuilder(
+      column: $table.ativoId,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<DateTime> get data => $composableBuilder(
+      column: $table.data,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get descricao => $composableBuilder(
+      column: $table.descricao,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<double> get custo => $composableBuilder(
+      column: $table.custo,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get realizadoPor => $composableBuilder(
+      column: $table.realizadoPor,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+        }
+      class $$ManutencoesAtivoTableOrderingComposer extends Composer<
+        _$AppDatabase,
+        $ManutencoesAtivoTable> {
+        $$ManutencoesAtivoTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          ColumnOrderings<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get ativoId => $composableBuilder(
+      column: $table.ativoId,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<DateTime> get data => $composableBuilder(
+      column: $table.data,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get descricao => $composableBuilder(
+      column: $table.descricao,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<double> get custo => $composableBuilder(
+      column: $table.custo,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get realizadoPor => $composableBuilder(
+      column: $table.realizadoPor,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+        }
+      class $$ManutencoesAtivoTableAnnotationComposer extends Composer<
+        _$AppDatabase,
+        $ManutencoesAtivoTable> {
+        $$ManutencoesAtivoTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          GeneratedColumn<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get ativoId => $composableBuilder(
+      column: $table.ativoId,
+      builder: (column) => column);
+      
+GeneratedColumn<DateTime> get data => $composableBuilder(
+      column: $table.data,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get descricao => $composableBuilder(
+      column: $table.descricao,
+      builder: (column) => column);
+      
+GeneratedColumn<double> get custo => $composableBuilder(
+      column: $table.custo,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get realizadoPor => $composableBuilder(
+      column: $table.realizadoPor,
+      builder: (column) => column);
+      
+        }
+      class $$ManutencoesAtivoTableTableManager extends RootTableManager    <_$AppDatabase,
+    $ManutencoesAtivoTable,
+    ManutencaoAtivoData,
+    $$ManutencoesAtivoTableFilterComposer,
+    $$ManutencoesAtivoTableOrderingComposer,
+    $$ManutencoesAtivoTableAnnotationComposer,
+    $$ManutencoesAtivoTableCreateCompanionBuilder,
+    $$ManutencoesAtivoTableUpdateCompanionBuilder,
+    (ManutencaoAtivoData,BaseReferences<_$AppDatabase,$ManutencoesAtivoTable,ManutencaoAtivoData>),
+    ManutencaoAtivoData,
+    PrefetchHooks Function()
+    > {
+    $$ManutencoesAtivoTableTableManager(_$AppDatabase db, $ManutencoesAtivoTable table) : super(
+      TableManagerState(
+        db: db,
+        table: table,
+        createFilteringComposer: () => $$ManutencoesAtivoTableFilterComposer($db: db,$table:table),
+        createOrderingComposer: () => $$ManutencoesAtivoTableOrderingComposer($db: db,$table:table),
+        createComputedFieldComposer: () => $$ManutencoesAtivoTableAnnotationComposer($db: db,$table:table),
+        updateCompanionCallback: ({Value<int> localId = const Value.absent(),Value<String> id = const Value.absent(),Value<String> ativoId = const Value.absent(),Value<DateTime> data = const Value.absent(),Value<String> descricao = const Value.absent(),Value<double> custo = const Value.absent(),Value<String?> realizadoPor = const Value.absent(),})=> ManutencoesAtivoCompanion(localId: localId,id: id,ativoId: ativoId,data: data,descricao: descricao,custo: custo,realizadoPor: realizadoPor,),
+        createCompanionCallback: ({Value<int> localId = const Value.absent(),required String id,required String ativoId,required DateTime data,required String descricao,required double custo,Value<String?> realizadoPor = const Value.absent(),})=> ManutencoesAtivoCompanion.insert(localId: localId,id: id,ativoId: ativoId,data: data,descricao: descricao,custo: custo,realizadoPor: realizadoPor,),
+        withReferenceMapper: (p0) => p0
+              .map(
+                  (e) =>
+                     (e.readTable(table), BaseReferences(db, table, e))
+                  )
+              .toList(),
+        prefetchHooksCallback: null,
+        ));
+        }
+    typedef $$ManutencoesAtivoTableProcessedTableManager = ProcessedTableManager    <_$AppDatabase,
+    $ManutencoesAtivoTable,
+    ManutencaoAtivoData,
+    $$ManutencoesAtivoTableFilterComposer,
+    $$ManutencoesAtivoTableOrderingComposer,
+    $$ManutencoesAtivoTableAnnotationComposer,
+    $$ManutencoesAtivoTableCreateCompanionBuilder,
+    $$ManutencoesAtivoTableUpdateCompanionBuilder,
+    (ManutencaoAtivoData,BaseReferences<_$AppDatabase,$ManutencoesAtivoTable,ManutencaoAtivoData>),
+    ManutencaoAtivoData,
+    PrefetchHooks Function()
+    >;typedef $$NotasAvaliacaoTableCreateCompanionBuilder = NotasAvaliacaoCompanion Function({required String id,required DateTime createdAt,required DateTime updatedAt,required SyncStatus syncStatus,Value<String?> createdBy,Value<String?> updatedBy,Value<bool> isDeleted,Value<int> localId,required String alunoId,required String disciplina,required int trimestre,required String anoLectivo,required double valor,Value<String?> observacao,});
+typedef $$NotasAvaliacaoTableUpdateCompanionBuilder = NotasAvaliacaoCompanion Function({Value<String> id,Value<DateTime> createdAt,Value<DateTime> updatedAt,Value<SyncStatus> syncStatus,Value<String?> createdBy,Value<String?> updatedBy,Value<bool> isDeleted,Value<int> localId,Value<String> alunoId,Value<String> disciplina,Value<int> trimestre,Value<String> anoLectivo,Value<double> valor,Value<String?> observacao,});
+class $$NotasAvaliacaoTableFilterComposer extends Composer<
+        _$AppDatabase,
+        $NotasAvaliacaoTable> {
+        $$NotasAvaliacaoTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+          ColumnWithTypeConverterFilters<SyncStatus,SyncStatus,int> get syncStatus => $composableBuilder(
+      column: $table.syncStatus,
+      builder: (column) => 
+      ColumnWithTypeConverterFilters(column));
+      
+ColumnFilters<String> get createdBy => $composableBuilder(
+      column: $table.createdBy,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get updatedBy => $composableBuilder(
+      column: $table.updatedBy,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<bool> get isDeleted => $composableBuilder(
+      column: $table.isDeleted,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get alunoId => $composableBuilder(
+      column: $table.alunoId,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get disciplina => $composableBuilder(
+      column: $table.disciplina,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<int> get trimestre => $composableBuilder(
+      column: $table.trimestre,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get anoLectivo => $composableBuilder(
+      column: $table.anoLectivo,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<double> get valor => $composableBuilder(
+      column: $table.valor,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get observacao => $composableBuilder(
+      column: $table.observacao,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+        }
+      class $$NotasAvaliacaoTableOrderingComposer extends Composer<
+        _$AppDatabase,
+        $NotasAvaliacaoTable> {
+        $$NotasAvaliacaoTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<int> get syncStatus => $composableBuilder(
+      column: $table.syncStatus,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get createdBy => $composableBuilder(
+      column: $table.createdBy,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get updatedBy => $composableBuilder(
+      column: $table.updatedBy,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<bool> get isDeleted => $composableBuilder(
+      column: $table.isDeleted,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get alunoId => $composableBuilder(
+      column: $table.alunoId,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get disciplina => $composableBuilder(
+      column: $table.disciplina,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<int> get trimestre => $composableBuilder(
+      column: $table.trimestre,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get anoLectivo => $composableBuilder(
+      column: $table.anoLectivo,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<double> get valor => $composableBuilder(
+      column: $table.valor,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get observacao => $composableBuilder(
+      column: $table.observacao,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+        }
+      class $$NotasAvaliacaoTableAnnotationComposer extends Composer<
+        _$AppDatabase,
+        $NotasAvaliacaoTable> {
+        $$NotasAvaliacaoTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          GeneratedColumn<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => column);
+      
+GeneratedColumn<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt,
+      builder: (column) => column);
+      
+GeneratedColumn<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt,
+      builder: (column) => column);
+      
+          GeneratedColumnWithTypeConverter<SyncStatus,int> get syncStatus => $composableBuilder(
+      column: $table.syncStatus,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get createdBy => $composableBuilder(
+      column: $table.createdBy,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get updatedBy => $composableBuilder(
+      column: $table.updatedBy,
+      builder: (column) => column);
+      
+GeneratedColumn<bool> get isDeleted => $composableBuilder(
+      column: $table.isDeleted,
+      builder: (column) => column);
+      
+GeneratedColumn<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get alunoId => $composableBuilder(
+      column: $table.alunoId,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get disciplina => $composableBuilder(
+      column: $table.disciplina,
+      builder: (column) => column);
+      
+GeneratedColumn<int> get trimestre => $composableBuilder(
+      column: $table.trimestre,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get anoLectivo => $composableBuilder(
+      column: $table.anoLectivo,
+      builder: (column) => column);
+      
+GeneratedColumn<double> get valor => $composableBuilder(
+      column: $table.valor,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get observacao => $composableBuilder(
+      column: $table.observacao,
+      builder: (column) => column);
+      
+        }
+      class $$NotasAvaliacaoTableTableManager extends RootTableManager    <_$AppDatabase,
+    $NotasAvaliacaoTable,
+    NotaAvaliacaoData,
+    $$NotasAvaliacaoTableFilterComposer,
+    $$NotasAvaliacaoTableOrderingComposer,
+    $$NotasAvaliacaoTableAnnotationComposer,
+    $$NotasAvaliacaoTableCreateCompanionBuilder,
+    $$NotasAvaliacaoTableUpdateCompanionBuilder,
+    (NotaAvaliacaoData,BaseReferences<_$AppDatabase,$NotasAvaliacaoTable,NotaAvaliacaoData>),
+    NotaAvaliacaoData,
+    PrefetchHooks Function()
+    > {
+    $$NotasAvaliacaoTableTableManager(_$AppDatabase db, $NotasAvaliacaoTable table) : super(
+      TableManagerState(
+        db: db,
+        table: table,
+        createFilteringComposer: () => $$NotasAvaliacaoTableFilterComposer($db: db,$table:table),
+        createOrderingComposer: () => $$NotasAvaliacaoTableOrderingComposer($db: db,$table:table),
+        createComputedFieldComposer: () => $$NotasAvaliacaoTableAnnotationComposer($db: db,$table:table),
+        updateCompanionCallback: ({Value<String> id = const Value.absent(),Value<DateTime> createdAt = const Value.absent(),Value<DateTime> updatedAt = const Value.absent(),Value<SyncStatus> syncStatus = const Value.absent(),Value<String?> createdBy = const Value.absent(),Value<String?> updatedBy = const Value.absent(),Value<bool> isDeleted = const Value.absent(),Value<int> localId = const Value.absent(),Value<String> alunoId = const Value.absent(),Value<String> disciplina = const Value.absent(),Value<int> trimestre = const Value.absent(),Value<String> anoLectivo = const Value.absent(),Value<double> valor = const Value.absent(),Value<String?> observacao = const Value.absent(),})=> NotasAvaliacaoCompanion(id: id,createdAt: createdAt,updatedAt: updatedAt,syncStatus: syncStatus,createdBy: createdBy,updatedBy: updatedBy,isDeleted: isDeleted,localId: localId,alunoId: alunoId,disciplina: disciplina,trimestre: trimestre,anoLectivo: anoLectivo,valor: valor,observacao: observacao,),
+        createCompanionCallback: ({required String id,required DateTime createdAt,required DateTime updatedAt,required SyncStatus syncStatus,Value<String?> createdBy = const Value.absent(),Value<String?> updatedBy = const Value.absent(),Value<bool> isDeleted = const Value.absent(),Value<int> localId = const Value.absent(),required String alunoId,required String disciplina,required int trimestre,required String anoLectivo,required double valor,Value<String?> observacao = const Value.absent(),})=> NotasAvaliacaoCompanion.insert(id: id,createdAt: createdAt,updatedAt: updatedAt,syncStatus: syncStatus,createdBy: createdBy,updatedBy: updatedBy,isDeleted: isDeleted,localId: localId,alunoId: alunoId,disciplina: disciplina,trimestre: trimestre,anoLectivo: anoLectivo,valor: valor,observacao: observacao,),
+        withReferenceMapper: (p0) => p0
+              .map(
+                  (e) =>
+                     (e.readTable(table), BaseReferences(db, table, e))
+                  )
+              .toList(),
+        prefetchHooksCallback: null,
+        ));
+        }
+    typedef $$NotasAvaliacaoTableProcessedTableManager = ProcessedTableManager    <_$AppDatabase,
+    $NotasAvaliacaoTable,
+    NotaAvaliacaoData,
+    $$NotasAvaliacaoTableFilterComposer,
+    $$NotasAvaliacaoTableOrderingComposer,
+    $$NotasAvaliacaoTableAnnotationComposer,
+    $$NotasAvaliacaoTableCreateCompanionBuilder,
+    $$NotasAvaliacaoTableUpdateCompanionBuilder,
+    (NotaAvaliacaoData,BaseReferences<_$AppDatabase,$NotasAvaliacaoTable,NotaAvaliacaoData>),
+    NotaAvaliacaoData,
+    PrefetchHooks Function()
+    >;typedef $$HorariosAulaTableCreateCompanionBuilder = HorariosAulaCompanion Function({required String id,required DateTime createdAt,required DateTime updatedAt,required SyncStatus syncStatus,Value<String?> createdBy,Value<String?> updatedBy,Value<bool> isDeleted,Value<int> localId,required String turmaId,required int diaSemana,required String horaInicio,required String horaFim,required String disciplina,Value<String?> professor,});
+typedef $$HorariosAulaTableUpdateCompanionBuilder = HorariosAulaCompanion Function({Value<String> id,Value<DateTime> createdAt,Value<DateTime> updatedAt,Value<SyncStatus> syncStatus,Value<String?> createdBy,Value<String?> updatedBy,Value<bool> isDeleted,Value<int> localId,Value<String> turmaId,Value<int> diaSemana,Value<String> horaInicio,Value<String> horaFim,Value<String> disciplina,Value<String?> professor,});
+class $$HorariosAulaTableFilterComposer extends Composer<
+        _$AppDatabase,
+        $HorariosAulaTable> {
+        $$HorariosAulaTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          ColumnFilters<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+          ColumnWithTypeConverterFilters<SyncStatus,SyncStatus,int> get syncStatus => $composableBuilder(
+      column: $table.syncStatus,
+      builder: (column) => 
+      ColumnWithTypeConverterFilters(column));
+      
+ColumnFilters<String> get createdBy => $composableBuilder(
+      column: $table.createdBy,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get updatedBy => $composableBuilder(
+      column: $table.updatedBy,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<bool> get isDeleted => $composableBuilder(
+      column: $table.isDeleted,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get turmaId => $composableBuilder(
+      column: $table.turmaId,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<int> get diaSemana => $composableBuilder(
+      column: $table.diaSemana,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get horaInicio => $composableBuilder(
+      column: $table.horaInicio,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get horaFim => $composableBuilder(
+      column: $table.horaFim,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get disciplina => $composableBuilder(
+      column: $table.disciplina,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+ColumnFilters<String> get professor => $composableBuilder(
+      column: $table.professor,
+      builder: (column) => 
+      ColumnFilters(column));
+      
+        }
+      class $$HorariosAulaTableOrderingComposer extends Composer<
+        _$AppDatabase,
+        $HorariosAulaTable> {
+        $$HorariosAulaTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          ColumnOrderings<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<int> get syncStatus => $composableBuilder(
+      column: $table.syncStatus,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get createdBy => $composableBuilder(
+      column: $table.createdBy,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get updatedBy => $composableBuilder(
+      column: $table.updatedBy,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<bool> get isDeleted => $composableBuilder(
+      column: $table.isDeleted,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get turmaId => $composableBuilder(
+      column: $table.turmaId,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<int> get diaSemana => $composableBuilder(
+      column: $table.diaSemana,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get horaInicio => $composableBuilder(
+      column: $table.horaInicio,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get horaFim => $composableBuilder(
+      column: $table.horaFim,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get disciplina => $composableBuilder(
+      column: $table.disciplina,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+ColumnOrderings<String> get professor => $composableBuilder(
+      column: $table.professor,
+      builder: (column) => 
+      ColumnOrderings(column));
+      
+        }
+      class $$HorariosAulaTableAnnotationComposer extends Composer<
+        _$AppDatabase,
+        $HorariosAulaTable> {
+        $$HorariosAulaTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+          GeneratedColumn<String> get id => $composableBuilder(
+      column: $table.id,
+      builder: (column) => column);
+      
+GeneratedColumn<DateTime> get createdAt => $composableBuilder(
+      column: $table.createdAt,
+      builder: (column) => column);
+      
+GeneratedColumn<DateTime> get updatedAt => $composableBuilder(
+      column: $table.updatedAt,
+      builder: (column) => column);
+      
+          GeneratedColumnWithTypeConverter<SyncStatus,int> get syncStatus => $composableBuilder(
+      column: $table.syncStatus,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get createdBy => $composableBuilder(
+      column: $table.createdBy,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get updatedBy => $composableBuilder(
+      column: $table.updatedBy,
+      builder: (column) => column);
+      
+GeneratedColumn<bool> get isDeleted => $composableBuilder(
+      column: $table.isDeleted,
+      builder: (column) => column);
+      
+GeneratedColumn<int> get localId => $composableBuilder(
+      column: $table.localId,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get turmaId => $composableBuilder(
+      column: $table.turmaId,
+      builder: (column) => column);
+      
+GeneratedColumn<int> get diaSemana => $composableBuilder(
+      column: $table.diaSemana,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get horaInicio => $composableBuilder(
+      column: $table.horaInicio,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get horaFim => $composableBuilder(
+      column: $table.horaFim,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get disciplina => $composableBuilder(
+      column: $table.disciplina,
+      builder: (column) => column);
+      
+GeneratedColumn<String> get professor => $composableBuilder(
+      column: $table.professor,
+      builder: (column) => column);
+      
+        }
+      class $$HorariosAulaTableTableManager extends RootTableManager    <_$AppDatabase,
+    $HorariosAulaTable,
+    HorarioAulaData,
+    $$HorariosAulaTableFilterComposer,
+    $$HorariosAulaTableOrderingComposer,
+    $$HorariosAulaTableAnnotationComposer,
+    $$HorariosAulaTableCreateCompanionBuilder,
+    $$HorariosAulaTableUpdateCompanionBuilder,
+    (HorarioAulaData,BaseReferences<_$AppDatabase,$HorariosAulaTable,HorarioAulaData>),
+    HorarioAulaData,
+    PrefetchHooks Function()
+    > {
+    $$HorariosAulaTableTableManager(_$AppDatabase db, $HorariosAulaTable table) : super(
+      TableManagerState(
+        db: db,
+        table: table,
+        createFilteringComposer: () => $$HorariosAulaTableFilterComposer($db: db,$table:table),
+        createOrderingComposer: () => $$HorariosAulaTableOrderingComposer($db: db,$table:table),
+        createComputedFieldComposer: () => $$HorariosAulaTableAnnotationComposer($db: db,$table:table),
+        updateCompanionCallback: ({Value<String> id = const Value.absent(),Value<DateTime> createdAt = const Value.absent(),Value<DateTime> updatedAt = const Value.absent(),Value<SyncStatus> syncStatus = const Value.absent(),Value<String?> createdBy = const Value.absent(),Value<String?> updatedBy = const Value.absent(),Value<bool> isDeleted = const Value.absent(),Value<int> localId = const Value.absent(),Value<String> turmaId = const Value.absent(),Value<int> diaSemana = const Value.absent(),Value<String> horaInicio = const Value.absent(),Value<String> horaFim = const Value.absent(),Value<String> disciplina = const Value.absent(),Value<String?> professor = const Value.absent(),})=> HorariosAulaCompanion(id: id,createdAt: createdAt,updatedAt: updatedAt,syncStatus: syncStatus,createdBy: createdBy,updatedBy: updatedBy,isDeleted: isDeleted,localId: localId,turmaId: turmaId,diaSemana: diaSemana,horaInicio: horaInicio,horaFim: horaFim,disciplina: disciplina,professor: professor,),
+        createCompanionCallback: ({required String id,required DateTime createdAt,required DateTime updatedAt,required SyncStatus syncStatus,Value<String?> createdBy = const Value.absent(),Value<String?> updatedBy = const Value.absent(),Value<bool> isDeleted = const Value.absent(),Value<int> localId = const Value.absent(),required String turmaId,required int diaSemana,required String horaInicio,required String horaFim,required String disciplina,Value<String?> professor = const Value.absent(),})=> HorariosAulaCompanion.insert(id: id,createdAt: createdAt,updatedAt: updatedAt,syncStatus: syncStatus,createdBy: createdBy,updatedBy: updatedBy,isDeleted: isDeleted,localId: localId,turmaId: turmaId,diaSemana: diaSemana,horaInicio: horaInicio,horaFim: horaFim,disciplina: disciplina,professor: professor,),
+        withReferenceMapper: (p0) => p0
+              .map(
+                  (e) =>
+                     (e.readTable(table), BaseReferences(db, table, e))
+                  )
+              .toList(),
+        prefetchHooksCallback: null,
+        ));
+        }
+    typedef $$HorariosAulaTableProcessedTableManager = ProcessedTableManager    <_$AppDatabase,
+    $HorariosAulaTable,
+    HorarioAulaData,
+    $$HorariosAulaTableFilterComposer,
+    $$HorariosAulaTableOrderingComposer,
+    $$HorariosAulaTableAnnotationComposer,
+    $$HorariosAulaTableCreateCompanionBuilder,
+    $$HorariosAulaTableUpdateCompanionBuilder,
+    (HorarioAulaData,BaseReferences<_$AppDatabase,$HorariosAulaTable,HorarioAulaData>),
+    HorarioAulaData,
+    PrefetchHooks Function()
     >;class $AppDatabaseManager {
 final _$AppDatabase _db;
 $AppDatabaseManager(this._db);
@@ -6001,4 +9439,11 @@ $$NotificacoesInternasTableTableManager get notificacoesInternas => $$Notificaco
 $$MensalidadesTableTableManager get mensalidades => $$MensalidadesTableTableManager(_db, _db.mensalidades);
 $$ConfiguracoesTableTableManager get configuracoes => $$ConfiguracoesTableTableManager(_db, _db.configuracoes);
 $$EvidenciaPagamentosTableTableManager get evidenciaPagamentos => $$EvidenciaPagamentosTableTableManager(_db, _db.evidenciaPagamentos);
+$$FuncionariosTableTableManager get funcionarios => $$FuncionariosTableTableManager(_db, _db.funcionarios);
+$$SalariosTableTableManager get salarios => $$SalariosTableTableManager(_db, _db.salarios);
+$$PresencasFuncionariosTableTableManager get presencasFuncionarios => $$PresencasFuncionariosTableTableManager(_db, _db.presencasFuncionarios);
+$$AtivosInventarioTableTableManager get ativosInventario => $$AtivosInventarioTableTableManager(_db, _db.ativosInventario);
+$$ManutencoesAtivoTableTableManager get manutencoesAtivo => $$ManutencoesAtivoTableTableManager(_db, _db.manutencoesAtivo);
+$$NotasAvaliacaoTableTableManager get notasAvaliacao => $$NotasAvaliacaoTableTableManager(_db, _db.notasAvaliacao);
+$$HorariosAulaTableTableManager get horariosAula => $$HorariosAulaTableTableManager(_db, _db.horariosAula);
 }

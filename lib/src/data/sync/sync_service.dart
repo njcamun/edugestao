@@ -13,6 +13,11 @@ import 'package:edugestao/src/domain/entities/matricula.dart';
 import 'package:edugestao/src/domain/entities/mensalidade.dart';
 import 'package:edugestao/src/domain/entities/custo.dart';
 import 'package:edugestao/src/domain/entities/configuracao.dart';
+import 'package:edugestao/src/domain/entities/funcionario.dart';
+import 'package:edugestao/src/domain/entities/salario.dart';
+import 'package:edugestao/src/domain/entities/ativo_inventario.dart';
+import 'package:edugestao/src/domain/entities/nota_avaliacao.dart';
+import 'package:edugestao/src/domain/entities/horario_aula.dart';
 import 'package:edugestao/src/domain/entities/sync_entity.dart';
 
 // Data Layer
@@ -24,6 +29,11 @@ import 'package:edugestao/src/data/local/drift/mappers/matricula_mapper.dart';
 import 'package:edugestao/src/data/local/drift/mappers/mensalidade_mapper.dart';
 import 'package:edugestao/src/data/local/drift/mappers/custo_mapper.dart';
 import 'package:edugestao/src/data/local/drift/mappers/config_mapper.dart';
+import 'package:edugestao/src/data/local/drift/mappers/funcionario_mapper.dart';
+import 'package:edugestao/src/data/local/drift/mappers/salario_mapper.dart';
+import 'package:edugestao/src/data/local/drift/mappers/ativo_inventario_mapper.dart';
+import 'package:edugestao/src/data/local/drift/mappers/nota_avaliacao_mapper.dart';
+import 'package:edugestao/src/data/local/drift/mappers/horario_aula_mapper.dart';
 
 // Providers & Services
 import 'package:edugestao/src/core/providers/database_provider.dart';
@@ -54,6 +64,7 @@ class SyncService {
   final Ref _ref;
   StreamSubscription? _connectivitySubscription;
   final List<StreamSubscription> _realtimeSubscriptions = [];
+  bool _syncAllInProgress = false;
 
   SyncService(this._ref) {
     _init();
@@ -88,7 +99,22 @@ class SyncService {
     }
 
     _stopRealtimeListeners();
-    final collections = ['alunos', 'turmas', 'mensalidades', 'custos', 'configuracoes', 'anosLectivos'];
+    final collections = [
+      'alunos',
+      'turmas',
+      'mensalidades',
+      'custos',
+      'configuracoes',
+      'anosLectivos',
+      'funcionarios',
+      'salarios',
+      'ativosInventario',
+      'presencasFuncionarios',
+      'manutencoesAtivo',
+      'notasAvaliacao',
+      'horariosAula',
+      'notificacoesInternas',
+    ];
     
     for (var coll in collections) {
       _realtimeSubscriptions.add(
@@ -111,6 +137,14 @@ class SyncService {
       case 'custos': await pullCustos(); break;
       case 'configuracoes': await pullConfig(); break;
       case 'anosLectivos': await pullAnosLectivos(); break;
+      case 'funcionarios': await pullFuncionarios(); break;
+      case 'salarios': await pullSalarios(); break;
+      case 'ativosInventario': await pullAtivosInventario(); break;
+      case 'presencasFuncionarios': await pullPresencasFuncionarios(); break;
+      case 'manutencoesAtivo': await pullManutencoesAtivo(); break;
+      case 'notasAvaliacao': await pullNotasAvaliacao(); break;
+      case 'horariosAula': await pullHorariosAula(); break;
+      case 'notificacoesInternas': await pullNotificacoesInternas(); break;
     }
   }
 
@@ -128,17 +162,27 @@ class SyncService {
   }
 
   Future<void> syncAll() async {
+    if (_syncAllInProgress) {
+      debugPrint('SyncService: syncAll já em execução, ignorando chamada duplicada.');
+      return;
+    }
+    _syncAllInProgress = true;
+
     debugPrint('SyncService: Iniciando syncAll...');
     if (!isInitialCloudPullSupported) {
       debugPrint('SyncService: SyncAll ignorado: Firestore não disponível nesta plataforma.');
-      // Mesmo assim, tentamos o push se houver internet
-      await syncLocalToCloud();
+      try {
+        await syncLocalToCloud();
+      } finally {
+        _syncAllInProgress = false;
+      }
       return;
     }
 
     final session = _ref.read(sessionProvider);
     if (!session.isAuthenticated) {
       debugPrint('SyncService: SyncAll abortado: Usuário não autenticado.');
+      _syncAllInProgress = false;
       return;
     }
 
@@ -151,10 +195,19 @@ class SyncService {
       await pullMensalidades();
       await pullCustos();
       await pullConfig();
+      await pullFuncionarios();
+      await pullSalarios();
+      await pullAtivosInventario();
+      await pullPresencasFuncionarios();
+      await pullManutencoesAtivo();
+      await pullNotasAvaliacao();
+      await pullHorariosAula();
+      await pullNotificacoesInternas();
       await syncLocalToCloud();
     } catch (e) {
       debugPrint('Erro no syncAll: $e');
     } finally {
+      _syncAllInProgress = false;
       _ref.read(isSyncingProvider.notifier).state = false;
     }
   }
@@ -472,6 +525,12 @@ class SyncService {
       await _syncMensalidades(userId);
       await _syncCustos(userId);
       await _syncConfig(userId);
+      await _syncFuncionarios(userId);
+      await _syncSalarios(userId);
+      await _syncAtivosInventario(userId);
+      await _syncNotasAvaliacao(userId);
+      await _syncHorariosAula(userId);
+      await _syncNotificacoesInternas(userId);
     } catch (e) {
       debugPrint('Erro Sync Local to Cloud: $e');
     } finally {
@@ -726,6 +785,546 @@ class SyncService {
       } catch (e) {
         debugPrint('Erro Push Config: $e');
       }
+    }
+  }
+
+  Future<void> pullFuncionarios() async {
+    if (!isInitialCloudPullSupported) return;
+    try {
+      final snap = await _firestore.collection('funcionarios').get();
+      for (var doc in snap.docs) {
+        final data = doc.data();
+        final entity = Funcionario()
+          ..id = doc.id
+          ..numeroFuncionario = data['numeroFuncionario'] ?? ''
+          ..nomeCompleto = data['nomeCompleto'] ?? ''
+          ..cargo = data['cargo'] ?? ''
+          ..email = data['email']
+          ..telefone = data['telefone'] ?? ''
+          ..documentoIdentidade = data['documentoIdentidade']
+          ..dataAdmissao = _parseDate(data['dataAdmissao'])
+          ..salarioBase = (data['salarioBase'] ?? 0).toDouble()
+          ..status = FuncionarioStatus.values.firstWhere(
+            (e) => e.name == (data['status'] ?? 'ativo'),
+            orElse: () => FuncionarioStatus.ativo,
+          )
+          ..ultimaPresenca = data['ultimaPresenca'] != null ? _parseDate(data['ultimaPresenca']) : null
+          ..observacoes = data['observacoes']
+          ..isDeleted = data['isDeleted'] ?? false
+          ..createdAt = _parseDate(data['createdAt'])
+          ..updatedAt = _parseDate(data['updatedAt'])
+          ..syncStatus = SyncStatus.synced;
+
+        final existing = await (_db.select(_db.funcionarios)..where((t) => t.id.equals(entity.id))).get();
+        final companion = existing.isNotEmpty
+            ? entity.toCompanion().copyWith(localId: Value(existing.first.localId))
+            : entity.toCompanion();
+        await _db.into(_db.funcionarios).insertOnConflictUpdate(companion);
+      }
+    } catch (e) {
+      debugPrint('Erro Pull Funcionarios: $e');
+    }
+  }
+
+  Future<void> pullSalarios() async {
+    if (!isInitialCloudPullSupported) return;
+    try {
+      final snap = await _firestore.collection('salarios').get();
+      for (var doc in snap.docs) {
+        final data = doc.data();
+        final entity = Salario()
+          ..id = doc.id
+          ..funcionarioId = data['funcionarioId'] ?? ''
+          ..funcionarioNome = data['funcionarioNome'] ?? ''
+          ..mesReferencia = data['mesReferencia'] ?? 1
+          ..anoReferencia = data['anoReferencia'] ?? DateTime.now().year
+          ..valorBase = (data['valorBase'] ?? 0).toDouble()
+          ..descontos = (data['descontos'] ?? 0).toDouble()
+          ..bonus = (data['bonus'] ?? 0).toDouble()
+          ..valorLiquido = (data['valorLiquido'] ?? 0).toDouble()
+          ..estado = SalarioEstado.values.firstWhere(
+            (e) => e.name == (data['estado'] ?? 'pendente'),
+            orElse: () => SalarioEstado.pendente,
+          )
+          ..dataPagamento = data['dataPagamento'] != null ? _parseDate(data['dataPagamento']) : null
+          ..observacao = data['observacao']
+          ..isDeleted = data['isDeleted'] ?? false
+          ..createdAt = _parseDate(data['createdAt'])
+          ..updatedAt = _parseDate(data['updatedAt'])
+          ..syncStatus = SyncStatus.synced;
+
+        final existing = await (_db.select(_db.salarios)..where((t) => t.id.equals(entity.id))).get();
+        final companion = existing.isNotEmpty
+            ? entity.toCompanion().copyWith(localId: Value(existing.first.localId))
+            : entity.toCompanion();
+        await _db.into(_db.salarios).insertOnConflictUpdate(companion);
+      }
+    } catch (e) {
+      debugPrint('Erro Pull Salarios: $e');
+    }
+  }
+
+  Future<void> pullAtivosInventario() async {
+    if (!isInitialCloudPullSupported) return;
+    try {
+      final snap = await _firestore.collection('ativosInventario').get();
+      for (var doc in snap.docs) {
+        final data = doc.data();
+        final entity = AtivoInventario()
+          ..id = doc.id
+          ..codigo = data['codigo'] ?? ''
+          ..nome = data['nome'] ?? ''
+          ..categoria = data['categoria'] ?? ''
+          ..localizacao = data['localizacao'] ?? ''
+          ..estado = AtivoEstado.values.firstWhere(
+            (e) => e.name == (data['estado'] ?? 'bom'),
+            orElse: () => AtivoEstado.bom,
+          )
+          ..valorAquisicao = (data['valorAquisicao'] ?? 0).toDouble()
+          ..dataAquisicao = _parseDate(data['dataAquisicao'])
+          ..ultimaManutencao = data['ultimaManutencao'] != null ? _parseDate(data['ultimaManutencao']) : null
+          ..observacoes = data['observacoes']
+          ..isDeleted = data['isDeleted'] ?? false
+          ..createdAt = _parseDate(data['createdAt'])
+          ..updatedAt = _parseDate(data['updatedAt'])
+          ..syncStatus = SyncStatus.synced;
+
+        final existing = await (_db.select(_db.ativosInventario)..where((t) => t.id.equals(entity.id))).get();
+        final companion = existing.isNotEmpty
+            ? entity.toCompanion().copyWith(localId: Value(existing.first.localId))
+            : entity.toCompanion();
+        await _db.into(_db.ativosInventario).insertOnConflictUpdate(companion);
+      }
+    } catch (e) {
+      debugPrint('Erro Pull Ativos: $e');
+    }
+  }
+
+  Future<void> pullPresencasFuncionarios() async {
+    if (!isInitialCloudPullSupported) return;
+    try {
+      final snapshot = await _firestore.collection('presencasFuncionarios').get();
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        final id = doc.id;
+        final companion = PresencasFuncionariosCompanion(
+          id: Value(id),
+          funcionarioId: Value(data['funcionarioId']?.toString() ?? ''),
+          data: Value(_parseDate(data['data'])),
+          presente: Value(data['presente'] == true),
+          observacao: Value(data['observacao']?.toString()),
+        );
+        final existing = await (_db.select(_db.presencasFuncionarios)..where((t) => t.id.equals(id))).get();
+        if (existing.isNotEmpty) {
+          await (_db.update(_db.presencasFuncionarios)..where((t) => t.localId.equals(existing.first.localId)))
+              .write(companion);
+        } else {
+          await _db.into(_db.presencasFuncionarios).insert(
+            PresencasFuncionariosCompanion.insert(
+              id: id,
+              funcionarioId: data['funcionarioId']?.toString() ?? '',
+              data: _parseDate(data['data']),
+              presente: data['presente'] == true,
+              observacao: Value(data['observacao']?.toString()),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Erro Pull Presencas: $e');
+    }
+  }
+
+  Future<void> pullManutencoesAtivo() async {
+    if (!isInitialCloudPullSupported) return;
+    try {
+      final snapshot = await _firestore.collection('manutencoesAtivo').get();
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        final id = doc.id;
+        final companion = ManutencoesAtivoCompanion(
+          id: Value(id),
+          ativoId: Value(data['ativoId']?.toString() ?? ''),
+          data: Value(_parseDate(data['data'])),
+          descricao: Value(data['descricao']?.toString() ?? ''),
+          custo: Value((data['custo'] ?? 0).toDouble()),
+          realizadoPor: Value(data['realizadoPor']?.toString()),
+        );
+        final existing = await (_db.select(_db.manutencoesAtivo)..where((t) => t.id.equals(id))).get();
+        if (existing.isNotEmpty) {
+          await (_db.update(_db.manutencoesAtivo)..where((t) => t.localId.equals(existing.first.localId)))
+              .write(companion);
+        } else {
+          await _db.into(_db.manutencoesAtivo).insert(
+            ManutencoesAtivoCompanion.insert(
+              id: id,
+              ativoId: data['ativoId']?.toString() ?? '',
+              data: _parseDate(data['data']),
+              descricao: data['descricao']?.toString() ?? '',
+              custo: (data['custo'] ?? 0).toDouble(),
+              realizadoPor: Value(data['realizadoPor']?.toString()),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Erro Pull Manutencoes: $e');
+    }
+  }
+
+  Future<void> pullNotasAvaliacao() async {
+    if (!isInitialCloudPullSupported) return;
+    try {
+      final snap = await _firestore.collection('notasAvaliacao').get();
+      for (var doc in snap.docs) {
+        final data = doc.data();
+        final entity = NotaAvaliacao()
+          ..id = doc.id
+          ..alunoId = data['alunoId'] ?? ''
+          ..disciplina = data['disciplina'] ?? ''
+          ..trimestre = data['trimestre'] ?? 1
+          ..anoLectivo = data['anoLectivo'] ?? ''
+          ..valor = (data['valor'] ?? 0).toDouble()
+          ..observacao = data['observacao']
+          ..isDeleted = data['isDeleted'] ?? false
+          ..createdAt = _parseDate(data['createdAt'])
+          ..updatedAt = _parseDate(data['updatedAt'])
+          ..syncStatus = SyncStatus.synced;
+
+        final existing = await (_db.select(_db.notasAvaliacao)..where((t) => t.id.equals(entity.id))).get();
+        final companion = existing.isNotEmpty
+            ? entity.toCompanion().copyWith(localId: Value(existing.first.localId))
+            : entity.toCompanion();
+        await _db.into(_db.notasAvaliacao).insertOnConflictUpdate(companion);
+      }
+    } catch (e) {
+      debugPrint('Erro Pull Notas: $e');
+    }
+  }
+
+  Future<void> pullHorariosAula() async {
+    if (!isInitialCloudPullSupported) return;
+    try {
+      final snap = await _firestore.collection('horariosAula').get();
+      for (var doc in snap.docs) {
+        final data = doc.data();
+        final entity = HorarioAula()
+          ..id = doc.id
+          ..turmaId = data['turmaId'] ?? ''
+          ..diaSemana = data['diaSemana'] ?? 1
+          ..horaInicio = data['horaInicio'] ?? ''
+          ..horaFim = data['horaFim'] ?? ''
+          ..disciplina = data['disciplina'] ?? ''
+          ..professor = data['professor']
+          ..isDeleted = data['isDeleted'] ?? false
+          ..createdAt = _parseDate(data['createdAt'])
+          ..updatedAt = _parseDate(data['updatedAt'])
+          ..syncStatus = SyncStatus.synced;
+
+        final existing = await (_db.select(_db.horariosAula)..where((t) => t.id.equals(entity.id))).get();
+        final companion = existing.isNotEmpty
+            ? entity.toCompanion().copyWith(localId: Value(existing.first.localId))
+            : entity.toCompanion();
+        await _db.into(_db.horariosAula).insertOnConflictUpdate(companion);
+      }
+    } catch (e) {
+      debugPrint('Erro Pull Horarios: $e');
+    }
+  }
+
+  DateTime _parseDate(dynamic value) {
+    if (value is Timestamp) return value.toDate();
+    if (value is DateTime) return value;
+    return DateTime.tryParse(value?.toString() ?? '') ?? DateTime.now();
+  }
+
+  Future<void> _syncFuncionarios(String userId) async {
+    final query = _db.select(_db.funcionarios)
+      ..where((t) =>
+          t.syncStatus.equals(SyncStatus.pendingSync.index) |
+          t.syncStatus.equals(SyncStatus.localOnly.index));
+    final rows = await query.get();
+    for (final row in rows) {
+      final entity = row.toEntity();
+      try {
+        await _firestore.collection('funcionarios').doc(entity.id).set({
+          'id': entity.id,
+          'numeroFuncionario': entity.numeroFuncionario,
+          'nomeCompleto': entity.nomeCompleto,
+          'cargo': entity.cargo,
+          'email': entity.email,
+          'telefone': entity.telefone,
+          'documentoIdentidade': entity.documentoIdentidade,
+          'dataAdmissao': entity.dataAdmissao.toIso8601String(),
+          'salarioBase': entity.salarioBase,
+          'status': entity.status.name,
+          'ultimaPresenca': entity.ultimaPresenca?.toIso8601String(),
+          'observacoes': entity.observacoes,
+          'isDeleted': entity.isDeleted,
+          'createdAt': entity.createdAt,
+          'updatedAt': FieldValue.serverTimestamp(),
+          'createdBy': entity.createdBy ?? userId,
+        }, SetOptions(merge: true));
+        await _db.update(_db.funcionarios).replace(
+          entity.toCompanion().copyWith(
+            localId: Value(row.localId),
+            syncStatus: const Value(SyncStatus.synced),
+          ),
+        );
+      } catch (e) {
+        debugPrint('Erro Push Funcionario: $e');
+      }
+    }
+  }
+
+  Future<void> _syncSalarios(String userId) async {
+    final query = _db.select(_db.salarios)
+      ..where((t) =>
+          t.syncStatus.equals(SyncStatus.pendingSync.index) |
+          t.syncStatus.equals(SyncStatus.localOnly.index));
+    final rows = await query.get();
+    for (final row in rows) {
+      final entity = row.toEntity();
+      try {
+        await _firestore.collection('salarios').doc(entity.id).set({
+          'id': entity.id,
+          'funcionarioId': entity.funcionarioId,
+          'funcionarioNome': entity.funcionarioNome,
+          'mesReferencia': entity.mesReferencia,
+          'anoReferencia': entity.anoReferencia,
+          'valorBase': entity.valorBase,
+          'descontos': entity.descontos,
+          'bonus': entity.bonus,
+          'valorLiquido': entity.valorLiquido,
+          'estado': entity.estado.name,
+          'dataPagamento': entity.dataPagamento?.toIso8601String(),
+          'observacao': entity.observacao,
+          'isDeleted': entity.isDeleted,
+          'createdAt': entity.createdAt,
+          'updatedAt': FieldValue.serverTimestamp(),
+          'createdBy': entity.createdBy ?? userId,
+        }, SetOptions(merge: true));
+        await _db.update(_db.salarios).replace(
+          entity.toCompanion().copyWith(
+            localId: Value(row.localId),
+            syncStatus: const Value(SyncStatus.synced),
+          ),
+        );
+      } catch (e) {
+        debugPrint('Erro Push Salario: $e');
+      }
+    }
+  }
+
+  Future<void> _syncAtivosInventario(String userId) async {
+    final query = _db.select(_db.ativosInventario)
+      ..where((t) =>
+          t.syncStatus.equals(SyncStatus.pendingSync.index) |
+          t.syncStatus.equals(SyncStatus.localOnly.index));
+    final rows = await query.get();
+    for (final row in rows) {
+      final entity = row.toEntity();
+      try {
+        await _firestore.collection('ativosInventario').doc(entity.id).set({
+          'id': entity.id,
+          'codigo': entity.codigo,
+          'nome': entity.nome,
+          'categoria': entity.categoria,
+          'localizacao': entity.localizacao,
+          'estado': entity.estado.name,
+          'valorAquisicao': entity.valorAquisicao,
+          'dataAquisicao': entity.dataAquisicao.toIso8601String(),
+          'ultimaManutencao': entity.ultimaManutencao?.toIso8601String(),
+          'observacoes': entity.observacoes,
+          'isDeleted': entity.isDeleted,
+          'createdAt': entity.createdAt,
+          'updatedAt': FieldValue.serverTimestamp(),
+          'createdBy': entity.createdBy ?? userId,
+        }, SetOptions(merge: true));
+        await _db.update(_db.ativosInventario).replace(
+          entity.toCompanion().copyWith(
+            localId: Value(row.localId),
+            syncStatus: const Value(SyncStatus.synced),
+          ),
+        );
+      } catch (e) {
+        debugPrint('Erro Push Ativo: $e');
+      }
+    }
+  }
+
+  Future<void> pullNotificacoesInternas() async {
+    if (!isInitialCloudPullSupported) return;
+    try {
+      final snap = await _firestore.collection('notificacoesInternas').get();
+      for (var doc in snap.docs) {
+        final data = doc.data();
+        final id = doc.id;
+        final existing = await (_db.select(_db.notificacoesInternas)..where((t) => t.id.equals(id))).get();
+        if (existing.isNotEmpty) {
+          await (_db.update(_db.notificacoesInternas)..where((t) => t.localId.equals(existing.first.localId))).write(
+            NotificacoesInternasCompanion(
+              titulo: Value(data['titulo']?.toString() ?? ''),
+              mensagem: Value(data['mensagem']?.toString() ?? ''),
+              tipo: Value(data['tipo']?.toString() ?? 'info'),
+              entidadeRelacionada: Value(data['entidadeRelacionada']?.toString()),
+              entidadeId: Value(data['entidadeId']?.toString()),
+              lida: Value(data['lida'] == true),
+            ),
+          );
+        } else {
+          await _db.into(_db.notificacoesInternas).insert(
+            NotificacoesInternasCompanion.insert(
+              id: id,
+              titulo: data['titulo']?.toString() ?? '',
+              mensagem: data['mensagem']?.toString() ?? '',
+              tipo: data['tipo']?.toString() ?? 'info',
+              entidadeRelacionada: Value(data['entidadeRelacionada']?.toString()),
+              entidadeId: Value(data['entidadeId']?.toString()),
+              lida: Value(data['lida'] == true),
+              createdAt: _parseDate(data['createdAt']),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('Erro Pull Notificacoes: $e');
+    }
+  }
+
+  Future<void> _syncNotificacoesInternas(String userId) async {
+    final rows = await _db.select(_db.notificacoesInternas).get();
+    for (final row in rows) {
+      try {
+        await _firestore.collection('notificacoesInternas').doc(row.id).set({
+          'id': row.id,
+          'titulo': row.titulo,
+          'mensagem': row.mensagem,
+          'tipo': row.tipo,
+          'entidadeRelacionada': row.entidadeRelacionada,
+          'entidadeId': row.entidadeId,
+          'lida': row.lida,
+          'createdAt': row.createdAt.toIso8601String(),
+          'updatedAt': FieldValue.serverTimestamp(),
+          'createdBy': userId,
+        }, SetOptions(merge: true));
+      } catch (e) {
+        debugPrint('Erro Push Notificacao: $e');
+      }
+    }
+  }
+
+  Future<void> _syncNotasAvaliacao(String userId) async {
+    final query = _db.select(_db.notasAvaliacao)
+      ..where((t) =>
+          t.syncStatus.equals(SyncStatus.pendingSync.index) |
+          t.syncStatus.equals(SyncStatus.localOnly.index));
+    final rows = await query.get();
+    for (final row in rows) {
+      final entity = row.toEntity();
+      try {
+        await _firestore.collection('notasAvaliacao').doc(entity.id).set({
+          'id': entity.id,
+          'alunoId': entity.alunoId,
+          'disciplina': entity.disciplina,
+          'trimestre': entity.trimestre,
+          'anoLectivo': entity.anoLectivo,
+          'valor': entity.valor,
+          'observacao': entity.observacao,
+          'isDeleted': entity.isDeleted,
+          'createdAt': entity.createdAt,
+          'updatedAt': FieldValue.serverTimestamp(),
+          'createdBy': entity.createdBy ?? userId,
+        }, SetOptions(merge: true));
+        await _db.update(_db.notasAvaliacao).replace(
+          entity.toCompanion().copyWith(
+            localId: Value(row.localId),
+            syncStatus: const Value(SyncStatus.synced),
+          ),
+        );
+      } catch (e) {
+        debugPrint('Erro Push Nota: $e');
+      }
+    }
+  }
+
+  Future<void> _syncHorariosAula(String userId) async {
+    final query = _db.select(_db.horariosAula)
+      ..where((t) =>
+          t.syncStatus.equals(SyncStatus.pendingSync.index) |
+          t.syncStatus.equals(SyncStatus.localOnly.index));
+    final rows = await query.get();
+    for (final row in rows) {
+      final entity = row.toEntity();
+      try {
+        await _firestore.collection('horariosAula').doc(entity.id).set({
+          'id': entity.id,
+          'turmaId': entity.turmaId,
+          'diaSemana': entity.diaSemana,
+          'horaInicio': entity.horaInicio,
+          'horaFim': entity.horaFim,
+          'disciplina': entity.disciplina,
+          'professor': entity.professor,
+          'isDeleted': entity.isDeleted,
+          'createdAt': entity.createdAt,
+          'updatedAt': FieldValue.serverTimestamp(),
+          'createdBy': entity.createdBy ?? userId,
+        }, SetOptions(merge: true));
+        await _db.update(_db.horariosAula).replace(
+          entity.toCompanion().copyWith(
+            localId: Value(row.localId),
+            syncStatus: const Value(SyncStatus.synced),
+          ),
+        );
+      } catch (e) {
+        debugPrint('Erro Push Horario: $e');
+      }
+    }
+  }
+
+  Future<void> pushPresencaFuncionario({
+    required String id,
+    required String funcionarioId,
+    required DateTime data,
+    required bool presente,
+    String? observacao,
+  }) async {
+    if (!isAutomaticCloudSyncSupported) return;
+    try {
+      await _firestore.collection('presencasFuncionarios').doc(id).set({
+        'id': id,
+        'funcionarioId': funcionarioId,
+        'data': data.toIso8601String(),
+        'presente': presente,
+        'observacao': observacao,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+    } catch (e) {
+      debugPrint('Erro Push Presenca: $e');
+    }
+  }
+
+  Future<void> pushManutencaoAtivo({
+    required String id,
+    required String ativoId,
+    required DateTime data,
+    required String descricao,
+    required double custo,
+    String? realizadoPor,
+  }) async {
+    if (!isAutomaticCloudSyncSupported) return;
+    try {
+      await _firestore.collection('manutencoesAtivo').doc(id).set({
+        'id': id,
+        'ativoId': ativoId,
+        'data': data.toIso8601String(),
+        'descricao': descricao,
+        'custo': custo,
+        'realizadoPor': realizadoPor,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+    } catch (e) {
+      debugPrint('Erro Push Manutencao: $e');
     }
   }
 

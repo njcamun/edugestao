@@ -4,50 +4,46 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/router/app_router.dart';
 import '../../core/theme/app_tokens.dart';
+import '../../shared/widgets/edu_logo.dart';
+import '../../shared/widgets/edu_primary_button.dart';
 import '../../state/session.dart';
 
 String _mapLoginError(Object error) {
   if (error is FirebaseAuthException) {
     switch (error.code) {
       case 'network-request-failed':
-        return 'SEM ACESSO A INTERNET. VERIFIQUE A SUA LIGACAO.';
+        return 'Sem acesso à internet. Verifique a sua ligação.';
       case 'popup-closed-by-user':
       case 'user-cancelled':
       case 'user-cancelled-login':
-        return 'LOGIN CANCELADO PELO UTILIZADOR.';
+        return 'Login cancelado.';
       case 'account-exists-with-different-credential':
-        return 'JA EXISTE UMA CONTA COM OUTRO METODO DE LOGIN.';
+        return 'Já existe uma conta com outro método de login.';
       case 'invalid-credential':
-        return 'NAO FOI POSSIVEL VALIDAR O LOGIN GOOGLE. TENTE NOVAMENTE.';
+        return 'Não foi possível validar o login Google. Tente novamente.';
       case 'wrong-password':
       case 'user-not-found':
-        return 'UTILIZADOR OU PALAVRA-PASSE INVALIDOS.';
+        return 'Utilizador ou palavra-passe inválidos.';
       case 'invalid-email':
-        return 'UTILIZADOR INVALIDO. USE EMAIL OU NOME REGISTADO.';
+        return 'Utilizador inválido.';
       case 'user-disabled':
-        return 'UTILIZADOR DESATIVADO. CONTACTE O ADMINISTRADOR.';
+        return 'Utilizador desativado. Contacte o administrador.';
       case 'missing-credentials':
-        return 'PREENCHA UTILIZADOR E PALAVRA-PASSE.';
+        return 'Preencha utilizador e palavra-passe.';
       case 'firebase-auth-unsupported':
-        return 'LOGIN GOOGLE INDISPONIVEL NESTA PLATAFORMA NO MODO ATUAL.';
+        return 'Login Google indisponível nesta plataforma.';
       case 'google-oauth-config-missing':
-        return 'CONFIGURE GOOGLE_OAUTH_CLIENT_ID E GOOGLE_OAUTH_CLIENT_SECRET NO DESKTOP.';
-      case 'missing-id-token':
-        return 'NAO FOI POSSIVEL VALIDAR O LOGIN GOOGLE. TENTE NOVAMENTE.';
-      case 'missing-google-token':
-        return 'NAO FOI POSSIVEL OBTER TOKEN DE LOGIN GOOGLE. TENTE NOVAMENTE.';
-      case 'google-userinfo-failed':
-        return 'NAO FOI POSSIVEL OBTER O PERFIL GOOGLE. VERIFIQUE INTERNET E TENTE NOVAMENTE.';
+        return 'Configure as credenciais Google OAuth no desktop.';
       default:
-        return 'FALHA NO LOGIN: ${(error.message ?? error.code)}'.toUpperCase();
+        return 'Falha no login: ${error.message ?? error.code}';
     }
   }
 
   final raw = error.toString().toLowerCase();
   if (raw.contains('network') || raw.contains('internet') || raw.contains('socket')) {
-    return 'SEM ACESSO A INTERNET. VERIFIQUE A SUA LIGACAO.';
+    return 'Sem acesso à internet. Verifique a sua ligação.';
   }
-  return 'NAO FOI POSSIVEL INICIAR SESSAO. TENTE NOVAMENTE.';
+  return 'Não foi possível iniciar sessão. Tente novamente.';
 }
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -62,16 +58,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     try {
       await ref.read(sessionProvider.notifier).loginAnonymously();
     } catch (e) {
-      rootScaffoldMessengerKey.currentState?.showSnackBar(
-        SnackBar(
-          content: Text(
-            _mapLoginError(e),
-            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 12, letterSpacing: 1),
-          ),
-          backgroundColor: Colors.black,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      _showError(_mapLoginError(e));
     }
   }
 
@@ -79,183 +66,110 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     try {
       await ref.read(sessionProvider.notifier).loginWithGoogle();
     } catch (e) {
-      rootScaffoldMessengerKey.currentState?.showSnackBar(
-        SnackBar(
-          content: Text(
-            _mapLoginError(e),
-            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 12, letterSpacing: 1),
-          ),
-          backgroundColor: Colors.black,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      _showError(_mapLoginError(e));
     }
+  }
+
+  void _showError(String message) {
+    rootScaffoldMessengerKey.currentState?.showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final session = ref.watch(sessionProvider);
+    final size = MediaQuery.sizeOf(context);
+    final isWide = size.width > 720;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTokens.background,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
-          child: Container(
-            width: 400,
-            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 64),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(AppTokens.radiusLG),
-              border: Border.all(color: Colors.black, width: 3),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black,
-                  offset: Offset(8, 8),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(
-                  'assets/icons/logo.png',
-                  height: 100,
-                  width: 100,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) => const Icon(
-                    Icons.school_rounded,
-                    size: 80,
-                    color: Colors.black,
-                  ),
-                ),
-                const SizedBox(height: 32),
-                const Text(
-                  'EDUGESTAO',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.black,
-                    letterSpacing: -1,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  'SISTEMA DE GESTAO ESCOLAR',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.black,
-                    letterSpacing: 2,
-                  ),
-                ),
-                const SizedBox(height: 64),
-                if (session.isLoading)
-                  const CircularProgressIndicator(color: Colors.black, strokeWidth: 4)
-                else ...[
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: GestureDetector(
-                      onTap: _loginWithGoogle,
-                      child: Container(
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(AppTokens.radiusMD),
-                          border: Border.all(color: Colors.black, width: 2),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: isWide ? 420 : double.infinity),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+              decoration: BoxDecoration(
+                color: AppTokens.surface,
+                borderRadius: BorderRadius.circular(AppTokens.radiusXL),
+                boxShadow: AppTokens.elevatedShadow,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const EduLogo(height: 80, showTagline: true),
+                  const SizedBox(height: 32),
+                  Text(
+                    'Bem-vindo(a)!',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          color: AppTokens.primaryDark,
+                          fontWeight: FontWeight.w600,
                         ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Inicie sessão para aceder à gestão escolar',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 36),
+                  if (session.isLoading)
+                    const Padding(
+                      padding: EdgeInsets.all(24),
+                      child: CircularProgressIndicator(),
+                    )
+                  else ...[
+                    EduPrimaryButton(
+                      label: 'Entrar com Google',
+                      icon: Icons.login_rounded,
+                      onPressed: _loginWithGoogle,
+                    ),
+                    const SizedBox(height: 12),
+                    EduPrimaryButton(
+                      label: 'Entrar como convidado',
+                      icon: Icons.person_outline_rounded,
+                      outlined: true,
+                      onPressed: _loginAnonymously,
+                    ),
+                    if (session.googleDebugLog != null && session.googleDebugLog!.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppTokens.background,
+                          borderRadius: BorderRadius.circular(AppTokens.radiusMD),
+                          border: Border.all(color: AppTokens.border),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.login_rounded, color: Colors.black),
-                            SizedBox(width: 16),
-                            Text(
-                              'ENTRAR COM GOOGLE',
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 1,
+                            Expanded(
+                              child: SelectableText(
+                                session.googleDebugLog!,
+                                style: Theme.of(context).textTheme.bodySmall,
                               ),
+                            ),
+                            IconButton(
+                              tooltip: 'Copiar',
+                              icon: const Icon(Icons.copy_rounded, size: 18),
+                              onPressed: () async {
+                                await Clipboard.setData(ClipboardData(text: session.googleDebugLog!));
+                                if (!context.mounted) return;
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('Mensagem copiada.')),
+                                );
+                              },
                             ),
                           ],
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: GestureDetector(
-                      onTap: _loginAnonymously,
-                      child: Container(
-                        height: 48,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(AppTokens.radiusMD),
-                          border: Border.all(color: Colors.black45, width: 1.5),
-                        ),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.person_outline_rounded, color: Colors.black54),
-                            SizedBox(width: 12),
-                            Text(
-                              'ENTRAR COMO CONVIDADO',
-                              style: TextStyle(
-                                color: Colors.black54,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 1,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (session.googleDebugLog != null && session.googleDebugLog!.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: Colors.black12,
-                        borderRadius: BorderRadius.circular(AppTokens.radiusMD),
-                        border: Border.all(color: Colors.black26),
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: SelectableText(
-                              session.googleDebugLog!,
-                              style: const TextStyle(
-                                color: Colors.black87,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 0.2,
-                              ),
-                            ),
-                          ),
-                          IconButton(
-                            tooltip: 'Copiar mensagem',
-                            icon: const Icon(Icons.copy_rounded, size: 16, color: Colors.black87),
-                            onPressed: () async {
-                              await Clipboard.setData(ClipboardData(text: session.googleDebugLog!));
-                              if (!context.mounted) return;
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Mensagem copiada para a area de transferencia.')),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+                    ],
                   ],
                 ],
-              ],
+              ),
             ),
           ),
         ),

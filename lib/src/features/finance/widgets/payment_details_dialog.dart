@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import '../../../core/theme/app_tokens.dart';
 import '../../../domain/entities/mensalidade.dart';
 import '../../../domain/entities/pagamento.dart';
 import '../../../domain/entities/evidencia_pagamento.dart';
+import '../../../shared/widgets/edu_form_styles.dart';
 import '../finance_controller.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io' show File;
@@ -18,57 +20,55 @@ class PaymentDetailsDialog extends ConsumerWidget {
     final repo = ref.watch(financeRepositoryProvider);
 
     return Dialog(
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: const BorderSide(color: Colors.black, width: 2),
-      ),
+      shape: EduFormStyles.dialogShape(),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 500),
+        constraints: EduFormStyles.dialogConstraints(context, maxWidth: 500),
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: EduFormStyles.dialogPadding(context),
           child: FutureBuilder<List<Pagamento>>(
             future: repo.getPagamentosByMensalidade(mensalidade.id),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const SizedBox(
                   height: 200,
-                  child: Center(child: CircularProgressIndicator(color: Colors.black)),
+                  child: Center(child: CircularProgressIndicator(color: AppTokens.primary)),
                 );
               }
 
               final pagamentos = snapshot.data ?? [];
               if (pagamentos.isEmpty) {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 40),
-                  child: Text('NENHUM REGISTRO DE PAGAMENTO ENCONTRADO.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    EduFormStyles.dialogHeader(context, 'Detalhes do pagamento'),
+                    const SizedBox(height: AppTokens.paddingLG),
+                    const Text('Nenhum registo de pagamento encontrado.', textAlign: TextAlign.center),
+                    const SizedBox(height: AppTokens.paddingLG),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(onPressed: () => Navigator.pop(context), child: const Text('Fechar')),
+                    ),
+                  ],
                 );
               }
 
-              final pagamento = pagamentos.first; // Pegamos o primeiro (geralmente único por mensalidade)
+              final pagamento = pagamentos.first;
 
               return Column(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text('DETALHES DO PAGAMENTO',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
-                  const Divider(color: Colors.black, thickness: 2, height: 32),
-                  
-                  _infoRow('RECIBO:', pagamento.numeroRecibo),
-                  _infoRow('VALOR:', currencyFmt.format(pagamento.valorPago)),
-                  _infoRow('DATA:', DateFormat('dd/MM/yyyy HH:mm').format(pagamento.dataPagamento)),
-                  _infoRow('MÉTODO:', pagamento.formaPagamento.toUpperCase()),
+                  EduFormStyles.dialogHeader(context, 'Detalhes do pagamento'),
+                  const SizedBox(height: AppTokens.paddingMD),
+                  EduFormStyles.infoRow('Recibo', pagamento.numeroRecibo),
+                  EduFormStyles.infoRow('Valor', currencyFmt.format(pagamento.valorPago)),
+                  EduFormStyles.infoRow('Data', DateFormat('dd/MM/yyyy HH:mm').format(pagamento.dataPagamento)),
+                  EduFormStyles.infoRow('Método', pagamento.formaPagamento),
                   if (pagamento.observacao?.isNotEmpty ?? false)
-                    _infoRow('OBS:', pagamento.observacao!),
-                  
-                  const SizedBox(height: 24),
-                  const Text('EVIDÊNCIA / COMPROVATIVO:',
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900)),
-                  const SizedBox(height: 12),
-                  
+                    EduFormStyles.infoRow('Observação', pagamento.observacao!),
+                  const SizedBox(height: AppTokens.paddingMD),
+                  EduFormStyles.sectionLabel('Evidência / comprovativo'),
+                  const SizedBox(height: 8),
                   if (pagamento.evidenciaId != null)
                     FutureBuilder<EvidenciaPagamento?>(
                       future: repo.getEvidenciaById(pagamento.evidenciaId!),
@@ -76,46 +76,37 @@ class PaymentDetailsDialog extends ConsumerWidget {
                         if (eviSnapshot.connectionState == ConnectionState.waiting) {
                           return Container(
                             height: 200,
-                            width: double.infinity,
-                            color: Colors.black12,
-                            child: const Center(child: CircularProgressIndicator(color: Colors.black)),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: AppTokens.background,
+                              borderRadius: BorderRadius.circular(AppTokens.radiusMD),
+                            ),
+                            child: const CircularProgressIndicator(color: AppTokens.primary),
                           );
                         }
 
                         final evidencia = eviSnapshot.data;
                         if (evidencia == null) {
-                          return const Text('EVIDÊNCIA NÃO LOCALIZADA.');
+                          return const Text('Evidência não localizada.');
                         }
 
                         return Container(
                           height: 250,
-                          width: double.infinity,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.black, width: 1.5),
+                            borderRadius: BorderRadius.circular(AppTokens.radiusMD),
+                            border: Border.all(color: AppTokens.border),
                           ),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(6),
+                            borderRadius: BorderRadius.circular(AppTokens.radiusMD),
                             child: _buildEvidenciaImage(evidencia),
                           ),
                         );
                       },
                     )
                   else
-                    const Text('SEM EVIDÊNCIA ANEXADA.'),
-
-                  const SizedBox(height: 32),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: FilledButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                      ),
-                      child: const Text('FECHAR', style: TextStyle(fontWeight: FontWeight.w900)),
-                    ),
-                  ),
+                    const Text('Sem evidência anexada.'),
+                  const SizedBox(height: AppTokens.paddingLG),
+                  FilledButton(onPressed: () => Navigator.pop(context), child: const Text('Fechar')),
                 ],
               );
             },
@@ -125,36 +116,25 @@ class PaymentDetailsDialog extends ConsumerWidget {
     );
   }
 
-  Widget _infoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: Row(
-        children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 12)),
-          const SizedBox(width: 8),
-          Expanded(child: Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
-        ],
-      ),
-    );
-  }
-
   Widget _buildEvidenciaImage(EvidenciaPagamento evidencia) {
-    // Tenta carregar do path local ou URL remota
     if (kIsWeb) {
       if (evidencia.urlRemota != null) {
         return Image.network(evidencia.urlRemota!, fit: BoxFit.contain);
       }
-      // Se for web e não tiver URL, tentamos o caminho local (pode ser blob)
-      return Image.network(evidencia.caminhoLocal, fit: BoxFit.contain, 
-        errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image, size: 40)));
-    } else {
-      final file = File(evidencia.caminhoLocal);
-      if (file.existsSync()) {
-        return Image.file(file, fit: BoxFit.contain);
-      } else if (evidencia.urlRemota != null) {
-        return Image.network(evidencia.urlRemota!, fit: BoxFit.contain);
-      }
+      return Image.network(
+        evidencia.caminhoLocal,
+        fit: BoxFit.contain,
+        errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.broken_image, size: 40)),
+      );
     }
-    return const Center(child: Text('IMAGEM INDISPONÍVEL LOCALMENTE'));
+
+    final file = File(evidencia.caminhoLocal);
+    if (file.existsSync()) {
+      return Image.file(file, fit: BoxFit.contain);
+    }
+    if (evidencia.urlRemota != null) {
+      return Image.network(evidencia.urlRemota!, fit: BoxFit.contain);
+    }
+    return const Center(child: Text('Imagem indisponível localmente'));
   }
 }

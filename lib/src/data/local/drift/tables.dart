@@ -1,6 +1,9 @@
 import 'package:drift/drift.dart';
 import '../../../domain/entities/sync_entity.dart';
 import '../../../domain/entities/aluno.dart';
+import '../../../domain/entities/funcionario.dart';
+import '../../../domain/entities/salario.dart';
+import '../../../domain/entities/ativo_inventario.dart';
 
 mixin SyncColumns on Table {
   TextColumn get id => text()(); // UUID único
@@ -166,6 +169,100 @@ class EvidenciaPagamentos extends Table {
   TextColumn get mimeType => text()();
   DateTimeColumn get createdAt => dateTime()();
   IntColumn get syncStatus => intEnum<SyncStatus>()();
+}
+
+@DataClassName('FuncionarioData')
+class Funcionarios extends Table with SyncColumns {
+  IntColumn get localId => integer().autoIncrement()();
+
+  TextColumn get numeroFuncionario => text().unique()();
+  TextColumn get nomeCompleto => text()();
+  TextColumn get cargo => text()();
+  TextColumn get email => text().nullable()();
+  TextColumn get telefone => text()();
+  TextColumn get documentoIdentidade => text().nullable()();
+  DateTimeColumn get dataAdmissao => dateTime()();
+  RealColumn get salarioBase => real()();
+  IntColumn get status => intEnum<FuncionarioStatus>()();
+  DateTimeColumn get ultimaPresenca => dateTime().nullable()();
+  TextColumn get observacoes => text().nullable()();
+}
+
+@DataClassName('SalarioData')
+class Salarios extends Table with SyncColumns {
+  IntColumn get localId => integer().autoIncrement()();
+
+  TextColumn get funcionarioId => text()();
+  TextColumn get funcionarioNome => text()();
+  IntColumn get mesReferencia => integer()();
+  IntColumn get anoReferencia => integer()();
+  RealColumn get valorBase => real()();
+  RealColumn get descontos => real()();
+  RealColumn get bonus => real()();
+  RealColumn get valorLiquido => real()();
+  IntColumn get estado => intEnum<SalarioEstado>()();
+  DateTimeColumn get dataPagamento => dateTime().nullable()();
+  TextColumn get observacao => text().nullable()();
+}
+
+@DataClassName('PresencaFuncionarioData')
+class PresencasFuncionarios extends Table {
+  IntColumn get localId => integer().autoIncrement()();
+  TextColumn get id => text()();
+  TextColumn get funcionarioId => text()();
+  DateTimeColumn get data => dateTime()();
+  BoolColumn get presente => boolean()();
+  TextColumn get observacao => text().nullable()();
+}
+
+@DataClassName('AtivoInventarioData')
+class AtivosInventario extends Table with SyncColumns {
+  IntColumn get localId => integer().autoIncrement()();
+
+  TextColumn get codigo => text().unique()();
+  TextColumn get nome => text()();
+  TextColumn get categoria => text()();
+  TextColumn get localizacao => text()();
+  IntColumn get estado => intEnum<AtivoEstado>()();
+  RealColumn get valorAquisicao => real()();
+  DateTimeColumn get dataAquisicao => dateTime()();
+  DateTimeColumn get ultimaManutencao => dateTime().nullable()();
+  TextColumn get observacoes => text().nullable()();
+}
+
+@DataClassName('NotaAvaliacaoData')
+class NotasAvaliacao extends Table with SyncColumns {
+  IntColumn get localId => integer().autoIncrement()();
+
+  TextColumn get alunoId => text()();
+  TextColumn get disciplina => text()();
+  IntColumn get trimestre => integer()();
+  TextColumn get anoLectivo => text()();
+  RealColumn get valor => real()();
+  TextColumn get observacao => text().nullable()();
+}
+
+@DataClassName('HorarioAulaData')
+class HorariosAula extends Table with SyncColumns {
+  IntColumn get localId => integer().autoIncrement()();
+
+  TextColumn get turmaId => text()();
+  IntColumn get diaSemana => integer()();
+  TextColumn get horaInicio => text()();
+  TextColumn get horaFim => text()();
+  TextColumn get disciplina => text()();
+  TextColumn get professor => text().nullable()();
+}
+
+@DataClassName('ManutencaoAtivoData')
+class ManutencoesAtivo extends Table {
+  IntColumn get localId => integer().autoIncrement()();
+  TextColumn get id => text()();
+  TextColumn get ativoId => text()();
+  DateTimeColumn get data => dateTime()();
+  TextColumn get descricao => text()();
+  RealColumn get custo => real()();
+  TextColumn get realizadoPor => text().nullable()();
 }
 
 @DataClassName('ConfiguracaoData')

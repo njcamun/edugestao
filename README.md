@@ -1,91 +1,71 @@
-# EduGestao - Sistema de Gestao Escolar (Flutter + Firebase)
+# EDUCLASS – Gestão Escolar
 
-Aplicacao multiplataforma (Web e Android) para gestao escolar, com arquitetura offline-first (Drift/SQLite) e sincronizacao com Firebase.
+Aplicação multiplataforma (**Android, Web, Windows**) para gestão escolar, com arquitetura **offline-first** (Drift/SQLite) e sincronização com **Firebase** (Auth + Firestore).
 
-## Como Executar Localmente
+## Pré-requisitos
 
-### 1) Pre-requisitos
-- Flutter SDK (3.3.0+)
-- Firebase CLI (`npm install -g firebase-tools`)
-- Conta no Firebase Console
+- Flutter SDK 3.3.0+
+- Conta Firebase (Auth + Firestore)
+- Para Android: `google-services.json` e SHA-1 registado — ver [docs/FIREBASE_ANDROID.md](docs/FIREBASE_ANDROID.md)
 
-### 2) Configuracao Firebase
-1. Crie um projeto no [Firebase Console](https://console.firebase.google.com/).
-2. Ative Authentication (Email/Senha e Google).
-3. Ative Cloud Firestore.
-4. Execute na raiz:
-   ```bash
-   flutterfire configure
-   ```
-   Selecione pelo menos `web` e `android`.
+## Execução rápida
 
-### 3) Configuracao Google Sign-In (Android)
-No Windows (PowerShell):
-```powershell
-keytool -list -v -keystore "$env:USERPROFILE\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android
-```
-Copie o SHA-1 para o Firebase Console e atualize `android/app/google-services.json`.
-
-### 4) Execucao
 ```bash
 flutter pub get
-flutter run -d chrome
-# ou
+dart run build_runner build --delete-conflicting-outputs   # após alterações Drift
+flutter analyze lib
+flutter test
 flutter run
 ```
 
-## Estado Atual da Aplicacao
+## Módulos (estado actual)
 
-### Modulos implementados
-- Autenticacao (Google, email/senha e anonimo)
-- Dashboard operacional e financeiro
-- Gestao de alunos
-- Gestao de turmas
-- Matriculas
-- Financeiro (mensalidades, pagamentos e custos)
-- Relatorios (incluindo geracao de PDF)
-- Configuracoes e perfis de utilizador
+| Área | Rota | Funcionalidades |
+|------|------|-----------------|
+| Painel | `/` | KPIs, gráfico, avisos pendentes |
+| Secretaria | `/alunos` | Alunos, turmas, matrículas |
+| Funcionários | `/funcionarios` | CRUD, presença |
+| Salários | `/salarios` | Folha mensal (perfil financeiro) |
+| Finanças | `/financeiro` | Propinas, custos, recibos PDF |
+| Inventário | `/inventario` | Activos e manutenções |
+| Notas | `/notas` | Lançamento 0–20, médias, PDF/CSV |
+| Horários | `/horarios` | Grade por turma, conflitos sala/professor |
+| Notificações | `/notificacoes` | Avisos, criar aviso, sync cloud |
+| Relatórios | `/relatorios` | Alunos, financeiro, notas (boletim, pauta, CSV) |
+| Definições | `/configuracoes` | Instituição, utilizadores |
+| Hub | `/modulos` | Acesso a todos os módulos |
 
-### Arquitetura
-- UI e estado: Flutter + Riverpod
-- Navegacao: GoRouter
-- Persistencia local: Drift/SQLite
-- Nuvem: Firebase Auth + Cloud Firestore
-- Sync: pull inicial + push local + listeners realtime (quando suportado)
+## Arquitectura
 
-## Seguranca e Bootstrap de Admin
+- **UI / estado:** Flutter + Riverpod  
+- **Navegação:** GoRouter + `ResponsiveLayout`  
+- **Local:** Drift **schema v4** (`notas_avaliacao`, `horarios_aula`, funcionários, salários, inventário, …)  
+- **Nuvem:** Firebase Auth + Firestore  
+- **Sync:** `syncAll` + push local + listeners realtime (Android/Web); Windows faz sobretudo upload  
 
-O projeto nao usa mais email hardcoded para privilegios de admin.
+Documentação Firestore: [docs/FIREBASE_FIRESTORE.md](docs/FIREBASE_FIRESTORE.md)
 
-Para bootstrap inicial de admin em ambiente controlado, use:
+## Segurança – admin inicial
+
 ```bash
 flutter run --dart-define=BOOTSTRAP_ADMIN_EMAIL=teu_email@dominio.com
 ```
 
-Se `BOOTSTRAP_ADMIN_EMAIL` nao for definido, novos perfis iniciam como `user`.
+Sem este define, novos perfis iniciam como `user`.
 
-## Quality Gate (CI e validacao local)
+## Checklist antes de release
 
-O repositório inclui workflow de CI em `.github/workflows/ci.yml` com validacoes para Flutter e backend.
+1. Configurar Firebase Android (SHA-1 + `android/app/google-services.json`).  
+2. Smoke test: login → aluno → matrícula → mensalidade → pagamento → nota → horário → PDF.  
+3. `flutter analyze` e `flutter test` sem erros.  
+4. Regras Firestore de produção (não usar só o exemplo do doc).  
 
-Antes de abrir PR, execute localmente:
+Detalhe: [docs/release-readiness-checklist.md](docs/release-readiness-checklist.md)
 
-### Flutter
+## CI
+
+Workflow em `.github/workflows/ci.yml` (Flutter + backend).
+
 ```bash
-flutter pub get
-flutter analyze
-flutter test
+cd backend && npm ci && npm run lint && npm run test && npm run build
 ```
-
-### Backend
-```bash
-cd backend
-npm ci
-npm run lint
-npm run test
-npm run build
-```
-
-Se qualquer comando falhar, corrija antes de submeter alteracoes.
-
-Checklist operacional de release: `docs/release-readiness-checklist.md`.

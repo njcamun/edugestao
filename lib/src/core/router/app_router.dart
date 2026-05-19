@@ -9,9 +9,17 @@ import '../../features/students/student_details_page.dart';
 import '../../features/finance/gestao_financeira_page.dart';
 import '../../features/reports/reports_page.dart';
 import '../../features/settings/settings_page.dart';
+import '../../features/modules/modules_hub_page.dart';
+import '../../features/modules/module_placeholder_page.dart';
+import '../../features/notifications/notifications_page.dart';
+import '../../features/schedules/schedules_page.dart';
+import '../../features/grades/grades_page.dart';
+import '../../features/staff/staff_page.dart';
+import '../../features/salaries/salaries_page.dart';
+import '../../features/inventory/inventory_page.dart';
+import '../../core/navigation/app_modules.dart';
 import '../../presentation/layouts/responsive_layout.dart';
 
-// Chave Global para notificações de sistema
 final rootScaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -47,6 +55,18 @@ final routerProvider = Provider<GoRouter>((ref) {
             ],
           ),
           GoRoute(
+            path: '/funcionarios',
+            builder: (context, state) => const StaffPage(),
+          ),
+          GoRoute(
+            path: '/salarios',
+            builder: (context, state) => const SalariesPage(),
+          ),
+          GoRoute(
+            path: '/inventario',
+            builder: (context, state) => const InventoryPage(),
+          ),
+          GoRoute(
             path: '/financeiro',
             builder: (context, state) => const GestaoFinanceiraPage(),
           ),
@@ -57,6 +77,33 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/configuracoes',
             builder: (context, state) => const SettingsPage(),
+          ),
+          GoRoute(
+            path: '/notificacoes',
+            builder: (context, state) => const NotificationsPage(),
+          ),
+          GoRoute(
+            path: '/horarios',
+            builder: (context, state) => const SchedulesPage(),
+          ),
+          GoRoute(
+            path: '/notas',
+            builder: (context, state) => const GradesPage(),
+          ),
+          GoRoute(
+            path: '/modulos',
+            builder: (context, state) => const ModulesHubPage(),
+          ),
+          GoRoute(
+            path: '/modulos/:moduleId',
+            builder: (context, state) {
+              final moduleId = state.pathParameters['moduleId']!;
+              final module = AppModules.findById(moduleId);
+              if (module == null) {
+                return const ModulesHubPage();
+              }
+              return ModulePlaceholderPage(module: module);
+            },
           ),
         ],
       ),

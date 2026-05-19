@@ -2,6 +2,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:intl/intl.dart';
+import '../../../core/services/pdf_font_service.dart';
 import '../../../domain/entities/aluno.dart';
 import '../../../domain/entities/matricula.dart';
 import '../../../domain/entities/turma.dart';
@@ -17,7 +18,7 @@ class ReportPdfGenerator {
     required String anoLectivo,
     ConfiguracaoInstitucional? config,
   }) async {
-    final doc = pw.Document();
+    final doc = pw.Document(theme: await PdfFontService.theme());
     final dateFmt = DateFormat('dd/MM/yyyy HH:mm');
 
     doc.addPage(
@@ -72,7 +73,7 @@ class ReportPdfGenerator {
     required String anoLectivo,
     ConfiguracaoInstitucional? config,
   }) async {
-    final doc = pw.Document();
+    final doc = pw.Document(theme: await PdfFontService.theme());
 
     doc.addPage(
       pw.MultiPage(
@@ -129,7 +130,7 @@ class ReportPdfGenerator {
     required String estado,
     ConfiguracaoInstitucional? config,
   }) async {
-    final doc = pw.Document();
+    final doc = pw.Document(theme: await PdfFontService.theme());
     final currencyFmt = NumberFormat.currency(locale: 'pt_AO', symbol: 'KZ');
     final dateFmt = DateFormat('dd/MM/yyyy HH:mm');
 
@@ -242,7 +243,7 @@ class ReportPdfGenerator {
     required String anoLectivo,
     ConfiguracaoInstitucional? config,
   }) async {
-    final doc = pw.Document();
+    final doc = pw.Document(theme: await PdfFontService.theme());
     final currencyFmt = NumberFormat.currency(locale: 'pt_AO', symbol: 'KZ');
     final dateFmt = DateFormat('dd/MM/yyyy HH:mm');
 
@@ -311,7 +312,7 @@ class ReportPdfGenerator {
             pw.Text(subtitle, style: const pw.TextStyle(fontSize: 9)),
           ],
         ),
-        pw.Text('EDUGESTÃO', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8)),
+        pw.Text('EDUCLASS', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8, color: PdfColor.fromInt(0xFF1E88E5))),
       ],
     );
   }

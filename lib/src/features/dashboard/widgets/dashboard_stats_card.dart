@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_tokens.dart';
+import '../../../shared/widgets/edu_card.dart';
 
 class DashboardStatsCard extends StatelessWidget {
   final String title;
   final String value;
   final String? subtitle;
   final IconData icon;
-  final Color? iconColor;
+  final Color? accentColor;
   final String? label1;
   final String? value1;
   final String? label2;
@@ -22,7 +23,7 @@ class DashboardStatsCard extends StatelessWidget {
     required this.value,
     this.subtitle,
     required this.icon,
-    this.iconColor,
+    this.accentColor,
     this.label1,
     this.value1,
     this.label2,
@@ -35,117 +36,86 @@ class DashboardStatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppTokens.radiusLG),
-        border: Border.all(color: Colors.black, width: 2), // Borda preta vincada
-      ),
+    final accent = accentColor ?? AppTokens.primary;
+
+    return EduCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(AppTokens.radiusSM),
+                ),
+                child: Icon(icon, size: 20, color: accent),
+              ),
+              const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  title.toUpperCase(), // Estilo mais brutalista
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1.2,
-                  ),
+                  title,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: AppTokens.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-              Icon(icon, size: 20, color: Colors.black),
             ],
           ),
-          const SizedBox(height: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              FittedBox(
-                fit: BoxFit.scaleDown,
-                child: Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 34,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.black,
-                    letterSpacing: -1.0,
+          const SizedBox(height: 16),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              value,
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    color: AppTokens.textPrimary,
+                    letterSpacing: -0.5,
                   ),
-                ),
-              ),
-              if (value1 != null || value2 != null || value3 != null) ...[
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    if (value1 != null)
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(label1?.toUpperCase() ?? '', 
-                                style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.blueGrey)),
-                            Text(value1!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900, overflow: TextOverflow.ellipsis)),
-                          ],
-                        ),
-                      ),
-                    if (value2 != null)
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(label2?.toUpperCase() ?? '', 
-                                style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.orange)),
-                            Text(value2!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900, overflow: TextOverflow.ellipsis)),
-                          ],
-                        ),
-                      ),
-                    if (value3 != null)
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(label3?.toUpperCase() ?? '', 
-                                style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.redAccent)),
-                            Text(value3!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900, overflow: TextOverflow.ellipsis)),
-                          ],
-                        ),
-                      ),
-                    if (value4 != null)
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(label4?.toUpperCase() ?? '', 
-                                style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.teal)),
-                            Text(value4!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900, overflow: TextOverflow.ellipsis)),
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
-              ],
-              if (subtitle != null) ...[
-                const SizedBox(height: 4),
-                Text(
-                  subtitle!,
-                  style: const TextStyle(
-                    color: Colors.black54,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ],
+            ),
           ),
+          if (value1 != null || value2 != null || value3 != null) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                if (value1 != null) Expanded(child: _metric(label1, value1, AppTokens.primary)),
+                if (value2 != null) Expanded(child: _metric(label2, value2, AppTokens.warning)),
+                if (value3 != null) Expanded(child: _metric(label3, value3, AppTokens.error)),
+                if (value4 != null) Expanded(child: _metric(label4, value4, AppTokens.success)),
+              ],
+            ),
+          ],
+          if (subtitle != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              subtitle!,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppTokens.textMuted),
+            ),
+          ],
         ],
       ),
+    );
+  }
+
+  Widget _metric(String? label, String? value, Color color) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label ?? '',
+          style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: color.withValues(alpha: 0.9)),
+        ),
+        Text(
+          value ?? '',
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTokens.textPrimary),
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
     );
   }
 }

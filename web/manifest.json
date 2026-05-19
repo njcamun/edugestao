@@ -1,11 +1,11 @@
 {
-  "name": "EduGestão Escolar",
-  "short_name": "EduGestão",
+  "name": "EDUCLASS – Gestão Escolar",
+  "short_name": "EDUCLASS",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
-  "description": "Sistema Moderno e Completo para Gestão Escolar Web",
+  "background_color": "#F5F7FA",
+  "theme_color": "#1E88E5",
+  "description": "Sistema moderno de gestão escolar para Android, Web e Windows",
   "orientation": "portrait-primary",
   "prefer_related_applications": false,
   "icons": [

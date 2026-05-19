@@ -1,5 +1,5 @@
 name: edugestao
-description: Sistema de Gestão Escolar Educlass - Professional, Modern & Offline-first.
+description: EDUCLASS – Gestão Escolar. Moderno, profissional e offline-first.
 version: 1.0.0+1
 
 environment:
@@ -23,6 +23,7 @@ dependencies:
   sqlite3_flutter_libs: ^0.5.22
   path: ^1.9.0
   path_provider: ^2.1.3
+  shared_preferences: ^2.3.3
 
   # Gestão de Estado e Navegação
   flutter_riverpod: ^2.5.1
@@ -58,3 +59,4 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/identidade visual.png

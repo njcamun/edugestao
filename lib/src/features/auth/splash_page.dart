@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/theme/app_tokens.dart';
 import '../../state/session.dart';
 import '../settings/settings_controller.dart';
 import '../../data/sync/sync_service.dart';
@@ -34,27 +35,18 @@ class _SplashPageState extends ConsumerState<SplashPage> {
       return;
     }
 
-    if (isInitialCloudPullSupported) {
+    // Sync inicial e listeners são geridos em App._setupSync() (evita syncAll duplicado).
+    if (isInitialCloudPullSupported && isCloudFirestoreSupported) {
       try {
-        final syncService = ref.read(syncServiceProvider);
-        
-        // No Windows Debug, isInitialCloudPullSupported é falso, mas por garantia:
-        if (isCloudFirestoreSupported) {
-          await syncService.syncAll();
-
-          // Garante que o ano lectivo 2025/2026 existe no Firestore
-          await syncService.seedAnoLectivo(
-            id: 'ano-2025-2026',
-            ano: '2025/2026',
-            dataInicio: DateTime(2025, 9, 1),
-            dataFim: DateTime(2026, 7, 31),
-            isActive: true,
-          );
-
-          if (mounted) syncService.startRealtimeListeners();
-        }
+        await ref.read(syncServiceProvider).seedAnoLectivo(
+          id: 'ano-2025-2026',
+          ano: '2025/2026',
+          dataInicio: DateTime(2025, 9, 1),
+          dataFim: DateTime(2026, 7, 31),
+          isActive: true,
+        );
       } catch (e) {
-        debugPrint('Erro na sincronização inicial: $e');
+        debugPrint('Erro ao preparar ano lectivo: $e');
       }
     }
 
@@ -74,7 +66,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     final logoPath = settings?.logotipoUrl;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppTokens.background,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -82,13 +74,17 @@ class _SplashPageState extends ConsumerState<SplashPage> {
             _buildLogo(logoPath),
             const SizedBox(height: 32),
             const SizedBox(
-              width: 24, height: 24,
-              child: CircularProgressIndicator(color: Colors.black, strokeWidth: 3),
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(strokeWidth: 2.5),
             ),
             const SizedBox(height: 24),
             Text(
-              settings?.nomeInstituicao.toUpperCase() ?? 'A CARREGAR SISTEMA...',
-              style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 11, letterSpacing: 2, color: Colors.black),
+              settings?.nomeInstituicao ?? 'A carregar EDUCLASS...',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF0D47A1),
+                  ),
             ),
           ],
         ),

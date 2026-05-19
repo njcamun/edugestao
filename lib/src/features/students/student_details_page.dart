@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../core/layout/adaptive.dart';
+import '../../core/theme/app_tokens.dart';
 import '../../domain/entities/aluno.dart';
 import '../../domain/entities/mensalidade.dart';
+import '../../shared/widgets/edu_card.dart';
+import '../../shared/widgets/edu_section_title.dart';
 import '../finance/finance_controller.dart';
 import '../finance/widgets/payment_confirmation_dialog.dart';
 import '../finance/widgets/receipt_pdf_generator.dart';
@@ -20,126 +24,115 @@ class StudentDetailsPage extends ConsumerWidget {
     final currencyFmt = NumberFormat.currency(locale: 'pt_AO', symbol: 'KZ');
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+          onPressed: () => context.pop(),
         ),
-        title: const Text('PERFIL DO ALUNO', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, letterSpacing: 1)),
+        title: const Text('Perfil do aluno'),
       ),
       body: studentsAsync.when(
         data: (alunos) {
           final aluno = alunos.where((a) => a.id == alunoId).firstOrNull;
-          if (aluno == null) return const Center(child: Text('ALUNO NÃO ENCONTRADO'));
+          if (aluno == null) {
+            return const Center(child: Text('Aluno não encontrado'));
+          }
 
           return SingleChildScrollView(
-            padding: EdgeInsets.all(context.isMediumOrSmaller ? 14 : 24),
+            padding: EdgeInsets.all(context.isMediumOrSmaller ? 12 : 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHeader(context, aluno),
-                const SizedBox(height: 32),
-                
-                const Text('SITUAÇÃO FINANCEIRA', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
-                const Divider(color: Colors.black, thickness: 2, height: 24),
-                
+                _ProfileHeader(aluno: aluno),
+                const SizedBox(height: 24),
+                const EduSectionTitle('Situação financeira', subtitle: 'Propinas e recibos'),
                 financeAsync.when(
                   data: (mensalidades) {
-                    if (mensalidades.isEmpty) return const Text('NENHUMA MENSALIDADE GERADA PARA ESTE ALUNO.');
-                    
-                    // Ordenar por data de vencimento
-                    final sorted = [...mensalidades];
-                    sorted.sort((a, b) => a.dataVencimento.compareTo(b.dataVencimento));
-
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: sorted.length,
-                      itemBuilder: (context, index) {
-                        final m = sorted[index];
-                        return _FinanceStatusItem(item: m, aluno: aluno, currencyFmt: currencyFmt);
-                      },
+                    if (mensalidades.isEmpty) {
+                      return Text(
+                        'Nenhuma mensalidade gerada para este aluno.',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      );
+                    }
+                    final sorted = [...mensalidades]
+                      ..sort((a, b) => a.dataVencimento.compareTo(b.dataVencimento));
+                    return Column(
+                      children: sorted
+                          .map((m) => _FinanceStatusItem(
+                                item: m,
+                                aluno: aluno,
+                                currencyFmt: currencyFmt,
+                              ))
+                          .toList(),
                     );
                   },
-                  loading: () => const Center(child: CircularProgressIndicator(color: Colors.black)),
-                  error: (_, __) => const Text('ERRO AO CARREGAR DADOS FINANCEIROS'),
+                  loading: () => const Center(child: CircularProgressIndicator()),
+                  error: (_, __) => const Text('Erro ao carregar dados financeiros'),
                 ),
               ],
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator(color: Colors.black)),
-        error: (_, __) => const Center(child: Text('ERRO AO CARREGAR PERFIL')),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (_, __) => const Center(child: Text('Erro ao carregar perfil')),
+      ),
+    );
+  }
+}
+
+class _ProfileHeader extends StatelessWidget {
+  final Aluno aluno;
+  const _ProfileHeader({required this.aluno});
+
+  @override
+  Widget build(BuildContext context) {
+    final dateFmt = DateFormat('dd/MM/yyyy');
+
+    return EduCard(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CircleAvatar(
+            radius: 32,
+            backgroundColor: AppTokens.primary,
+            child: Text(
+              aluno.nomeCompleto.isNotEmpty ? aluno.nomeCompleto[0].toUpperCase() : '?',
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w600, color: Colors.white),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(aluno.nomeCompleto, style: Theme.of(context).textTheme.titleLarge),
+                const SizedBox(height: 6),
+                _infoRow(Icons.badge_outlined, 'Nº ${aluno.numeroAluno}'),
+                _infoRow(Icons.school_outlined, aluno.anoEscolaridade),
+                _infoRow(Icons.person_outline, aluno.nomeEncarregado),
+                _infoRow(Icons.phone_outlined, aluno.telefonePrincipal),
+                if (aluno.email != null && aluno.email!.isNotEmpty)
+                  _infoRow(Icons.email_outlined, aluno.email!),
+                _infoRow(Icons.calendar_today_outlined, 'Inscrição: ${dateFmt.format(aluno.dataInscricao)}'),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildHeader(BuildContext context, Aluno aluno) {
-    final isCompact = context.isMediumOrSmaller;
-
-    return Container(
-      padding: EdgeInsets.all(isCompact ? 14 : 20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black, width: 2),
+  Widget _infoRow(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        children: [
+          Icon(icon, size: 14, color: AppTokens.textMuted),
+          const SizedBox(width: 8),
+          Expanded(child: Text(text, style: const TextStyle(fontSize: 13))),
+        ],
       ),
-      child: isCompact
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    aluno.nomeCompleto[0].toUpperCase(),
-                    style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: Colors.white),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(aluno.nomeCompleto.toUpperCase(), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: Colors.black)),
-                const SizedBox(height: 4),
-                Text('Nº INSCRIÇÃO: ${aluno.numeroAluno}', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87)),
-                Text('ENCARREGADO: ${aluno.nomeEncarregado.toUpperCase()}', style: const TextStyle(fontSize: 10, color: Colors.black54)),
-              ],
-            )
-          : Row(
-              children: [
-                Container(
-                  width: 70,
-                  height: 70,
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    aluno.nomeCompleto[0].toUpperCase(),
-                    style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.white),
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(aluno.nomeCompleto.toUpperCase(), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Colors.black)),
-                      const SizedBox(height: 4),
-                      Text('Nº INSCRIÇÃO: ${aluno.numeroAluno}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87)),
-                      Text('ENCARREGADO: ${aluno.nomeEncarregado.toUpperCase()}', style: const TextStyle(fontSize: 11, color: Colors.black54)),
-                    ],
-                  ),
-                ),
-              ],
-            ),
     );
   }
 }
@@ -149,121 +142,75 @@ class _FinanceStatusItem extends StatelessWidget {
   final Aluno aluno;
   final NumberFormat currencyFmt;
 
-  const _FinanceStatusItem({required this.item, required this.aluno, required this.currencyFmt});
+  const _FinanceStatusItem({
+    required this.item,
+    required this.aluno,
+    required this.currencyFmt,
+  });
 
   @override
   Widget build(BuildContext context) {
     final isPaid = item.estado == 'pago';
-    final isOverdue = item.estado == 'atrasado' || (!isPaid && item.dataVencimento.isBefore(DateTime.now()));
-    final isCompact = context.isMediumOrSmaller;
+    final isOverdue =
+        item.estado == 'atrasado' || (!isPaid && item.dataVencimento.isBefore(DateTime.now()));
+    final statusColor = isPaid ? AppTokens.success : (isOverdue ? AppTokens.error : AppTokens.warning);
+    final statusLabel =
+        isPaid ? 'Pago' : (isOverdue ? 'Em atraso' : 'Pendente');
+    final monthLabel = DateFormat('MMMM yyyy', 'pt_AO')
+        .format(DateTime(item.anoReferencia, item.mesReferencia));
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.black, width: 1),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: isCompact
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(
-                      isPaid ? Icons.check_circle : (isOverdue ? Icons.error : Icons.pending),
-                      size: 18,
-                      color: Colors.black,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        DateFormat('MMMM yyyy', 'pt_AO').format(DateTime(item.anoReferencia, item.mesReferencia)).toUpperCase(),
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w900),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(isPaid ? Icons.print_outlined : Icons.payment_rounded, size: 18),
-                      onPressed: () {
-                        if (isPaid) {
-                          ReceiptPdfGenerator.generateAndPrint(mensalidade: item, aluno: aluno);
-                        } else {
-                          showDialog(
-                            context: context,
-                            builder: (context) => PaymentConfirmationDialog(mensalidade: item),
-                          );
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                Text(
-                  isPaid ? 'PAGAMENTO EFECTUADO' : (isOverdue ? 'PAGAMENTO EM ATRASO' : 'AGUARDANDO PAGAMENTO'),
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black54),
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Expanded(child: Text(currencyFmt.format(item.valor), style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w900))),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: EduCard(
+        child: Row(
+          children: [
+            Icon(
+              isPaid ? Icons.check_circle_outline : Icons.schedule_rounded,
+              color: statusColor,
+              size: 22,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(monthLabel, style: Theme.of(context).textTheme.titleSmall),
+                  Text(statusLabel, style: TextStyle(fontSize: 12, color: statusColor, fontWeight: FontWeight.w600)),
+                  if (!isPaid)
                     Text(
-                      isPaid ? 'RECIBO DISPONÍVEL' : 'VENCE A ${DateFormat('dd/MM').format(item.dataVencimento)}',
-                      style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
+                      'Vence a ${DateFormat('dd/MM/yyyy').format(item.dataVencimento)}',
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
-                  ],
-                ),
-              ],
-            )
-          : Row(
-        children: [
-          Icon(
-            isPaid ? Icons.check_circle : (isOverdue ? Icons.error : Icons.pending),
-            size: 20,
-            color: Colors.black,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  DateFormat('MMMM yyyy', 'pt_AO').format(DateTime(item.anoReferencia, item.mesReferencia)).toUpperCase(),
-                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w900),
+                  currencyFmt.format(item.valor),
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
                 ),
-                Text(
-                  isPaid ? 'PAGAMENTO EFECTUADO' : (isOverdue ? 'PAGAMENTO EM ATRASO' : 'AGUARDANDO PAGAMENTO'),
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black54),
+                const SizedBox(height: 4),
+                IconButton(
+                  tooltip: isPaid ? 'Imprimir recibo' : 'Registar pagamento',
+                  icon: Icon(isPaid ? Icons.print_outlined : Icons.payment_rounded, size: 20),
+                  color: AppTokens.primary,
+                  onPressed: () {
+                    if (isPaid) {
+                      ReceiptPdfGenerator.generateAndPrint(mensalidade: item, aluno: aluno);
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (context) => PaymentConfirmationDialog(mensalidade: item),
+                      );
+                    }
+                  },
                 ),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(currencyFmt.format(item.valor), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w900)),
-              if (isPaid)
-                const Text('RECIBO DISPONÍVEL', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold))
-              else
-                Text('VENCE A ${DateFormat('dd/MM').format(item.dataVencimento)}', style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold)),
-            ],
-          ),
-          const SizedBox(width: 8),
-          if (isPaid)
-            IconButton(
-              icon: const Icon(Icons.print_outlined, size: 18),
-              onPressed: () => ReceiptPdfGenerator.generateAndPrint(mensalidade: item, aluno: aluno),
-            )
-          else
-            IconButton(
-              icon: const Icon(Icons.payment_rounded, size: 18),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => PaymentConfirmationDialog(mensalidade: item),
-                );
-              },
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

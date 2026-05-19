@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/theme/app_tokens.dart';
+import '../../../shared/widgets/edu_form_styles.dart';
 import '../../../domain/entities/matricula.dart';
 import '../../../domain/entities/sync_entity.dart';
 import '../../students/students_controller.dart';
@@ -54,12 +55,11 @@ class _EnrollmentFormDialogState extends ConsumerState<EnrollmentFormDialog> {
     final isCompact = width < 640;
 
     return Dialog(
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTokens.radiusLG), side: const BorderSide(color: Colors.black, width: 2)),
+      shape: EduFormStyles.dialogShape(),
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: isCompact ? width * 0.96 : 500),
+        constraints: EduFormStyles.dialogConstraints(context),
         child: Padding(
-          padding: EdgeInsets.all(isCompact ? 12 : AppTokens.paddingLG),
+          padding: EduFormStyles.dialogPadding(context),
           child: Form(
             key: _formKey,
             child: SingleChildScrollView(
@@ -67,20 +67,11 @@ class _EnrollmentFormDialogState extends ConsumerState<EnrollmentFormDialog> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          widget.matricula == null ? 'NOVA MATRÍCULA' : 'EDITAR MATRÍCULA',
-                          style: TextStyle(fontSize: isCompact ? 15 : 18, fontWeight: FontWeight.w900, color: Colors.black, letterSpacing: 1),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close, color: Colors.black)),
-                    ],
+                  EduFormStyles.dialogHeader(
+                    context,
+                    widget.matricula == null ? 'Nova matrícula' : 'Editar matrícula',
                   ),
-                  const Divider(color: Colors.black, thickness: 2, height: 32),
+                  const SizedBox(height: AppTokens.paddingMD),
 
                   // Seleção de Aluno
                   studentsAsync.when(
@@ -88,7 +79,7 @@ class _EnrollmentFormDialogState extends ConsumerState<EnrollmentFormDialog> {
                       initial: _selectedAlunoId,
                       customItems: alunos.map((a) => DropdownMenuItem(value: a.id, child: Text(a.nomeCompleto.toUpperCase()))).toList(),
                       disabled: widget.matricula != null),
-                    loading: () => const LinearProgressIndicator(color: Colors.black),
+                    loading: () => const LinearProgressIndicator(color: AppTokens.primary),
                     error: (_, __) => const Text('ERRO AO CARREGAR ALUNOS'),
                   ),
                   const SizedBox(height: 16),
@@ -135,51 +126,13 @@ class _EnrollmentFormDialogState extends ConsumerState<EnrollmentFormDialog> {
                             Expanded(child: _buildField('ANO LECTIVO', _anoLectivoController, Icons.calendar_today_outlined)),
                           ],
                         ),
-                  const SizedBox(height: 32),
-
-                  isCompact
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text('CANCELAR', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                            ),
-                            const SizedBox(height: 8),
-                            FilledButton(
-                              onPressed: _isSubmitting ? null : _submit,
-                              style: FilledButton.styleFrom(
-                                backgroundColor: Colors.black,
-                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                              ),
-                              child: _isSubmitting
-                                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                                  : Text(widget.matricula == null ? 'CONFIRMAR' : 'GUARDAR'),
-                            ),
-                          ],
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: const Text('CANCELAR', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                            ),
-                            const SizedBox(width: 12),
-                            FilledButton(
-                              onPressed: _isSubmitting ? null : _submit,
-                              style: FilledButton.styleFrom(
-                                backgroundColor: Colors.black,
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                              ),
-                              child: _isSubmitting
-                                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                                  : Text(widget.matricula == null ? 'CONFIRMAR' : 'GUARDAR'),
-                            ),
-                          ],
-                        ),
+                  const SizedBox(height: AppTokens.paddingLG),
+                  EduFormStyles.dialogActions(
+                    onCancel: () => Navigator.pop(context),
+                    onConfirm: _isSubmitting ? null : _submit,
+                    confirmLabel: widget.matricula == null ? 'Confirmar' : 'Guardar',
+                    isLoading: _isSubmitting,
+                  ),
                 ],
               ),
             ),
@@ -193,21 +146,16 @@ class _EnrollmentFormDialogState extends ConsumerState<EnrollmentFormDialog> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
-        shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black, width: 2)),
         title: Row(
           children: [
-            const Icon(Icons.warning_amber_rounded, color: Colors.black),
+            const Icon(Icons.warning_amber_rounded, color: AppTokens.warning),
             const SizedBox(width: 10),
-            Text(title, style: const TextStyle(fontWeight: FontWeight.w900)),
+            Expanded(child: Text(title, style: const TextStyle(fontWeight: FontWeight.w600))),
           ],
         ),
         content: Text(message),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('COMPREENDIDO', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          ),
+          FilledButton(onPressed: () => Navigator.pop(context), child: const Text('Compreendi')),
         ],
       ),
     );
@@ -219,35 +167,18 @@ class _EnrollmentFormDialogState extends ConsumerState<EnrollmentFormDialog> {
       maxLines: maxLines,
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
       textCapitalization: capitalize ? TextCapitalization.words : TextCapitalization.none,
-      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
-      decoration: InputDecoration(
-        labelText: label.toUpperCase(),
-        labelStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-        prefixIcon: Icon(icon, size: 20, color: Colors.black),
-        border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-        enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-        focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.5)),
-        filled: true,
-        fillColor: Colors.white,
-      ),
-      validator: (v) => v!.isEmpty ? 'OBRIGATÓRIO' : null,
+      decoration: EduFormStyles.inputDecoration(label, icon: icon),
+      validator: (v) => (v == null || v.isEmpty) ? 'Campo obrigatório' : null,
     );
   }
 
   Widget _buildDropdown(String label, List<String> items, Function(String?) onChanged, {String? initial, List<DropdownMenuItem<String>>? customItems, bool disabled = false}) {
     return DropdownButtonFormField<String>(
       initialValue: initial,
-      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
-      decoration: InputDecoration(
-        labelText: label.toUpperCase(),
-        labelStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-        border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-        enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-        focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.5)),
-      ),
-      items: customItems ?? items.map((e) => DropdownMenuItem(value: e, child: Text(e.toUpperCase()))).toList(),
+      decoration: EduFormStyles.inputDecoration(label),
+      items: customItems ?? items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
       onChanged: disabled ? null : onChanged,
-      validator: (v) => v == null ? 'OBRIGATÓRIO' : null,
+      validator: (v) => v == null ? 'Campo obrigatório' : null,
     );
   }
 
@@ -272,14 +203,14 @@ class _EnrollmentFormDialogState extends ConsumerState<EnrollmentFormDialog> {
 
           if (jaMatriculado) {
             setState(() => _isSubmitting = false);
-            if (mounted) _showErrorAlert('MATRÍCULA DUPLICADA', 'ESTE ALUNO JÁ POSSUI UMA MATRÍCULA ATIVA NESTA TURMA.');
+            if (mounted) _showErrorAlert('Matrícula duplicada', 'Este aluno já possui uma matrícula activa nesta turma.');
             return;
           }
 
           final totalInscritos = enrollments.where((e) => e.turmaId == _selectedTurmaId && e.estado == 'ativa').length;
           if (totalInscritos >= selectedTurma.limiteAlunos) {
             setState(() => _isSubmitting = false);
-            if (mounted) _showErrorAlert('LIMITE ATINGIDO', 'ESTA TURMA ATINGIU O LIMITE MÁXIMO DE ${selectedTurma.limiteAlunos} VAGAS.');
+            if (mounted) _showErrorAlert('Limite atingido', 'Esta turma atingiu o limite máximo de ${selectedTurma.limiteAlunos} vagas.');
             return;
           }
         }

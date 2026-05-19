@@ -4,6 +4,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import '../../domain/entities/aluno.dart';
 import '../../domain/entities/mensalidade.dart';
+import 'pdf_font_service.dart';
 import '../../domain/entities/configuracao.dart';
 
 class ReportService {
@@ -12,7 +13,7 @@ class ReportService {
     ConfiguracaoInstitucional? config,
     String? filtroTurno,
   }) async {
-    final doc = pw.Document();
+    final doc = pw.Document(theme: await PdfFontService.theme());
     final dateFmt = DateFormat('dd/MM/yyyy HH:mm');
 
     doc.addPage(
@@ -50,7 +51,7 @@ class ReportService {
     ConfiguracaoInstitucional? config,
     required String periodo,
   }) async {
-    final doc = pw.Document();
+    final doc = pw.Document(theme: await PdfFontService.theme());
     final currencyFmt = NumberFormat.currency(locale: 'pt_AO', symbol: 'KZ');
 
     final totalRecebido = mensalidades.where((m) => m.estado == 'pago').fold(0.0, (sum, m) => sum + m.valor);

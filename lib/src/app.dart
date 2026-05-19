@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/router/app_router.dart';
-import 'core/theme/app_tokens.dart';
+import 'core/theme/app_theme.dart';
 import 'data/sync/sync_service.dart';
 import 'state/session.dart';
+import 'state/theme_mode_controller.dart';
 
 class App extends ConsumerStatefulWidget {
   const App({super.key});
@@ -17,8 +18,7 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    
-    // Força a sincronização inicial caso o utilizador já esteja logado
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkInitialSetup();
     });
@@ -37,18 +37,14 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
     }
   }
 
-  /// Ativa a sincronização e os listeners
   void _setupSync() {
     if (!isInitialCloudPullSupported && !isAutomaticCloudSyncSupported) {
       return;
     }
 
     final syncService = ref.read(syncServiceProvider);
-    
-    // Dispara o PULL total inicial (Cloud -> local)
     syncService.syncAll();
-    
-    // Ativa a escuta em tempo real para atualizações multi-utilizador
+
     if (isAutomaticCloudSyncSupported) {
       syncService.startRealtimeListeners();
     }
@@ -57,7 +53,6 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed && isAutomaticCloudSyncSupported) {
-      // Tenta sincronizar alterações locais ao voltar para a app
       ref.read(syncServiceProvider).syncLocalToCloud();
     }
   }
@@ -65,8 +60,8 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final router = ref.watch(routerProvider);
+    final themeMode = ref.watch(themeModeProvider);
 
-    // Listener reativo para detetar mudanças de estado de login durante o uso
     ref.listen(sessionProvider, (previous, next) {
       if (
         isInitialCloudPullSupported &&
@@ -78,19 +73,12 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
     });
 
     return MaterialApp.router(
-      title: 'EduGestão',
+      title: 'EDUCLASS – Gestão Escolar',
       debugShowCheckedModeBanner: false,
       scaffoldMessengerKey: rootScaffoldMessengerKey,
-      theme: ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: AppTokens.background,
-        fontFamily: 'Inter',
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.black,
-          primary: Colors.black,
-          surface: Colors.white,
-        ),
-      ),
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: themeMode,
       routerConfig: router,
     );
   }

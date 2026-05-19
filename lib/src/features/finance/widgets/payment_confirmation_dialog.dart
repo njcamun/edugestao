@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:path/path.dart' as p;
 import '../../../core/theme/app_tokens.dart';
+import '../../../shared/widgets/edu_form_styles.dart';
 import '../../../domain/entities/mensalidade.dart';
 import '../../../domain/entities/pagamento.dart';
 import '../../../domain/entities/evidencia_pagamento.dart';
@@ -88,8 +89,8 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
     if (_evidencia == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('A EVIDÊNCIA É OBRIGATÓRIA PARA CONFIRMAR O PAGAMENTO.'),
-          backgroundColor: Colors.black,
+          content: Text('A evidência é obrigatória para confirmar o pagamento.'),
+          backgroundColor: AppTokens.warning,
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -161,7 +162,7 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('ERRO: $e'), backgroundColor: Colors.black));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro: $e'), backgroundColor: AppTokens.error));
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -174,12 +175,11 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
     final isCompact = width < 640;
 
     return Dialog(
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: Colors.black, width: 2)),
+      shape: EduFormStyles.dialogShape(),
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: isCompact ? width * 0.96 : 500),
+        constraints: EduFormStyles.dialogConstraints(context, maxWidth: 500),
         child: Padding(
-          padding: EdgeInsets.all(isCompact ? 12 : AppTokens.paddingLG),
+          padding: EduFormStyles.dialogPadding(context),
           child: Form(
             key: _formKey,
             child: SingleChildScrollView(
@@ -187,40 +187,36 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('CONFIRMAR RECEBIMENTO', style: TextStyle(fontSize: isCompact ? 15 : 18, fontWeight: FontWeight.w900, letterSpacing: 1)),
-                  const Divider(color: Colors.black, thickness: 2, height: 32),
+                  EduFormStyles.dialogHeader(context, 'Confirmar recebimento'),
+                  const SizedBox(height: AppTokens.paddingMD),
                   
                   if (!_dividaAnulada) ...[
-                    _buildField('VALOR RECEBIDO (KZ)', _valorController, Icons.payments_outlined, isNumber: true),
+                    _buildField('Valor recebido (KZ)', _valorController, Icons.payments_outlined, isNumber: true),
                     const SizedBox(height: 16),
-                    _buildDropdown('FORMA DE PAGAMENTO', ['Numerário', 'TPA', 'Transferência', 'Depósito'], (val) => setState(() => _formaPagamento = val!), initial: _formaPagamento),
+                    _buildDropdown('Forma de pagamento', ['Numerário', 'TPA', 'Transferência', 'Depósito'], (val) => setState(() => _formaPagamento = val!), initial: _formaPagamento),
                   ] else ...[
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(8)),
-                      child: const Text(
-                        'MODO DE ANULAÇÃO: O VALOR SERÁ ZERADO E A DÍVIDA MARCADA COMO ANULADA NO SISTEMA.',
-                        style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
-                      ),
+                    EduFormStyles.warningBanner(
+                      'Modo de anulação: o valor será zerado e a dívida marcada como anulada no sistema.',
                     ),
                   ],
                   
                   const SizedBox(height: 16),
-                  _buildField('OBSERVAÇÕES / JUSTIFICAÇÃO', _obsController, Icons.note_alt_outlined, maxLines: 2, capitalize: true),
+                  _buildField('Observações / justificação', _obsController, Icons.note_alt_outlined, maxLines: 2, capitalize: true),
                   
                   const SizedBox(height: 24),
                   CheckboxListTile(
-                    title: const Text('DÍVIDA ANULADA (ISENÇÃO)', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 13)),
-                    subtitle: const Text('MARQUE PARA ANULAR ESTE PAGAMENTO MEDIANTE AUTORIZAÇÃO.', style: TextStyle(fontSize: 10)),
+                    title: const Text('Dívida anulada (isenção)', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                    subtitle: const Text('Marque para anular este pagamento mediante autorização.', style: TextStyle(fontSize: 12)),
                     value: _dividaAnulada,
                     onChanged: (val) => setState(() => _dividaAnulada = val!),
-                    activeColor: Colors.black,
+                    activeColor: AppTokens.primary,
                     contentPadding: EdgeInsets.zero,
                   ),
 
                   const SizedBox(height: 24),
-                  Text(_dividaAnulada ? 'EVIDÊNCIA DE AUTORIZAÇÃO (OBRIGATÓRIO)' : 'COMPROVATIVO DE DEPÓSITO/TPA (OBRIGATÓRIO)', 
-                    style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 11, letterSpacing: 0.5)),
+                  EduFormStyles.sectionLabel(
+                    _dividaAnulada ? 'Evidência de autorização (obrigatório)' : 'Comprovativo de depósito/TPA (obrigatório)',
+                  ),
                   const SizedBox(height: 12),
                   
                   if (_evidencia != null)
@@ -231,7 +227,7 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
                           width: double.infinity,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.black, width: 1.5),
+                            border: Border.all(color: AppTokens.border),
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(6),
@@ -241,7 +237,7 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
                         Positioned(
                           right: 8, top: 8,
                           child: CircleAvatar(
-                            backgroundColor: Colors.black,
+                            backgroundColor: AppTokens.primaryDark,
                             child: IconButton(icon: const Icon(Icons.close, color: Colors.white, size: 18), onPressed: () => setState(() {
                               _evidencia = null;
                               _webBytes = null;
@@ -256,55 +252,32 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
                             children: [
                               Row(
                                 children: [
-                                  Expanded(child: _buildImageAction('CÂMARA', Icons.camera_alt_outlined, () => _pickImage(ImageSource.camera))),
+                                  Expanded(child: EduFormStyles.imageAction('Câmara', Icons.camera_alt_outlined, () => _pickImage(ImageSource.camera))),
                                   const SizedBox(width: 12),
-                                  Expanded(child: _buildImageAction('GALERIA', Icons.image_outlined, () => _pickImage(ImageSource.gallery))),
+                                  Expanded(child: EduFormStyles.imageAction('Galeria', Icons.image_outlined, () => _pickImage(ImageSource.gallery))),
                                 ],
                               ),
                               const SizedBox(height: 12),
-                              SizedBox(width: double.infinity, child: _buildImageAction('FICHEIRO / PDF', Icons.attach_file_rounded, _pickFile)),
+                              SizedBox(width: double.infinity, child: EduFormStyles.imageAction('Ficheiro / PDF', Icons.attach_file_rounded, _pickFile)),
                             ],
                           )
                         : Row(
                             children: [
-                              Expanded(child: _buildImageAction('CÂMARA', Icons.camera_alt_outlined, () => _pickImage(ImageSource.camera))),
+                              Expanded(child: EduFormStyles.imageAction('Câmara', Icons.camera_alt_outlined, () => _pickImage(ImageSource.camera))),
                               const SizedBox(width: 12),
-                              Expanded(child: _buildImageAction('GALERIA', Icons.image_outlined, () => _pickImage(ImageSource.gallery))),
+                              Expanded(child: EduFormStyles.imageAction('Galeria', Icons.image_outlined, () => _pickImage(ImageSource.gallery))),
                               const SizedBox(width: 12),
-                              Expanded(child: _buildImageAction('FICHEIRO / PDF', Icons.attach_file_rounded, _pickFile)),
+                              Expanded(child: EduFormStyles.imageAction('Ficheiro / PDF', Icons.attach_file_rounded, _pickFile)),
                             ],
                           ),
                   
-                  const SizedBox(height: 32),
-                  isCompact
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCELAR', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))),
-                            const SizedBox(height: 8),
-                            FilledButton(
-                              onPressed: _isSaving ? null : _confirmar,
-                              style: FilledButton.styleFrom(backgroundColor: Colors.black, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-                              child: _isSaving
-                                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                                  : Text(_dividaAnulada ? 'ANULAR DÍVIDA' : 'CONFIRMAR PAGAMENTO', style: const TextStyle(fontWeight: FontWeight.w900)),
-                            ),
-                          ],
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCELAR', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))),
-                            const SizedBox(width: 12),
-                            FilledButton(
-                              onPressed: _isSaving ? null : _confirmar,
-                              style: FilledButton.styleFrom(backgroundColor: Colors.black, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-                              child: _isSaving
-                                  ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                                  : Text(_dividaAnulada ? 'ANULAR DÍVIDA' : 'CONFIRMAR PAGAMENTO', style: const TextStyle(fontWeight: FontWeight.w900)),
-                            ),
-                          ],
-                        ),
+                  const SizedBox(height: AppTokens.paddingLG),
+                  EduFormStyles.dialogActions(
+                    onCancel: () => Navigator.pop(context),
+                    onConfirm: _isSaving ? null : _confirmar,
+                    confirmLabel: _dividaAnulada ? 'Anular dívida' : 'Confirmar pagamento',
+                    isLoading: _isSaving,
+                  ),
                 ],
               ),
             ),
@@ -317,49 +290,20 @@ class _PaymentConfirmationDialogState extends ConsumerState<PaymentConfirmationD
   Widget _buildField(String label, TextEditingController controller, IconData icon, {bool isNumber = false, int maxLines = 1, bool capitalize = false}) {
     return TextFormField(
       controller: controller,
+      maxLines: maxLines,
       keyboardType: isNumber ? TextInputType.number : TextInputType.text,
       textCapitalization: capitalize ? TextCapitalization.words : TextCapitalization.none,
-      style: const TextStyle(fontWeight: FontWeight.bold),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.w900),
-        prefixIcon: Icon(icon, size: 20, color: Colors.black),
-        border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-        enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-        focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.5)),
-      ),
-      validator: (v) => v!.isEmpty ? 'OBRIGATÓRIO' : null,
+      decoration: EduFormStyles.inputDecoration(label, icon: icon),
+      validator: (v) => (v == null || v.isEmpty) ? 'Campo obrigatório' : null,
     );
   }
 
   Widget _buildDropdown(String label, List<String> items, Function(String?) onChanged, {String? initial}) {
     return DropdownButtonFormField<String>(
       initialValue: initial,
-      style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.w900),
-        border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-        enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-        focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.5)),
-      ),
-      items: items.map((e) => DropdownMenuItem(value: e, child: Text(e.toUpperCase()))).toList(),
+      decoration: EduFormStyles.inputDecoration(label),
+      items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
       onChanged: onChanged,
-    );
-  }
-
-  Widget _buildImageAction(String label, IconData icon, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Container(
-        height: 70,
-        decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 1.5), borderRadius: BorderRadius.circular(8)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [Icon(icon, color: Colors.black, size: 22), const SizedBox(height: 4), Text(label, style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w900))],
-        ),
-      ),
     );
   }
 

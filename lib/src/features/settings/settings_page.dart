@@ -7,9 +7,12 @@ import '../../domain/entities/configuracao.dart';
 import '../../domain/entities/utilizador.dart';
 import '../../domain/entities/sync_entity.dart';
 import '../../state/session.dart';
+import '../../state/theme_mode_controller.dart';
 import 'settings_controller.dart';
 import 'users_page.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import '../../shared/widgets/edu_card.dart';
+import '../../shared/widgets/edu_segmented_tabs.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({super.key});
@@ -95,7 +98,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> with SingleTickerPr
       await ref.read(settingsRepositoryProvider).saveConfig(config);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('CONFIGURAÇÕES ACTUALIZADAS COM SUCESSO!'), backgroundColor: Colors.black),
+          const SnackBar(content: Text('Configurações guardadas com sucesso.')),
         );
       }
     }
@@ -114,22 +117,14 @@ class _SettingsPageState extends ConsumerState<SettingsPage> with SingleTickerPr
       backgroundColor: Colors.transparent,
       body: Column(
         children: [
-          if (isAdmin)
-            Container(
-              height: isNarrow ? 42 : 45,
-              margin: EdgeInsets.only(bottom: isNarrow ? 14 : 24),
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.black, width: 1.5)),
-              child: TabBar(
-                controller: _tabController,
-                isScrollable: isNarrow,
-                tabAlignment: isNarrow ? TabAlignment.start : TabAlignment.fill,
-                indicator: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(6)),
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.black,
-                labelStyle: TextStyle(fontWeight: FontWeight.w900, fontSize: isNarrow ? 10 : 11),
-                tabs: const [Tab(text: 'INSTITUIÇÃO'), Tab(text: 'UTILIZADORES')],
-              ),
+          if (isAdmin) ...[
+            EduSegmentedTabs(
+              controller: _tabController,
+              scrollable: isNarrow,
+              labels: const ['Instituição', 'Utilizadores'],
             ),
+            SizedBox(height: isNarrow ? 14 : 20),
+          ],
           Expanded(
             child: isAdmin 
               ? TabBarView(controller: _tabController, children: [_buildInstituicaoForm(settingsAsync, canEdit), const UsersPage()])
@@ -154,7 +149,28 @@ class _SettingsPageState extends ConsumerState<SettingsPage> with SingleTickerPr
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildSection('IDENTIDADE VISUAL', [
+                EduCard(
+                  child: _buildSection('Aparência', [
+                    Consumer(
+                      builder: (context, ref, _) {
+                        final mode = ref.watch(themeModeProvider);
+                        final isDark = mode == ThemeMode.dark;
+                        return SwitchListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: const Text('Tema escuro'),
+                          subtitle: const Text('Alternar entre modo claro e escuro'),
+                          value: isDark,
+                          onChanged: (v) => ref.read(themeModeProvider.notifier).setMode(
+                                v ? ThemeMode.dark : ThemeMode.light,
+                              ),
+                        );
+                      },
+                    ),
+                  ]),
+                ),
+                const SizedBox(height: 16),
+                EduCard(
+                  child: _buildSection('Identidade visual', [
                   Wrap(
                     spacing: 16,
                     runSpacing: 12,
@@ -164,7 +180,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> with SingleTickerPr
                         onTap: canEdit ? _pickImage : null,
                         child: Container(
                           width: 100, height: 100,
-                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.black, width: 2)),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.surface,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Theme.of(context).dividerColor),
+                          ),
                           child: _logotipoPath != null && _logotipoPath!.isNotEmpty
                               ? ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
@@ -190,44 +210,51 @@ class _SettingsPageState extends ConsumerState<SettingsPage> with SingleTickerPr
                       ),
                       SizedBox(
                         width: isNarrow ? (width - 180).clamp(120.0, 320.0) : 320,
-                        child: const Text('LOGÓTIPO OFICIAL DA INSTITUIÇÃO.', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900)),
+                        child: Text(
+                          'Logótipo oficial da instituição.',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
                       ),
                     ],
                   ),
                 ]),
-                const SizedBox(height: 32),
-                _buildSection('DADOS GERAIS', [
-                  _buildField('NOME DA INSTITUIÇÃO', _nomeController, Icons.school_outlined, capitalize: true, enabled: canEdit),
+                ),
+                const SizedBox(height: 16),
+                EduCard(
+                  child: _buildSection('Dados gerais', [
+                  _buildField('Nome da instituição', _nomeController, Icons.school_outlined, capitalize: true, enabled: canEdit),
                   const SizedBox(height: 16),
-                  _buildField('NIF / IDENTIFICAÇÃO FISCAL', _nifController, Icons.badge_outlined, enabled: canEdit),
-                ]),
-                const SizedBox(height: 32),
-                _buildSection('CONTACTOS & LOCALIZAÇÃO', [
-                  _buildField('MORADA COMPLETA', _moradaController, Icons.location_on_outlined, capitalize: true, enabled: canEdit),
+                  _buildField('NIF / Identificação fiscal', _nifController, Icons.badge_outlined, enabled: canEdit),
+                  ]),
+                ),
+                const SizedBox(height: 16),
+                EduCard(
+                  child: _buildSection('Contactos e localização', [
+                  _buildField('Morada completa', _moradaController, Icons.location_on_outlined, capitalize: true, enabled: canEdit),
                   const SizedBox(height: 16),
                   isNarrow
                       ? Column(
                           children: [
-                            _buildField('TELEFONE', _telefoneController, Icons.phone_outlined, enabled: canEdit),
+                            _buildField('Telefone', _telefoneController, Icons.phone_outlined, enabled: canEdit),
                             const SizedBox(height: 16),
-                            _buildField('E-MAIL', _emailController, Icons.email_outlined, enabled: canEdit),
+                            _buildField('E-mail', _emailController, Icons.email_outlined, enabled: canEdit),
                           ],
                         )
                       : Row(
                     children: [
-                      Expanded(child: _buildField('TELEFONE', _telefoneController, Icons.phone_outlined, enabled: canEdit)),
+                      Expanded(child: _buildField('Telefone', _telefoneController, Icons.phone_outlined, enabled: canEdit)),
                       const SizedBox(width: 16),
-                      Expanded(child: _buildField('E-MAIL', _emailController, Icons.email_outlined, enabled: canEdit)),
+                      Expanded(child: _buildField('E-mail', _emailController, Icons.email_outlined, enabled: canEdit)),
                     ],
                   ),
-                ]),
+                  ]),
+                ),
                 if (canEdit) ...[
-                  const SizedBox(height: 48),
+                  const SizedBox(height: 24),
                   FilledButton.icon(
                     onPressed: _save,
                     icon: const Icon(Icons.save_outlined),
-                    label: const Text('GUARDAR ALTERAÇÕES'),
-                    style: FilledButton.styleFrom(backgroundColor: Colors.black, padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+                    label: const Text('Guardar alterações'),
                   ),
                 ],
                 const SizedBox(height: 64),
@@ -236,7 +263,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> with SingleTickerPr
           ),
         );
       },
-      loading: () => const Center(child: CircularProgressIndicator(color: Colors.black)),
+      loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(child: Text('Erro: $e')),
     );
   }
@@ -245,7 +272,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> with SingleTickerPr
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 11, color: Colors.black, letterSpacing: 1.5)),
+        Text(title, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
         const SizedBox(height: 16),
         ...children,
       ],
@@ -257,18 +284,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> with SingleTickerPr
       controller: controller,
       enabled: enabled,
       textCapitalization: capitalize ? TextCapitalization.words : TextCapitalization.none,
-      style: TextStyle(color: enabled ? Colors.black : Colors.black54, fontWeight: FontWeight.w600),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-        prefixIcon: Icon(icon, size: 20, color: Colors.black),
-        border: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-        enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 1.5)),
-        focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.black, width: 2.5)),
-        filled: true,
-        fillColor: enabled ? Colors.white : Colors.grey.shade100,
+        prefixIcon: Icon(icon, size: 20),
       ),
-      validator: (v) => v!.isEmpty ? 'OBRIGATÓRIO' : null,
+      validator: (v) => v == null || v.isEmpty ? 'Campo obrigatório' : null,
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../../core/providers/database_provider.dart';
 import '../../data/local/drift/app_database.dart';
+import '../../data/sync/sync_service.dart';
 
 class NotificationService {
   final Ref _ref;
@@ -30,6 +31,7 @@ class NotificationService {
     );
 
     await db.into(db.notificacoesInternas).insert(notificacao);
+    _ref.read(syncServiceProvider).syncLocalToCloud();
   }
 }
 

@@ -1,0 +1,7 @@
+# Copie para android/key.properties (não commitar).
+# Gere o keystore: scripts/create-release-keystore.ps1
+
+storePassword=SUBSTITUA
+keyPassword=SUBSTITUA
+keyAlias=upload
+storeFile=upload-keystore.jks

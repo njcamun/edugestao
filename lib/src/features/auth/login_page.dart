@@ -34,6 +34,8 @@ String _mapLoginError(Object error) {
         return 'Login Google indisponível nesta plataforma.';
       case 'google-oauth-config-missing':
         return 'Configure as credenciais Google OAuth no desktop.';
+      case 'desktop-google-flow-disabled':
+        return 'Esta versão deve usar o fluxo Google OAuth desktop no Windows.';
       default:
         return 'Falha no login: ${error.message ?? error.code}';
     }

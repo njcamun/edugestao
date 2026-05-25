@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../core/theme/app_tokens.dart';
 import '../../shared/firebase_service.dart';
-import '../../state/session.dart';
 import 'dashboard_chart_provider.dart';
 import 'widgets/dashboard_alerts_panel.dart';
 import 'widgets/dashboard_chart.dart';
@@ -17,10 +15,7 @@ class DashboardPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final firebase = ref.watch(firebaseServiceProvider);
-    final session = ref.watch(sessionProvider);
     final currencyFmt = NumberFormat.currency(locale: 'pt_AO', symbol: 'KZ');
-    final greeting = _greeting();
-    final userName = session.perfil?.nome.split(' ').first ?? 'Utilizador';
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -30,21 +25,21 @@ class DashboardPage extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '$greeting, $userName!',
+              'Resumo da escola',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: AppTokens.primaryDark,
                     fontWeight: FontWeight.w600,
                   ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             Text(
-              'Aqui está o resumo da sua escola.',
-              style: Theme.of(context).textTheme.bodyMedium,
+              'Indicadores e alertas do período actual.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppTokens.textMuted,
+                  ),
             ),
             const SizedBox(height: 20),
             _AcademicYearBanner(),
-            const SizedBox(height: 20),
-            _QuickActions(ref: ref),
             const SizedBox(height: 24),
             LayoutBuilder(
               builder: (context, constraints) {
@@ -196,13 +191,6 @@ class DashboardPage extends ConsumerWidget {
       ),
     );
   }
-
-  String _greeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return 'Bom dia';
-    if (hour < 18) return 'Boa tarde';
-    return 'Boa noite';
-  }
 }
 
 class _AcademicYearBanner extends StatelessWidget {
@@ -256,49 +244,6 @@ class _AcademicYearBanner extends StatelessWidget {
       ),
     );
   }
-}
-
-class _QuickActions extends StatelessWidget {
-  final WidgetRef ref;
-
-  const _QuickActions({required this.ref});
-
-  @override
-  Widget build(BuildContext context) {
-    final user = ref.watch(sessionProvider).perfil;
-    final actions = [
-      const _Action(Icons.person_add_outlined, 'Novo aluno', '/alunos'),
-      const _Action(Icons.how_to_reg_outlined, 'Matrículas', '/alunos'),
-      if (user?.canViewFinance ?? false) const _Action(Icons.receipt_long_outlined, 'Propinas', '/financeiro'),
-      if (user?.canViewReports ?? false) const _Action(Icons.summarize_outlined, 'Relatórios', '/relatorios'),
-      const _Action(Icons.badge_outlined, 'Funcionários', '/funcionarios'),
-      const _Action(Icons.inventory_2_outlined, 'Inventário', '/inventario'),
-      const _Action(Icons.apps_rounded, 'Módulos', '/modulos'),
-    ];
-
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
-      children: actions
-          .map(
-            (a) => ActionChip(
-              avatar: Icon(a.icon, size: 18, color: AppTokens.primary),
-              label: Text(a.label),
-              backgroundColor: AppTokens.surface,
-              side: const BorderSide(color: AppTokens.border),
-              onPressed: () => context.go(a.route),
-            ),
-          )
-          .toList(),
-    );
-  }
-}
-
-class _Action {
-  final IconData icon;
-  final String label;
-  final String route;
-  const _Action(this.icon, this.label, this.route);
 }
 
 class _BalanceCard extends StatelessWidget {

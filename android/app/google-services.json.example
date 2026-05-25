@@ -1,7 +1,7 @@
 {
   "project_info": {
     "project_number": "SUBSTITUA_PELO_SEU_PROJECT_NUMBER",
-    "project_id": "SUBSTITUA_PELO_SEU_PROJECT_ID",
+    "project_id": "edugestao",
     "storage_bucket": "SUBSTITUA.appspot.com"
   },
   "client": [

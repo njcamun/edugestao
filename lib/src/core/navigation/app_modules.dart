@@ -48,7 +48,7 @@ class AppModules {
     title: 'Matrículas',
     subtitle: 'Inscrições e renovações',
     icon: Icons.how_to_reg_outlined,
-    route: '/alunos',
+    route: '/matriculas',
   );
 
   static const turmas = AppModule(
@@ -56,7 +56,7 @@ class AppModules {
     title: 'Turmas e classes',
     subtitle: 'Salas, turnos e capacidade',
     icon: Icons.class_outlined,
-    route: '/alunos',
+    route: '/turmas',
   );
 
   static const funcionarios = AppModule(
@@ -72,7 +72,7 @@ class AppModules {
     title: 'Propinas',
     subtitle: 'Pagamentos e recibos',
     icon: Icons.account_balance_wallet_outlined,
-    route: '/financeiro',
+    route: '/financeiro/propinas',
     visible: _canFinance,
   );
 
@@ -90,7 +90,7 @@ class AppModules {
     title: 'Finanças',
     subtitle: 'Entradas, saídas e caixa',
     icon: Icons.show_chart_outlined,
-    route: '/financeiro',
+    route: '/financeiro/resumo',
     visible: _canFinance,
   );
 
@@ -174,20 +174,6 @@ class AppModules {
         ..._comingSoon.where((m) => m.isVisibleFor(user)),
       ];
 
-  /// Itens principais da sidebar / navegação rápida.
-  static List<AppModule> primaryNav(Utilizador? user) => [
-        dashboard,
-        alunos,
-        horarios,
-        notas,
-        funcionarios,
-        if (_canFinance(user)) salarios,
-        if (_canFinance(user)) financas,
-        inventario,
-        if (_canReports(user)) relatorios,
-        notificacoes,
-      ];
-
   static AppModule? findById(String id) {
     try {
       return [..._available, ..._comingSoon].firstWhere((m) => m.id == id);
@@ -198,12 +184,14 @@ class AppModules {
 
   static String sectionTitleFor(String location) {
     if (location == '/') return 'Painel principal';
-    if (location.startsWith('/alunos')) return 'Secretaria académica';
+    if (location.startsWith('/alunos')) return 'Alunos';
+    if (location == '/turmas') return 'Turmas e classes';
+    if (location == '/matriculas') return 'Matrículas';
     if (location == '/funcionarios') return 'Funcionários';
     if (location == '/salarios') return 'Salários';
     if (location == '/inventario') return 'Inventário';
-    if (location == '/financeiro') return 'Gestão financeira';
-    if (location == '/relatorios') return 'Relatórios';
+    if (location.startsWith('/financeiro')) return _financeTitle(location);
+    if (location.startsWith('/relatorios')) return _reportTitle(location);
     if (location == '/configuracoes') return 'Definições';
     if (location == '/notificacoes') return 'Notificações';
     if (location == '/horarios') return 'Horários';
@@ -218,17 +206,37 @@ class AppModules {
 
   static String sectionSubtitleFor(String location) {
     if (location == '/') return 'Visão geral da escola';
-    if (location.startsWith('/alunos')) return 'Alunos, turmas e matrículas';
+    if (location.startsWith('/alunos')) return 'Cadastro e perfil dos alunos';
+    if (location == '/turmas') return 'Salas, turnos e capacidade';
+    if (location == '/matriculas') return 'Inscrições e renovações';
     if (location == '/funcionarios') return 'Equipa, cargos e presença';
     if (location == '/salarios') return 'Processamento e pagamentos';
     if (location == '/inventario') return 'Activos, estado e manutenção';
-    if (location == '/financeiro') return 'Propinas, custos e fluxo de caixa';
-    if (location == '/relatorios') return 'Exportação e análise';
+    if (location.startsWith('/financeiro')) return _financeSubtitle(location);
+    if (location.startsWith('/relatorios')) return 'Exportação e análise';
     if (location == '/configuracoes') return 'Dados da instituição';
     if (location == '/notificacoes') return 'Avisos e alertas do sistema';
     if (location == '/horarios') return 'Organização de aulas por turma';
     if (location == '/notas') return 'Acompanhamento académico';
     if (location == '/modulos') return 'Acesso a todas as áreas';
     return 'Gestão escolar';
+  }
+
+  static String _financeTitle(String location) {
+    if (location.contains('/propinas')) return 'Propinas';
+    if (location.contains('/custos')) return 'Custos';
+    return 'Resumo financeiro';
+  }
+
+  static String _financeSubtitle(String location) {
+    if (location.contains('/propinas')) return 'Pagamentos e recibos';
+    if (location.contains('/custos')) return 'Despesas e inventário de custos';
+    return 'Entradas, saídas e saldo';
+  }
+
+  static String _reportTitle(String location) {
+    if (location.contains('/financeiro')) return 'Relatório financeiro';
+    if (location.contains('/notas')) return 'Relatório de notas';
+    return 'Relatório de alunos';
   }
 }

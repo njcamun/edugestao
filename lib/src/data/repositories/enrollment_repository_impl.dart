@@ -81,27 +81,7 @@ class EnrollmentRepositoryImpl implements EnrollmentRepository {
 
   @override
   Future<void> permanentDeleteMatricula(String id) async {
-    final mensalidadesQuery = _db.select(_db.mensalidades)..where((t) => t.matriculaId.equals(id));
-    final mensalidades = await mensalidadesQuery.get();
-
-    await _db.transaction(() async {
-      for (final m in mensalidades) {
-        // Apagar pagamentos da mensalidade
-        final pagamentosQuery = _db.select(_db.pagamentos)..where((t) => t.mensalidadeId.equals(m.id));
-        final pagamentos = await pagamentosQuery.get();
-        for (final p in pagamentos) {
-          await (_db.delete(_db.pagamentos)..where((t) => t.id.equals(p.id))).go();
-          _sync.deleteFromCloud('pagamentos', p.id);
-        }
-        // Apagar mensalidade
-        await (_db.delete(_db.mensalidades)..where((t) => t.id.equals(m.id))).go();
-        _sync.deleteFromCloud('mensalidades', m.id);
-      }
-
-      // Apagar a matrícula
-      await (_db.delete(_db.matriculas)..where((t) => t.id.equals(id))).go();
-      _sync.deleteFromCloud('matriculas', id);
-    });
+    await _sync.permanentDelete.hardDeleteMatriculaCascade(id);
   }
 
   @override

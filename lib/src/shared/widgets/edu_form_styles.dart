@@ -153,6 +153,38 @@ class EduFormStyles {
     );
   }
 
+  static Future<bool?> showConfirmDialog(
+    BuildContext context, {
+    required String title,
+    required String message,
+    String confirmLabel = 'Confirmar',
+    String cancelLabel = 'Cancelar',
+    bool destructive = false,
+  }) {
+    return showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: dialogShape(),
+        backgroundColor: AppTokens.surface,
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w600, color: AppTokens.textPrimary),
+        ),
+        content: Text(message, style: const TextStyle(color: AppTokens.textSecondary)),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(cancelLabel)),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: destructive
+                ? FilledButton.styleFrom(backgroundColor: AppTokens.error)
+                : null,
+            child: Text(confirmLabel),
+          ),
+        ],
+      ),
+    );
+  }
+
   static Widget warningBanner(String message) {
     return Container(
       padding: const EdgeInsets.all(12),

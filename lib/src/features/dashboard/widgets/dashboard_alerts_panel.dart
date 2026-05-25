@@ -93,7 +93,7 @@ class DashboardAlertsPanel extends ConsumerWidget {
                         title: Text(item.nome, style: const TextStyle(fontSize: 13)),
                         trailing: Text(currency.format(item.valor),
                             style: const TextStyle(fontWeight: FontWeight.w600, color: AppTokens.error)),
-                        onTap: () => context.go('/financeiro'),
+                        onTap: () => context.go('/financeiro/propinas'),
                       ),
                     )
                     .toList(),

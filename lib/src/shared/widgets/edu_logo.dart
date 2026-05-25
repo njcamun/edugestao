@@ -28,14 +28,21 @@ class EduLogo extends StatelessWidget {
             color: AppTokens.primary,
           ),
         ),
-        const SizedBox(height: 12),
-        Text(
-          AppTokens.appName,
-          style: TextStyle(
-            fontSize: height * 0.35,
-            fontWeight: FontWeight.w700,
-            color: titleColor ?? AppTokens.primaryDark,
-            letterSpacing: 0.5,
+        SizedBox(height: height < 48 ? 8 : 12),
+        SizedBox(
+          width: double.infinity,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              AppTokens.appName,
+              style: TextStyle(
+                fontSize: height * 0.35,
+                fontWeight: FontWeight.w700,
+                color: titleColor ?? AppTokens.primaryDark,
+                letterSpacing: 0.5,
+              ),
+            ),
           ),
         ),
         if (showTagline) ...[

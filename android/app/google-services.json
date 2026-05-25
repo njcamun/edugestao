@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "174638590833-8sk1ee3nqpinre25mt386tjud7qnmm47.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.edugestao",
+            "certificate_hash": "cf938576c80f97a942ecc92a66a88db4dc88f38e"
+          }
+        },
+        {
           "client_id": "174638590833-iqbud5c17h3da9fu3aj6hk8s2sp1chf3.apps.googleusercontent.com",
           "client_type": 3
         }

@@ -14,6 +14,8 @@ class App extends ConsumerStatefulWidget {
 }
 
 class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
+  bool _syncSetupDone = false;
+
   @override
   void initState() {
     super.initState();
@@ -38,10 +40,12 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
   }
 
   void _setupSync() {
+    if (_syncSetupDone) return;
     if (!isInitialCloudPullSupported && !isAutomaticCloudSyncSupported) {
       return;
     }
 
+    _syncSetupDone = true;
     final syncService = ref.read(syncServiceProvider);
     syncService.syncAll().whenComplete(() {
       if (!mounted || !isAutomaticCloudSyncSupported) return;
@@ -62,6 +66,10 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
     final themeMode = ref.watch(themeModeProvider);
 
     ref.listen(sessionProvider, (previous, next) {
+      if (!next.isAuthenticated) {
+        _syncSetupDone = false;
+        return;
+      }
       if (
         isInitialCloudPullSupported &&
         next.isAuthenticated &&

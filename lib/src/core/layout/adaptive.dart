@@ -35,7 +35,21 @@ extension AdaptiveContext on BuildContext {
     return screenWidth >= 1000 ? 16 : 12;
   }
 
-  double maxContentWidth() {
-    return screenWidth >= AdaptiveBreakpoints.desktop ? 1320 : double.infinity;
+  double maxContentWidth([double? availableWidth]) {
+    final width = availableWidth ?? screenWidth;
+    if (width >= AdaptiveBreakpoints.wide) return 1320;
+    return width;
   }
+
+  /// Largura útil da barra lateral (0 = usar drawer).
+  double sidebarWidthFor(double screenWidth) {
+    if (screenWidth < AdaptiveBreakpoints.mobile) return 0;
+    if (screenWidth < AdaptiveBreakpoints.desktop) {
+      return (screenWidth * 0.26).clamp(220.0, 252.0);
+    }
+    return 260;
+  }
+
+  bool useNavigationDrawer(double screenWidth) =>
+      screenWidth < AdaptiveBreakpoints.mobile;
 }

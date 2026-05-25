@@ -25,5 +25,5 @@ final costsStreamProvider = StreamProvider<List<CustoMensal>>((ref) {
 
 // Filtros para o Inventário de Custos
 final costsTypeFilterProvider = StateProvider<String>((ref) => 'TODOS'); // TODOS, FIXOS, VARIAVEIS
-final costsMonthFilterProvider = StateProvider<int?>((ref) => null); // Padrão: Todos os meses
+final costsMonthFilterProvider = StateProvider<int?>((ref) => DateTime.now().month);
 final costsYearFilterProvider = StateProvider<int?>((ref) => DateTime.now().year);

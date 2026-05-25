@@ -83,7 +83,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
               settings?.nomeInstituicao ?? 'A carregar EDUCLASS...',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF0D47A1),
+                    color: AppTokens.primaryDark,
                   ),
             ),
           ],

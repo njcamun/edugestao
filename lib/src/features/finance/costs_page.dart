@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../core/theme/app_tokens.dart';
+import '../../shared/widgets/edu_card.dart';
+import '../../shared/widgets/edu_form_styles.dart';
 import '../../domain/entities/custo.dart';
 import '../../domain/entities/utilizador.dart';
 import '../../state/session.dart';
@@ -47,13 +49,14 @@ class CostsPage extends ConsumerWidget {
 
                 if (filteredCosts.isEmpty) return _buildEmptyState();
 
-                return ListView.builder(
+                return ListView.separated(
                   physics: const BouncingScrollPhysics(),
                   itemCount: filteredCosts.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 10),
                   itemBuilder: (context, index) {
                     final cost = filteredCosts[index];
                     return Opacity(
-                      opacity: cost.isDeleted ? 0.5 : 1.0,
+                      opacity: cost.isDeleted ? 0.55 : 1.0,
                       child: _CostListItem(
                           cost: cost,
                           currencyFmt: currencyFmt,
@@ -62,8 +65,7 @@ class CostsPage extends ConsumerWidget {
                   },
                 );
               },
-              loading: () => const Center(
-                  child: CircularProgressIndicator(color: Colors.black)),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (err, stack) => Center(child: Text('ERRO AO CARREGAR: $err')),
             ),
           ),
@@ -87,12 +89,7 @@ class CostsPage extends ConsumerWidget {
                   FilledButton.icon(
                     onPressed: () => showDialog(context: context, builder: (c) => const CostFormDialog()),
                     icon: const Icon(Icons.add_circle_outline_rounded, size: 18),
-                    label: const Text('ADICIONAR EXTRA'),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 18),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    ),
+                    label: const Text('Adicionar custo'),
                   ),
                 ],
               ),
@@ -149,37 +146,48 @@ class CostsPage extends ConsumerWidget {
   Widget _buildFilterBar(BuildContext context, WidgetRef ref) {
     final typeFilter = ref.watch(costsTypeFilterProvider);
     final month = ref.watch(costsMonthFilterProvider);
+    final year = ref.watch(costsYearFilterProvider);
+    final now = DateTime.now();
 
     final List<String> meses = [
-      'JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO',
-      'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'
+      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
     ];
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black, width: 1.5),
-      ),
+    return EduCard(
+      elevated: false,
       child: Column(
         children: [
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _FilterChip(label: 'TODOS', isSelected: typeFilter == 'TODOS', onTap: () => ref.read(costsTypeFilterProvider.notifier).state = 'TODOS'),
-                _FilterChip(label: 'FIXOS', isSelected: typeFilter == 'FIXOS', onTap: () => ref.read(costsTypeFilterProvider.notifier).state = 'FIXOS'),
-                _FilterChip(label: 'VARIÁVEIS', isSelected: typeFilter == 'VARIAVEIS', onTap: () => ref.read(costsTypeFilterProvider.notifier).state = 'VARIAVEIS'),
+                _FilterChip(label: 'Todos', isSelected: typeFilter == 'TODOS', onTap: () => ref.read(costsTypeFilterProvider.notifier).state = 'TODOS'),
+                _FilterChip(label: 'Fixos', isSelected: typeFilter == 'FIXOS', onTap: () => ref.read(costsTypeFilterProvider.notifier).state = 'FIXOS'),
+                _FilterChip(label: 'Variáveis', isSelected: typeFilter == 'VARIAVEIS', onTap: () => ref.read(costsTypeFilterProvider.notifier).state = 'VARIAVEIS'),
                 const SizedBox(width: 8, child: VerticalDivider()),
                 DropdownButton<int?>(
                   value: month,
                   underline: const SizedBox(),
                   items: [
-                    const DropdownMenuItem(value: null, child: Text('TODOS MESES', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold))),
-                    ...List.generate(12, (i) => DropdownMenuItem(value: i + 1, child: Text(meses[i], style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)))),
+                    const DropdownMenuItem(value: null, child: Text('Todos os meses')),
+                    ...List.generate(12, (i) => DropdownMenuItem(
+                          value: i + 1,
+                          child: Text(meses[i]),
+                        )),
                   ],
                   onChanged: (val) => ref.read(costsMonthFilterProvider.notifier).state = val,
+                ),
+                const SizedBox(width: 8),
+                DropdownButton<int?>(
+                  value: year,
+                  underline: const SizedBox(),
+                  items: [
+                    DropdownMenuItem(value: now.year - 1, child: Text('${now.year - 1}')),
+                    DropdownMenuItem(value: now.year, child: Text('${now.year}')),
+                    DropdownMenuItem(value: now.year + 1, child: Text('${now.year + 1}')),
+                  ],
+                  onChanged: (val) => ref.read(costsYearFilterProvider.notifier).state = val,
                 ),
               ],
             ),
@@ -196,7 +204,7 @@ class CostsPage extends ConsumerWidget {
         children: [
           Icon(Icons.inventory_2_outlined, size: 64, color: AppTokens.border),
           SizedBox(height: 16),
-          Text('NENHUM REGISTO PARA ESTE FILTRO.', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14)),
+          Text('Nenhum custo para este período.', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
         ],
       ),
     );
@@ -218,32 +226,30 @@ class _CostListItem extends ConsumerWidget {
         ? meses[cost.mesReferencia - 1] 
         : 'MÊS N/A';
 
-    return InkWell(
+    final statusColor = isPaid ? AppTokens.success : AppTokens.warning;
+
+    return EduCard(
       onTap: () => showDialog(context: context, builder: (c) => CostFormDialog(custo: cost)),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.black, width: 1.5),
-        ),
-        child: Row(
+      child: Row(
           children: [
-            Container(
-              width: 40, height: 40,
-              decoration: BoxDecoration(color: isPaid ? Colors.black : Colors.white, border: Border.all(color: Colors.black, width: 1.5), borderRadius: BorderRadius.circular(8)),
-              child: Icon(isPaid ? Icons.check : Icons.pending_actions_rounded, color: isPaid ? Colors.white : Colors.black, size: 20),
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: statusColor.withValues(alpha: 0.12),
+              child: Icon(
+                isPaid ? Icons.check_rounded : Icons.pending_actions_rounded,
+                color: statusColor,
+                size: 20,
+              ),
             ),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(cost.descricao.toUpperCase(), style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13)),
+                  Text(cost.descricao, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                   Text(
-                    '${cost.tipo} • $mesNome ${cost.anoReferencia}',
-                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black54),
+                    '${cost.tipo} · $mesNome ${cost.anoReferencia}',
+                    style: const TextStyle(fontSize: 12, color: AppTokens.textSecondary),
                   ),
                 ],
               ),
@@ -251,8 +257,8 @@ class _CostListItem extends ConsumerWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(currencyFmt.format(cost.valor), style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: isPaid ? Colors.black : Colors.red.shade900)),
-                Text(isPaid ? 'LIQUIDADO' : 'AGUARDANDO', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w900, color: isPaid ? Colors.black : Colors.red.shade900, letterSpacing: 0.5)),
+                Text(currencyFmt.format(cost.valor), style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15, color: isPaid ? AppTokens.textPrimary : AppTokens.error)),
+                Text(isPaid ? 'Liquidado' : 'Pendente', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: isPaid ? AppTokens.success : AppTokens.error)),
               ],
             ),
             if (!isPaid || isAdmin)
@@ -262,67 +268,48 @@ class _CostListItem extends ConsumerWidget {
                   color: cost.isDeleted ? Colors.green : Colors.red,
                   size: 20,
                 ),
-                onPressed: () {
+                onPressed: () async {
                   if (cost.isDeleted) {
-                    ref.read(costsRepositoryProvider).restoreCusto(cost.id);
+                    await ref.read(costsRepositoryProvider).restoreCusto(cost.id);
                   } else {
-                    _confirmDelete(context, ref);
+                    await _confirmDelete(context, ref);
                   }
                 },
               ),
             if (isAdmin && cost.isDeleted)
               IconButton(
-                icon: const Icon(Icons.delete_forever_rounded, color: Colors.black, size: 20),
+                icon: Icon(Icons.delete_forever_rounded, color: AppTokens.error.withValues(alpha: 0.85), size: 20),
                 onPressed: () => _confirmPermanentDelete(context, ref),
               ),
           ],
         ),
-      ),
     );
   }
 
-  void _confirmPermanentDelete(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
-        shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black, width: 2)),
-        title: const Text('REMOÇÃO DEFINITIVA', style: TextStyle(fontWeight: FontWeight.w900)),
-        content: Text('ESTA ACÇÃO IRÁ APAGAR PERMANENTEMENTE O REGISTO DE ${cost.descricao.toUpperCase()} NA CLOUD E LOCALMENTE. NÃO PODE SER DESFEITO.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCELAR', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))),
-          TextButton(
-            onPressed: () async {
-              await ref.read(costsRepositoryProvider).permanentDeleteCusto(cost.id);
-              if (context.mounted) Navigator.pop(context);
-            },
-            child: const Text('APAGAR TUDO', style: TextStyle(color: Colors.red, fontWeight: FontWeight.w900)),
-          ),
-        ],
-      ),
+  Future<void> _confirmPermanentDelete(BuildContext context, WidgetRef ref) async {
+    final ok = await EduFormStyles.showConfirmDialog(
+      context,
+      title: 'Eliminar definitivamente',
+      message: 'O custo «${cost.descricao}» será removido localmente e na nuvem. Não pode ser desfeito.',
+      confirmLabel: 'Eliminar',
+      destructive: true,
     );
+    if (ok == true) {
+      await ref.read(costsRepositoryProvider).permanentDeleteCusto(cost.id);
+    }
   }
 
-  void _confirmDelete(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
-        shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black, width: 2)),
-        title: const Text('ELIMINAR CUSTO', style: TextStyle(fontWeight: FontWeight.w900)),
-        content: Text('DESEJA ELIMINAR O REGISTO DE ${cost.descricao.toUpperCase()}?'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCELAR', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))),
-          TextButton(
-            onPressed: () async {
-              await ref.read(costsRepositoryProvider).deleteCusto(cost.id);
-              if (context.mounted) Navigator.pop(context);
-            },
-            child: const Text('CONFIRMAR', style: TextStyle(color: Colors.red, fontWeight: FontWeight.w900)),
-          ),
-        ],
-      ),
+  Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
+    final ok = await EduFormStyles.showConfirmDialog(
+      context,
+      title: 'Eliminar custo',
+      message: 'Deseja eliminar «${cost.descricao}»?',
+      confirmLabel: 'Eliminar',
+      destructive: true,
     );
+    if (ok == true) {
+      await ref.read(costsRepositoryProvider).deleteCusto(cost.id);
+    }
   }
 }
 
@@ -341,8 +328,19 @@ class _FilterChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(6),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(color: isSelected ? Colors.black : Colors.white, border: Border.all(color: Colors.black, width: 1.5), borderRadius: BorderRadius.circular(6)),
-          child: Text(label, style: TextStyle(color: isSelected ? Colors.white : Colors.black, fontSize: 10, fontWeight: FontWeight.w900)),
+          decoration: BoxDecoration(
+            color: isSelected ? AppTokens.primary : AppTokens.surface,
+            border: Border.all(color: isSelected ? AppTokens.primary : AppTokens.border),
+            borderRadius: BorderRadius.circular(AppTokens.radiusSM),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? Colors.white : AppTokens.textSecondary,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
       ),
     );

@@ -6,7 +6,8 @@ Aplicação multiplataforma (**Android, Web, Windows**) para gestão escolar, co
 
 - Flutter SDK 3.3.0+
 - Conta Firebase (Auth + Firestore)
-- Para Android: `google-services.json` e SHA-1 registado — ver [docs/FIREBASE_ANDROID.md](docs/FIREBASE_ANDROID.md)
+- Android debug: [docs/FIREBASE_ANDROID.md](docs/FIREBASE_ANDROID.md), [docs/FIREBASE_APP_CHECK.md](docs/FIREBASE_APP_CHECK.md)
+- Android **release** / Play Store: [docs/FIREBASE_RELEASE.md](docs/FIREBASE_RELEASE.md)
 
 ## Execução rápida
 

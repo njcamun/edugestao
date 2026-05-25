@@ -113,12 +113,37 @@ class SessionNotifier extends StateNotifier<SessionState> {
         return novoUtilizador;
       }
     } catch (e) {
-      return null;
+      debugPrint('Session: falha ao carregar perfil Firestore ($e); usa perfil local.');
+      return Utilizador(
+        id: user.uid,
+        nome: user.displayName ?? 'Utilizador',
+        email: user.email ?? '',
+        fotoUrl: user.photoURL,
+        perfil: _resolveInitialPerfil(user.email),
+      );
     }
+  }
+
+  Future<void> _completeSignIn(User user, {String? debugLog}) async {
+    state = SessionState(
+      firebaseUser: user,
+      perfil: state.perfil,
+      isLoading: true,
+      googleDebugLog: debugLog ?? state.googleDebugLog,
+    );
+    final perfil = await _loadOrCreatePerfil(user);
+    state = SessionState(
+      firebaseUser: user,
+      perfil: perfil,
+      isLoading: false,
+      googleDebugLog: debugLog ?? 'Sessao iniciada.',
+    );
   }
 
   Future<void> loginWithGoogle() async {
     if (state.isLoading) return;
+    final useWindowsDesktopGoogleFlow =
+        !kIsWeb && defaultTargetPlatform == TargetPlatform.windows;
 
     state = SessionState(
       firebaseUser: state.firebaseUser,
@@ -127,12 +152,14 @@ class SessionNotifier extends StateNotifier<SessionState> {
       googleDebugLog: 'Google: iniciando autenticacao...',
     );
     try {
-      if (!isAuthStateStreamSupported) {
+      if (useWindowsDesktopGoogleFlow || !isAuthStateStreamSupported) {
         state = SessionState(
           firebaseUser: state.firebaseUser,
           perfil: state.perfil,
           isLoading: true,
-          googleDebugLog: 'Google: fluxo desktop (OAuth direto) iniciado.',
+          googleDebugLog: useWindowsDesktopGoogleFlow
+              ? 'Google: fluxo desktop Windows (OAuth direto) iniciado.'
+              : 'Google: fluxo desktop (OAuth direto) iniciado.',
         );
 
         final desktopProfile = await _firebaseService.signInWithGoogleDesktopProfile();
@@ -156,11 +183,26 @@ class SessionNotifier extends StateNotifier<SessionState> {
           perfil: perfilInicial,
         );
 
+        User? firebaseUser;
+        var debugLog = 'Google: login concluido via ${desktopProfile.authSource}.';
+        if (isCloudAuthSupported) {
+          try {
+            final cloudCredential = await _firebaseService.signInAnonymously();
+            firebaseUser = cloudCredential.user;
+            if (firebaseUser != null) {
+              debugLog = '$debugLog Sessao Firebase auxiliar iniciada.';
+            }
+          } catch (e) {
+            debugPrint('Google desktop: falha ao abrir sessao Firebase auxiliar: $e');
+            debugLog = '$debugLog Sessao Firebase auxiliar indisponivel.';
+          }
+        }
+
         state = SessionState(
-          firebaseUser: null,
+          firebaseUser: firebaseUser,
           perfil: perfil,
           isLoading: false,
-          googleDebugLog: 'Google: login concluido via ${desktopProfile.authSource}.',
+          googleDebugLog: debugLog,
         );
         return;
       }
@@ -182,12 +224,18 @@ class SessionNotifier extends StateNotifier<SessionState> {
         return;
       }
 
-      state = SessionState(
-        firebaseUser: state.firebaseUser,
-        perfil: state.perfil,
-        isLoading: false,
-        googleDebugLog: 'Google: credencial Firebase recebida com sucesso.',
-      );
+      final user = credential.user;
+      if (user == null) {
+        state = SessionState(
+          firebaseUser: state.firebaseUser,
+          perfil: state.perfil,
+          isLoading: false,
+          googleDebugLog: 'Google: utilizador Firebase ausente apos login.',
+        );
+        return;
+      }
+
+      await _completeSignIn(user, debugLog: 'Google: sessao iniciada com sucesso.');
     } catch (e) {
       state = SessionState(
         firebaseUser: state.firebaseUser,
@@ -209,27 +257,18 @@ class SessionNotifier extends StateNotifier<SessionState> {
     );
     try {
       final credential = await _firebaseService.signInAnonymously();
-
-      if (!isAuthStateStreamSupported) {
-        final user = credential.user;
-        if (user == null) {
-          state = SessionState(
-            firebaseUser: state.firebaseUser,
-            perfil: state.perfil,
-            isLoading: false,
-            googleDebugLog: state.googleDebugLog,
-          );
-          return;
-        }
-
-        final perfil = await _loadOrCreatePerfil(user);
+      final user = credential.user;
+      if (user == null) {
         state = SessionState(
-          firebaseUser: user,
-          perfil: perfil,
+          firebaseUser: state.firebaseUser,
+          perfil: state.perfil,
           isLoading: false,
           googleDebugLog: state.googleDebugLog,
         );
+        return;
       }
+
+      await _completeSignIn(user, debugLog: 'Convidado: sessao iniciada.');
     } catch (e) {
       state = SessionState(
         firebaseUser: state.firebaseUser,
@@ -251,7 +290,12 @@ class SessionNotifier extends StateNotifier<SessionState> {
       googleDebugLog: state.googleDebugLog,
     );
     try {
-      await _firebaseService.signInWithUsernameAndPassword(usernameOrEmail, password);
+      final credential =
+          await _firebaseService.signInWithUsernameAndPassword(usernameOrEmail, password);
+      final user = credential.user;
+      if (user != null) {
+        await _completeSignIn(user, debugLog: 'Login email: sessao iniciada.');
+      }
     } catch (e) {
       state = SessionState(
         firebaseUser: state.firebaseUser,

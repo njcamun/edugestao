@@ -12,7 +12,7 @@
 
 - Validate separate configs for `dev`, `staging`, and `prod`.
 - Validate Firebase project and API endpoints per environment.
-- Android: SHA-1 + `android/app/google-services.json` (see `FIREBASE_ANDROID.md`).
+- Android: SHA-1 + `android/app/google-services.json` + App Check debug token (see `FIREBASE_ANDROID.md`, `FIREBASE_APP_CHECK.md`).
 - Validate required `--dart-define` values for production builds.
 
 ## Quality Gates

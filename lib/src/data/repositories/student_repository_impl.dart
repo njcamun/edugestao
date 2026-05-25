@@ -91,43 +91,7 @@ class StudentRepositoryImpl implements StudentRepository {
 
   @override
   Future<void> permanentDeleteAluno(String id) async {
-    // 1. Obter todas as mensalidades do aluno para poder apagar pagamentos vinculados
-    final mensalidadesQuery = _db.select(_db.mensalidades)..where((t) => t.alunoId.equals(id));
-    final mensalidades = await mensalidadesQuery.get();
-    final mensalidadeIds = mensalidades.map((m) => m.id).toList();
-
-    await _db.transaction(() async {
-      // 2. Apagar Pagamentos vinculados às mensalidades do aluno
-      if (mensalidadeIds.isNotEmpty) {
-        for (final mid in mensalidadeIds) {
-          final pagamentosQuery = _db.select(_db.pagamentos)..where((t) => t.mensalidadeId.equals(mid));
-          final pagamentos = await pagamentosQuery.get();
-          
-          for (final p in pagamentos) {
-            await (_db.delete(_db.pagamentos)..where((t) => t.id.equals(p.id))).go();
-            _sync.deleteFromCloud('pagamentos', p.id);
-          }
-        }
-      }
-
-      // 3. Apagar Mensalidades
-      await (_db.delete(_db.mensalidades)..where((t) => t.alunoId.equals(id))).go();
-      for (final mid in mensalidadeIds) {
-        _sync.deleteFromCloud('mensalidades', mid);
-      }
-
-      // 4. Apagar Matrículas
-      final matriculasQuery = _db.select(_db.matriculas)..where((t) => t.alunoId.equals(id));
-      final matriculas = await matriculasQuery.get();
-      await (_db.delete(_db.matriculas)..where((t) => t.alunoId.equals(id))).go();
-      for (final mat in matriculas) {
-        _sync.deleteFromCloud('matriculas', mat.id);
-      }
-
-      // 5. Apagar o Aluno
-      await (_db.delete(_db.alunos)..where((t) => t.id.equals(id))).go();
-      _sync.deleteFromCloud('alunos', id);
-    });
+    await _sync.permanentDelete.hardDeleteAlunoCascade(id);
 
     await _audit.log(
       entidade: 'Aluno',

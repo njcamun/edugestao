@@ -11,13 +11,11 @@ import 'package:path/path.dart' as p;
 
 bool get isCloudFirestoreSupported {
   if (kIsWeb) return true;
-  if (defaultTargetPlatform == TargetPlatform.windows) return false;
   return true;
 }
 
 bool get isCloudAuthSupported {
   if (kIsWeb) return true;
-  if (defaultTargetPlatform == TargetPlatform.windows) return false;
   return true;
 }
 
@@ -54,8 +52,8 @@ void _loadDesktopOAuthIfNeeded() {
     return;
   }
 
-  // 3) Local config file used by this workspace launcher.
-  final oauthBat = _findFileUpwards('oauth.desktop.local.bat');
+  // 3) Config file beside the installed app / current workspace.
+  final oauthBat = _findNamedFile('oauth.desktop.local.bat');
   if (oauthBat != null) {
     final parsed = _parseDesktopOAuthBat(oauthBat);
     _googleDesktopClientId = parsed.$1.isNotEmpty ? parsed.$1 : _googleDesktopClientId;
@@ -74,15 +72,48 @@ void _loadDesktopOAuthIfNeeded() {
   }
 }
 
-String? _findFileUpwards(String fileName) {
-  try {
-    var dir = Directory.current;
-    for (var i = 0; i < 8; i++) {
-      final candidate = File(p.join(dir.path, fileName));
-      if (candidate.existsSync()) return candidate.path;
+List<Directory> _desktopConfigSearchDirs() {
+  final dirs = <Directory>[];
+  final seen = <String>{};
+
+  void addDir(Directory dir) {
+    final path = p.normalize(dir.path);
+    if (seen.add(path) && dir.existsSync()) {
+      dirs.add(dir);
+    }
+  }
+
+  void addUpwards(Directory start, int depth) {
+    var dir = start;
+    for (var i = 0; i < depth; i++) {
+      addDir(dir);
       final parent = dir.parent;
       if (parent.path == dir.path) break;
       dir = parent;
+    }
+  }
+
+  try {
+    addUpwards(Directory.current, 8);
+  } catch (_) {
+    // Ignore current-directory lookup errors.
+  }
+
+  try {
+    final exeDir = Directory(p.dirname(Platform.resolvedExecutable));
+    addUpwards(exeDir, 3);
+  } catch (_) {
+    // Ignore executable-directory lookup errors.
+  }
+
+  return dirs;
+}
+
+String? _findNamedFile(String fileName) {
+  try {
+    for (final dir in _desktopConfigSearchDirs()) {
+      final candidate = File(p.join(dir.path, fileName));
+      if (candidate.existsSync()) return candidate.path;
     }
   } catch (_) {
     // Ignore lookup errors and continue with next source.
@@ -106,8 +137,7 @@ String? _findFileUpwards(String fileName) {
 
 String? _findClientSecretJson() {
   try {
-    var dir = Directory.current;
-    for (var i = 0; i < 8; i++) {
+    for (final dir in _desktopConfigSearchDirs()) {
       final entries = dir.listSync();
       for (final entry in entries) {
         if (entry is File) {
@@ -117,9 +147,6 @@ String? _findClientSecretJson() {
           }
         }
       }
-      final parent = dir.parent;
-      if (parent.path == dir.path) break;
-      dir = parent;
     }
   } catch (_) {
     // Ignore lookup errors and continue.
@@ -162,22 +189,30 @@ class FirebaseService {
   gsiap.GoogleSignIn? _googleSignIn;
   final Dio _dio = Dio();
 
+  User? get currentUser {
+    if (_auth != null) return _auth!.currentUser;
+    if (!isCloudAuthSupported) return null;
+    try {
+      return FirebaseAuth.instance.currentUser;
+    } catch (_) {
+      return null;
+    }
+  }
+
   FirebaseAuth get _authInstance {
     if (!isCloudAuthSupported) {
       throw FirebaseAuthException(
         code: 'firebase-auth-unsupported',
-        message: 'Firebase Auth nao esta disponível (Windows Debug).',
+        message: 'Firebase Auth nao está disponível nesta plataforma.',
       );
     }
-    // No Windows Debug, isCloudAuthSupported é falso, então nunca chegamos aqui.
     return _auth ??= FirebaseAuth.instance;
   }
 
   FirebaseFirestore get _dbInstance {
     if (!isCloudFirestoreSupported) {
-      throw StateError('Cloud Firestore nao esta disponível (Windows Debug).');
+      throw StateError('Cloud Firestore nao está disponível nesta plataforma.');
     }
-    // No Windows Debug, isCloudFirestoreSupported é falso, então nunca chegamos aqui.
     return _db ??= FirebaseFirestore.instance;
   }
 
@@ -224,6 +259,13 @@ class FirebaseService {
       if (kIsWeb) {
         final googleProvider = GoogleAuthProvider();
         return await _authInstance.signInWithPopup(googleProvider);
+      }
+
+      if (defaultTargetPlatform == TargetPlatform.windows) {
+        throw FirebaseAuthException(
+          code: 'desktop-google-flow-disabled',
+          message: 'No Windows, o login Google deve usar o fluxo OAuth desktop local.',
+        );
       }
 
       final credentials = await _googleSignInInstance.signIn();
@@ -342,6 +384,13 @@ class FirebaseService {
   }
 
   Future<UserCredential> signInAnonymously() => _authInstance.signInAnonymously();
+
+  Future<User?> ensureCloudSession() async {
+    final existing = currentUser;
+    if (existing != null) return existing;
+    final credential = await signInAnonymously();
+    return credential.user;
+  }
 
   Future<UserCredential> signInWithUsernameAndPassword(
     String usernameOrEmail,

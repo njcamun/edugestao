@@ -3,6 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../core/layout/adaptive.dart';
 import '../../core/theme/app_tokens.dart';
+import '../../shared/widgets/edu_card.dart';
+import '../../shared/widgets/edu_empty_state.dart';
+import '../../shared/widgets/edu_form_styles.dart';
 import '../../domain/entities/mensalidade.dart';
 import '../../domain/entities/utilizador.dart';
 import '../../domain/entities/sync_entity.dart';
@@ -34,9 +37,10 @@ class FinancePage extends ConsumerWidget {
           Expanded(
             child: filteredFinance.isEmpty 
               ? _buildEmptyState(ref.watch(financeSearchProvider).isNotEmpty || ref.watch(financeStatusFilterProvider) != null)
-              : ListView.builder(
+              : ListView.separated(
                   physics: const BouncingScrollPhysics(),
                   itemCount: filteredFinance.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 10),
                   itemBuilder: (context, index) {
                     final item = filteredFinance[index];
                     return _FinanceListItem(item: item, currencyFmt: currencyFmt);
@@ -58,13 +62,8 @@ class FinancePage extends ConsumerWidget {
       'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'
     ];
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black, width: 1.5),
-      ),
+    return EduCard(
+      elevated: false,
       child: Column(
         children: [
           Row(
@@ -73,10 +72,9 @@ class FinancePage extends ConsumerWidget {
                 child: TextField(
                   onChanged: (val) => ref.read(financeSearchProvider.notifier).state = val,
                   decoration: const InputDecoration(
-                    hintText: 'PESQUISAR POR NOME DO ALUNO...',
-                    prefixIcon: Icon(Icons.search, color: Colors.black),
+                    hintText: 'Pesquisar por nome do aluno...',
+                    prefixIcon: Icon(Icons.search_rounded),
                     border: InputBorder.none,
-                    hintStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -88,7 +86,7 @@ class FinancePage extends ConsumerWidget {
                 ),
             ],
           ),
-          const Divider(color: Colors.black12),
+          const Divider(height: 24),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
@@ -171,18 +169,12 @@ class FinancePage extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(bool isFiltering) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.search_off_rounded, size: 64, color: AppTokens.border),
-          const SizedBox(height: 16),
-          Text(
-            isFiltering ? 'NENHUM RESULTADO PARA OS FILTROS.' : 'NENHUMA COBRANÇA ENCONTRADA.',
-            style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14),
-          ),
-        ],
-      ),
+    return EduEmptyState(
+      icon: isFiltering ? Icons.search_off_rounded : Icons.receipt_long_outlined,
+      title: isFiltering ? 'Nenhum resultado' : 'Nenhuma cobrança',
+      message: isFiltering
+          ? 'Ajuste os filtros ou a pesquisa.'
+          : 'Gere mensalidades a partir das matrículas activas.',
     );
   }
 }
@@ -204,16 +196,16 @@ class _FilterChip extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: isSelected ? Colors.black : Colors.white,
-            border: Border.all(color: Colors.black, width: 1.5),
-            borderRadius: BorderRadius.circular(6),
+            color: isSelected ? AppTokens.primary : AppTokens.surface,
+            border: Border.all(color: isSelected ? AppTokens.primary : AppTokens.border),
+            borderRadius: BorderRadius.circular(AppTokens.radiusSM),
           ),
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? Colors.white : Colors.black,
-              fontSize: 10,
-              fontWeight: FontWeight.w900,
+              color: isSelected ? Colors.white : AppTokens.textSecondary,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
@@ -243,14 +235,12 @@ class _FinanceListItem extends ConsumerWidget {
       'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'
     ];
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+    final statusColor = isPaid
+        ? AppTokens.success
+        : (isOverdue ? AppTokens.error : AppTokens.warning);
+
+    return EduCard(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black, width: 1.5),
-      ),
       child: studentsAsync.when(
         data: (alunos) {
           final aluno = alunos.where((a) => a.id == item.alunoId).firstOrNull;
@@ -262,30 +252,25 @@ class _FinanceListItem extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Container(
-                      width: 34,
-                      height: 34,
-                      decoration: BoxDecoration(
-                        color: isPaid ? Colors.black : Colors.white,
-                        border: Border.all(color: Colors.black, width: 2),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                    CircleAvatar(
+                      radius: 17,
+                      backgroundColor: statusColor.withValues(alpha: 0.12),
                       child: Icon(
-                        isPaid ? Icons.check : (isOverdue ? Icons.priority_high : Icons.access_time),
-                        color: isPaid ? Colors.white : Colors.black,
+                        isPaid ? Icons.check_rounded : (isOverdue ? Icons.priority_high_rounded : Icons.schedule_rounded),
+                        color: statusColor,
                         size: 18,
                       ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: Text(alunoNome.toUpperCase(), style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 13), maxLines: 2, overflow: TextOverflow.ellipsis),
+                      child: Text(alunoNome, style: Theme.of(context).textTheme.titleSmall, maxLines: 2, overflow: TextOverflow.ellipsis),
                     ),
                   ],
                 ),
                 const SizedBox(height: 6),
                 Text(
                   '${meses[item.mesReferencia - 1]} • VENCE EM ${DateFormat('dd/MM/yyyy').format(item.dataVencimento)}',
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black54),
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 8),
                 Row(
@@ -302,13 +287,13 @@ class _FinanceListItem extends ConsumerWidget {
                       onPressed: isPaid 
                           ? () => showDialog(context: context, builder: (c) => PaymentDetailsDialog(mensalidade: item))
                           : null,
-                      icon: Icon(Icons.visibility_outlined, color: isPaid ? Colors.black : Colors.black26),
+                      icon: Icon(Icons.visibility_outlined, color: isPaid ? AppTokens.primary : AppTokens.textMuted),
                     ),
                     IconButton(
                       onPressed: !isPaid
                           ? () => showDialog(context: context, builder: (c) => PaymentConfirmationDialog(mensalidade: item))
                           : () => ReceiptPdfGenerator.generateAndPrint(mensalidade: item, aluno: aluno!),
-                      icon: Icon(!isPaid ? Icons.payments_outlined : Icons.print_outlined, color: Colors.black),
+                      icon: Icon(!isPaid ? Icons.payments_outlined : Icons.print_outlined, color: AppTokens.primary),
                     ),
                     if (isAdmin) ...[
                       IconButton(
@@ -330,16 +315,12 @@ class _FinanceListItem extends ConsumerWidget {
 
           return Row(
             children: [
-              Container(
-                width: 40, height: 40,
-                decoration: BoxDecoration(
-                  color: isPaid ? Colors.black : Colors.white,
-                  border: Border.all(color: Colors.black, width: 2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
+              CircleAvatar(
+                radius: 20,
+                backgroundColor: statusColor.withValues(alpha: 0.12),
                 child: Icon(
-                  isPaid ? Icons.check : (isOverdue ? Icons.priority_high : Icons.access_time),
-                  color: isPaid ? Colors.white : Colors.black,
+                  isPaid ? Icons.check_rounded : (isOverdue ? Icons.priority_high_rounded : Icons.schedule_rounded),
+                  color: statusColor,
                   size: 20,
                 ),
               ),
@@ -348,7 +329,7 @@ class _FinanceListItem extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(alunoNome.toUpperCase(), style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14)),
+                    Text(alunoNome, style: Theme.of(context).textTheme.titleMedium),
                     Text(
                       '${meses[item.mesReferencia - 1]} • VENCE EM ${DateFormat('dd/MM/yyyy').format(item.dataVencimento)}',
                       style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black54),
@@ -370,18 +351,18 @@ class _FinanceListItem extends ConsumerWidget {
               if (isPaid)
                 IconButton(
                   onPressed: () => showDialog(context: context, builder: (c) => PaymentDetailsDialog(mensalidade: item)),
-                  icon: const Icon(Icons.visibility_outlined, color: Colors.black),
+                  icon: const Icon(Icons.visibility_outlined, color: AppTokens.primary),
                   tooltip: 'Ver Detalhes e Evidência',
                 ),
               if (!isPaid)
                 IconButton(
                   onPressed: () => showDialog(context: context, builder: (c) => PaymentConfirmationDialog(mensalidade: item)),
-                  icon: const Icon(Icons.payments_outlined, color: Colors.black),
+                  icon: const Icon(Icons.payments_outlined, color: AppTokens.primary),
                 )
               else
                 IconButton(
                   onPressed: () => ReceiptPdfGenerator.generateAndPrint(mensalidade: item, aluno: aluno!),
-                  icon: const Icon(Icons.print_outlined, color: Colors.black),
+                  icon: const Icon(Icons.print_outlined, color: AppTokens.primary),
                 ),
               if (isAdmin) ...[
                 IconButton(
@@ -411,25 +392,17 @@ class _FinanceListItem extends ConsumerWidget {
     );
   }
 
-  void _confirmDeleteIndividual(BuildContext context, WidgetRef ref, Mensalidade item) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('EXCLUIR FACTURA', style: TextStyle(fontWeight: FontWeight.w900)),
-        content: const Text('TEM A CERTEZA QUE DESEJA ELIMINAR ESTA COBRANÇA DEFINITIVAMENTE? ISTO APAGARÁ TAMBÉM QUALQUER PAGAMENTO ASSOCIADO.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCELAR')),
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              await ref.read(financeRepositoryProvider).deleteMensalidadePermanent(item.id);
-            },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('EXCLUIR', style: TextStyle(fontWeight: FontWeight.w900)),
-          ),
-        ],
-      ),
+  void _confirmDeleteIndividual(BuildContext context, WidgetRef ref, Mensalidade item) async {
+    final ok = await EduFormStyles.showConfirmDialog(
+      context,
+      title: 'Eliminar cobrança',
+      message: 'Esta acção remove definitivamente a cobrança e pagamentos associados, localmente e na nuvem.',
+      confirmLabel: 'Eliminar',
+      destructive: true,
     );
+    if (ok == true) {
+      await ref.read(financeRepositoryProvider).deleteMensalidadePermanent(item.id);
+    }
   }
 }
 
@@ -467,9 +440,9 @@ class _FinanceCorrectionDialogState extends ConsumerState<_FinanceCorrectionDial
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black, width: 2)),
-      title: const Text('CORRIGIR DADOS FINANCEIROS', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+      shape: EduFormStyles.dialogShape(),
+      backgroundColor: AppTokens.surface,
+      title: const Text('Corrigir dados financeiros', style: TextStyle(fontWeight: FontWeight.w600)),
       content: Form(
         key: _formKey,
         child: Column(
@@ -478,22 +451,13 @@ class _FinanceCorrectionDialogState extends ConsumerState<_FinanceCorrectionDial
             TextFormField(
               controller: _valorController,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                labelText: 'VALOR DA MENSALIDADE', 
-                border: OutlineInputBorder(),
-                labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-              ),
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              decoration: EduFormStyles.inputDecoration('Valor da mensalidade'),
               validator: (v) => v!.isEmpty ? 'OBRIGATÓRIO' : null,
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
               initialValue: _estado,
-              decoration: const InputDecoration(
-                labelText: 'ESTADO', 
-                border: OutlineInputBorder(),
-                labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-              ),
+              decoration: EduFormStyles.inputDecoration('Estado'),
               items: const [
                 DropdownMenuItem(value: 'pendente', child: Text('PENDENTE')),
                 DropdownMenuItem(value: 'pago', child: Text('PAGO')),
@@ -506,24 +470,17 @@ class _FinanceCorrectionDialogState extends ConsumerState<_FinanceCorrectionDial
             TextFormField(
               controller: _obsController,
               maxLines: 2,
-              decoration: const InputDecoration(
-                labelText: 'OBSERVAÇÕES', 
-                border: OutlineInputBorder(),
-                labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-              ),
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              decoration: EduFormStyles.inputDecoration('Observações'),
             ),
           ],
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCELAR', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))),
-        FilledButton(
-          onPressed: _isSaving ? null : _save,
-          style: FilledButton.styleFrom(backgroundColor: Colors.black, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-          child: _isSaving 
-            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) 
-            : const Text('SALVAR ALTERAÇÕES', style: TextStyle(fontWeight: FontWeight.w900)),
+        EduFormStyles.dialogActions(
+          onCancel: () => Navigator.pop(context),
+          onConfirm: _isSaving ? null : _save,
+          confirmLabel: 'Guardar',
+          isLoading: _isSaving,
         ),
       ],
     );
@@ -544,7 +501,7 @@ class _FinanceCorrectionDialogState extends ConsumerState<_FinanceCorrectionDial
       await repo.saveMensalidade(item);
       if (mounted) Navigator.pop(context);
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('ERRO: $e'), backgroundColor: Colors.black));
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Erro: $e')));
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }

@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "edugestao" "\0"
+            VALUE "CompanyName", "EDUCLASS" "\0"
+            VALUE "FileDescription", "EDUCLASS - Gestão Escolar" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "edugestao" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2026 com.example. All rights reserved." "\0"
+            VALUE "InternalName", "EDUCLASS" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2026 EDUCLASS. Todos os direitos reservados." "\0"
             VALUE "OriginalFilename", "edugestao.exe" "\0"
-            VALUE "ProductName", "edugestao" "\0"
+            VALUE "ProductName", "EDUCLASS" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

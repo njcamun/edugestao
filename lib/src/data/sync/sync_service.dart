@@ -2,7 +2,8 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:drift/drift.dart';
-import 'package:flutter/foundation.dart' show TargetPlatform, debugPrint, defaultTargetPlatform, kIsWeb;
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Domain Entities
@@ -23,6 +24,7 @@ import 'package:edugestao/src/domain/entities/sync_entity.dart';
 // Data Layer
 import 'package:edugestao/src/data/local/drift/app_database.dart';
 import 'package:edugestao/src/data/local/drift/mappers/aluno_mapper.dart';
+import 'package:edugestao/src/data/sync/permanent_delete_helper.dart';
 import 'package:edugestao/src/data/local/drift/mappers/ano_lectivo_mapper.dart';
 import 'package:edugestao/src/data/local/drift/mappers/turma_mapper.dart';
 import 'package:edugestao/src/data/local/drift/mappers/matricula_mapper.dart';
@@ -45,8 +47,7 @@ final isSyncingProvider = StateProvider<bool>((ref) => false);
 /// Verifica se o Cloud Firestore está disponível nesta plataforma.
 bool get isAutomaticCloudSyncSupported {
   if (!isCloudFirestoreSupported) return false;
-  if (kIsWeb) return true;
-  return defaultTargetPlatform != TargetPlatform.windows;
+  return true;
 }
 
 bool get isConnectivitySyncSupported {
@@ -56,8 +57,7 @@ bool get isConnectivitySyncSupported {
 
 bool get isInitialCloudPullSupported {
   if (!isCloudFirestoreSupported) return false;
-  if (kIsWeb) return true;
-  return defaultTargetPlatform != TargetPlatform.windows;
+  return true;
 }
 
 class SyncService {
@@ -82,6 +82,16 @@ class SyncService {
     return _firebaseService.db;
   }
 
+  bool get _hasCloudSession =>
+      _ref.read(sessionProvider).firebaseUser != null || _firebaseService.currentUser != null;
+
+  Future<User?> _ensureCloudSession() async {
+    if (!_ref.read(sessionProvider).isAuthenticated) {
+      return null;
+    }
+    return await _firebaseService.ensureCloudSession();
+  }
+
   void _init() {
     if (!isConnectivitySyncSupported) {
       return;
@@ -96,6 +106,9 @@ class SyncService {
 
   void startRealtimeListeners() {
     if (!isAutomaticCloudSyncSupported) {
+      return;
+    }
+    if (!_hasCloudSession) {
       return;
     }
 
@@ -243,6 +256,12 @@ class SyncService {
       _syncAllInProgress = false;
       return;
     }
+    final cloudUser = await _ensureCloudSession();
+    if (cloudUser == null) {
+      debugPrint('SyncService: SyncAll abortado: sessão Firebase indisponível.');
+      _syncAllInProgress = false;
+      return;
+    }
 
     _ref.read(isSyncingProvider.notifier).state = true;
     try {
@@ -274,10 +293,23 @@ class SyncService {
     if (!isCloudFirestoreSupported) {
       return 'Sincronização em nuvem não disponível nesta plataforma.';
     }
-
-    if (defaultTargetPlatform == TargetPlatform.windows) {
-      await syncLocalToCloud();
-      return 'Upload de dados locais concluído.';
+    if (!_ref.read(sessionProvider).isAuthenticated) {
+      return 'Inicie sessão antes de sincronizar.';
+    }
+    if (!_hasCloudSession) {
+      try {
+        final cloudUser = await _ensureCloudSession();
+        if (cloudUser == null) {
+          return 'SYNC 1.0.1: sessão Firebase auxiliar não foi criada.';
+        }
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'operation-not-allowed') {
+          return 'Active o login anónimo no Firebase para permitir sincronização no desktop.';
+        }
+        return 'Falha ao abrir sessão Firebase: ${e.message ?? e.code}';
+      } catch (e) {
+        return 'Falha ao abrir sessão Firebase: $e';
+      }
     }
 
     await syncAll();
@@ -578,7 +610,9 @@ class SyncService {
 
     final session = _ref.read(sessionProvider);
     if (!session.isAuthenticated) return;
-    final userId = session.firebaseUser!.uid;
+    final user = await _ensureCloudSession();
+    if (user == null) return;
+    final userId = user.uid;
 
     _ref.read(isSyncingProvider.notifier).state = true;
     try {
@@ -1392,6 +1426,8 @@ class SyncService {
     }
   }
 
+  PermanentDeleteHelper get permanentDelete => PermanentDeleteHelper(_db, this);
+
   Future<void> deleteFromCloud(String collection, String id) async {
     if (!isAutomaticCloudSyncSupported) return;
     try {
@@ -1399,6 +1435,21 @@ class SyncService {
       debugPrint('SyncService: Documento $id removido da colecao $collection na nuvem.');
     } catch (e) {
       debugPrint('Erro ao remover documento da nuvem: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> deleteManyFromCloud(
+    List<({String collection, String id})> items,
+  ) async {
+    for (final item in items) {
+      try {
+        await deleteFromCloud(item.collection, item.id);
+      } catch (e) {
+        debugPrint(
+          'SyncService: falha ao remover ${item.collection}/${item.id}: $e',
+        );
+      }
     }
   }
 

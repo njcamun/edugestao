@@ -78,10 +78,7 @@ class CostsRepositoryImpl implements CostsRepository {
 
   @override
   Future<void> permanentDeleteCusto(String id) async {
-    await _db.transaction(() async {
-      await (_db.delete(_db.custosMensais)..where((t) => t.id.equals(id))).go();
-      _sync.deleteFromCloud('custos_mensais', id);
-    });
+    await _sync.permanentDelete.hardDeleteCusto(id);
 
     await _audit.log(
       entidade: 'Custo',

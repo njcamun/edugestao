@@ -11,6 +11,7 @@ import '../../state/theme_mode_controller.dart';
 import 'settings_controller.dart';
 import 'users_page.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import '../../core/theme/app_tokens.dart';
 import '../../shared/widgets/edu_card.dart';
 import '../../shared/widgets/edu_segmented_tabs.dart';
 
@@ -194,18 +195,18 @@ class _SettingsPageState extends ConsumerState<SettingsPage> with SingleTickerPr
                                           fit: BoxFit.cover,
                                           errorBuilder: (c, e, s) => const Icon(
                                               Icons.add_a_photo_outlined,
-                                              color: Colors.black),
+                                              color: AppTokens.primary),
                                         )
                                       : Image.file(
                                           File(_logotipoPath!),
                                           fit: BoxFit.cover,
                                           errorBuilder: (c, e, s) => const Icon(
                                               Icons.add_a_photo_outlined,
-                                              color: Colors.black),
+                                              color: AppTokens.primary),
                                         ),
                                 )
                               : const Icon(Icons.add_a_photo_outlined,
-                                  color: Colors.black),
+                                  color: AppTokens.primary),
                         ),
                       ),
                       SizedBox(

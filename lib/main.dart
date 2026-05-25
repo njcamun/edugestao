@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform, kIsWeb;
+import 'package:flutter/foundation.dart'
+    show TargetPlatform, debugPrint, defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'firebase_options.dart';
 import 'src/app.dart';
+import 'src/core/firebase/firebase_bootstrap.dart';
 
 Future<void> main() async {
   await runZonedGuarded(() async {
@@ -32,20 +32,10 @@ Future<void> main() async {
       await initializeDateFormatting('pt_PT', null);
     }
 
-    // Tentar inicializar o Firebase. No Windows (seja Debug ou Release), o plugin às vezes causa crash nativo.
-    // Envolvemos num try-catch muito rigoroso.
-    if (!kIsWeb && defaultTargetPlatform == TargetPlatform.windows) {
-      debugPrint('AVISO: Inicialização do Firebase ignorada no Windows para prevenir crashes nativos.');
-    } else {
-      try {
-        debugPrint('MAIN: Tentando inicializar Firebase...');
-        await Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
-        );
-        debugPrint('MAIN: Firebase inicializado com sucesso.');
-      } catch (e) {
-        debugPrint('MAIN: Falha ao inicializar Firebase: $e');
-      }
+    try {
+      await bootstrapFirebase();
+    } catch (e, st) {
+      debugPrint('MAIN: Falha ao inicializar Firebase: $e\n$st');
     }
 
     // Captura erros não tratados em Release e impede crash silencioso

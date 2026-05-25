@@ -252,36 +252,12 @@ echo  [2/2] flutter pub get...
 call flutter pub get
 if errorlevel 1 exit /b 1
 
-call :sub_apply_windows_stability_patch
-if errorlevel 1 exit /b 1
-
 exit /b 0
 
 
 :sub_apply_windows_stability_patch
-if not exist "windows\flutter\generated_plugins.cmake" exit /b 0
-
 echo.
-echo  [PATCH] Aplicando estabilidade Windows (desativar firebase_auth nativo)...
-
-powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-  "$p='windows\flutter\generated_plugins.cmake';" ^
-  "$c=Get-Content -Raw $p;" ^
-  "$c=[regex]::Replace($c,'(?m)^\s*firebase_auth\s*\r?\n','');" ^
-  "Set-Content -Path $p -Value $c -Encoding UTF8;"
-if errorlevel 1 exit /b 1
-
-if exist "windows\flutter\generated_plugin_registrant.cc" (
-	powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-	  "$p='windows\flutter\generated_plugin_registrant.cc';" ^
-	  "$c=Get-Content -Raw $p;" ^
-	  "$c=$c -replace '(?m)^#include <firebase_auth\/firebase_auth_plugin_c_api\.h>\r?\n','';" ^
-	  "$c=$c -replace 'FirebaseAuthPluginCApiRegisterWithRegistrar\([\s\S]*?\);\r?\n','';" ^
-	  "Set-Content -Path $p -Value $c -Encoding UTF8;"
-	if errorlevel 1 exit /b 1
-)
-
-echo  [OK] Patch Windows aplicado.
+echo  [INFO] Nenhum patch de estabilidade Windows aplicado.
 exit /b 0
 
 

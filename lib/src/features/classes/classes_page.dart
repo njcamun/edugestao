@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_tokens.dart';
+import '../../shared/widgets/edu_form_styles.dart';
 import '../../shared/widgets/edu_card.dart';
 import '../../shared/widgets/edu_empty_state.dart';
 import '../../domain/entities/turma.dart';
@@ -165,46 +166,29 @@ class _ClassCard extends ConsumerWidget {
     );
   }
 
-  void _confirmDelete(BuildContext context, WidgetRef ref, {bool permanent = false}) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Colors.white,
-        shape: const RoundedRectangleBorder(side: BorderSide(color: Colors.black, width: 2)),
-        title: Text(permanent ? 'ELIMINAR DEFINITIVAMENTE' : 'ELIMINAR TURMA', style: const TextStyle(fontWeight: FontWeight.w900)),
-        content: Text(permanent 
-          ? 'ESTA ACÇÃO É IRREVERSÍVEL E APAGARÁ TODAS AS MATRÍCULAS E PAGAMENTOS DESTA TURMA. DESEJA APAGAR ${turma.nomeTurma.toUpperCase()}?' 
-          : 'TEM A CERTEZA QUE DESEJA ELIMINAR A TURMA ${turma.nomeTurma.toUpperCase()}?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('CANCELAR', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          ),
-          TextButton(
-            onPressed: () async {
-              try {
-                if (permanent) {
-                  await ref.read(classesRepositoryProvider).permanentDeleteTurma(turma.id);
-                } else {
-                  await ref.read(classesRepositoryProvider).deleteTurma(turma.id);
-                }
-                if (context.mounted) Navigator.pop(context);
-              } catch (e) {
-                if (context.mounted) {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(e.toString().replaceAll('Exception:', '').toUpperCase()),
-                      backgroundColor: Colors.black,
-                    ),
-                  );
-                }
-              }
-            },
-            child: const Text('CONFIRMAR', style: TextStyle(color: Colors.red, fontWeight: FontWeight.w900)),
-          ),
-        ],
-      ),
+  Future<void> _confirmDelete(BuildContext context, WidgetRef ref, {bool permanent = false}) async {
+    final ok = await EduFormStyles.showConfirmDialog(
+      context,
+      title: permanent ? 'Eliminar definitivamente' : 'Eliminar turma',
+      message: permanent
+          ? 'Remove definitivamente «${turma.nomeTurma}», matrículas e cobranças (local e nuvem).'
+          : 'Tem a certeza que deseja eliminar a turma ${turma.nomeTurma}?',
+      confirmLabel: permanent ? 'Eliminar' : 'Confirmar',
+      destructive: true,
     );
+    if (ok != true) return;
+    try {
+      if (permanent) {
+        await ref.read(classesRepositoryProvider).permanentDeleteTurma(turma.id);
+      } else {
+        await ref.read(classesRepositoryProvider).deleteTurma(turma.id);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString().replaceAll('Exception:', '').trim())),
+        );
+      }
+    }
   }
 }

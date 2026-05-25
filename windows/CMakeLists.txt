@@ -62,10 +62,8 @@ add_subdirectory(${FLUTTER_MANAGED_DIR})
 add_subdirectory("runner")
 
 
-# Custom plugin build rules for Windows.
-# We intentionally exclude firebase_auth from native registration/linking
-# because it is unstable in this desktop target for this project.
-include(flutter/custom_plugins.cmake)
+# Generated plugin build rules for Windows.
+include(flutter/generated_plugins.cmake)
 
 
 # === Installation ===

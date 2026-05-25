@@ -61,7 +61,7 @@ class GlobalSearchService {
           id: m.id,
           title: 'Matrícula ${m.numeroMatricula}',
           subtitle: '$nome · ${m.anoLectivo}',
-          route: '/alunos',
+          route: '/matriculas',
         ));
       }
     }
@@ -75,7 +75,7 @@ class GlobalSearchService {
           id: t.id,
           title: t.nomeTurma,
           subtitle: 'Turma · Sala ${t.numeroSala}',
-          route: '/alunos',
+          route: '/turmas',
         ));
       }
     }

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../core/theme/app_tokens.dart';
+import '../../shared/widgets/edu_card.dart';
 import '../../shared/widgets/edu_empty_state.dart';
+import '../../shared/widgets/edu_form_styles.dart';
 import '../../domain/entities/matricula.dart';
 import 'enrollments_controller.dart';
 import 'widgets/enrollment_form_dialog.dart';
@@ -98,13 +100,9 @@ class _EnrollmentsPageState extends ConsumerState<EnrollmentsPage> {
   }
 
   Widget _buildFilters() {
-    return Container(
+    return EduCard(
+      elevated: false,
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTokens.border),
-      ),
       child: Row(
         children: [
           Expanded(
@@ -196,16 +194,11 @@ class _EnrollmentCard extends ConsumerWidget {
     });
 
     return Opacity(
-      opacity: isDeleted ? 0.5 : 1.0,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        decoration: BoxDecoration(
-          color: isDeleted ? Colors.grey.shade100 : Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: isDeleted ? Colors.grey : AppTokens.border),
-        ),
+      opacity: isDeleted ? 0.55 : 1.0,
+      child: EduCard(
+        color: isDeleted ? AppTokens.background : null,
         child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          contentPadding: EdgeInsets.zero,
           leading: CircleAvatar(
             backgroundColor: isDeleted ? Colors.grey.shade300 : AppTokens.background,
             child: Icon(
@@ -222,7 +215,9 @@ class _EnrollmentCard extends ConsumerWidget {
                   children: [
                     Text(
                       alunoNome,
-                      style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: isDeleted ? Colors.black54 : AppTokens.slate900),
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: isDeleted ? AppTokens.textMuted : AppTokens.textPrimary,
+                          ),
                     ),
                     Text(
                       'MENSALIDADE: ${NumberFormat.currency(locale: 'pt_AO', symbol: 'Kz').format(matricula.valorMensalidade)}',
@@ -233,9 +228,12 @@ class _EnrollmentCard extends ConsumerWidget {
               ),
               if (isDeleted)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(4)),
-                  child: const Text('ANULADA', style: TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900)),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: AppTokens.textMuted.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Text('Anulada', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600)),
                 ),
             ],
           ),
@@ -294,31 +292,23 @@ class _EnrollmentCard extends ConsumerWidget {
     );
   }
 
-  void _confirmDelete(BuildContext context, WidgetRef ref, String alunoNome, bool permanent) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(permanent ? 'ELIMINAR DEFINITIVAMENTE' : 'Anular Matrícula'),
-        content: Text(permanent 
-          ? 'ESTA ACÇÃO APAGARÁ TODOS OS REGISTOS DE PAGAMENTO E MENSALIDADES DE $alunoNome. DESEJA CONTINUAR?' 
-          : 'Tem a certeza que deseja anular a matrícula de $alunoNome?'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
-          TextButton(
-            onPressed: () async {
-              if (permanent) {
-                await ref.read(enrollmentRepositoryProvider).permanentDeleteMatricula(matricula.id);
-              } else {
-                await ref.read(enrollmentRepositoryProvider).deleteMatricula(matricula.id);
-              }
-              if (context.mounted) Navigator.pop(context);
-            },
-            style: TextButton.styleFrom(foregroundColor: AppTokens.error),
-            child: const Text('Confirmar'),
-          ),
-        ],
-      ),
+  Future<void> _confirmDelete(BuildContext context, WidgetRef ref, String alunoNome, bool permanent) async {
+    final ok = await EduFormStyles.showConfirmDialog(
+      context,
+      title: permanent ? 'Eliminar definitivamente' : 'Anular matrícula',
+      message: permanent
+          ? 'Remove definitivamente a matrícula de $alunoNome, mensalidades e pagamentos (local e nuvem).'
+          : 'Tem a certeza que deseja anular a matrícula de $alunoNome?',
+      confirmLabel: permanent ? 'Eliminar' : 'Anular',
+      destructive: true,
     );
+    if (ok == true) {
+      if (permanent) {
+        await ref.read(enrollmentRepositoryProvider).permanentDeleteMatricula(matricula.id);
+      } else {
+        await ref.read(enrollmentRepositoryProvider).deleteMatricula(matricula.id);
+      }
+    }
   }
 }
 
@@ -391,10 +381,9 @@ class _GenerateFeesDialogState extends ConsumerState<_GenerateFeesDialog> {
         TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCELAR')),
         FilledButton(
           onPressed: _isGenerating ? null : _generate,
-          style: FilledButton.styleFrom(backgroundColor: Colors.black),
-          child: _isGenerating 
+          child: _isGenerating
             ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-            : const Text('GERAR COBRANÇAS'),
+            : const Text('Gerar cobranças'),
         ),
       ],
     );

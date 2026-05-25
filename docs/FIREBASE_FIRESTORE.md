@@ -65,4 +65,7 @@ service cloud.firestore {
 
 No desktop Windows, a app faz **upload** (`syncLocalToCloud`) mas não faz pull inicial automático. Use Android/Web para sincronização bidireccional completa.
 
-Ver também: [FIREBASE_ANDROID.md](./FIREBASE_ANDROID.md) para SHA-1 e `google-services.json`.
+Ver também:
+
+- [FIREBASE_ANDROID.md](./FIREBASE_ANDROID.md) — SHA-1 e `google-services.json`
+- [FIREBASE_APP_CHECK.md](./FIREBASE_APP_CHECK.md) — App Check (debug token + Play Integrity)
